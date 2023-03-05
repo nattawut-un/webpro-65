@@ -1,10 +1,11 @@
 <script>
-import axios from 'axios';
+import { store } from './store.js'
+import axios from 'axios'
 
 export default {
   data() {
     return {
-      cart: [],
+      store,
       productId: null,
       details: {},
       quantity: 1,
@@ -27,16 +28,16 @@ export default {
       let product = JSON.parse(JSON.stringify(this.details))
 
       if (this.alreadyAdded) {
-        this.cart[this.cartIndex].quantity = this.quantity
-        localStorage.setItem('cart', JSON.stringify(this.cart))
+        this.store.cart[this.cartIndex].quantity = this.quantity
+        localStorage.setItem('cart', JSON.stringify(this.store.cart))
         alert('เพิ่มสิงค้าลงตะกร้าแล้ว')
         this.$router.back()
         return
       }
 
       product.quantity = this.quantity
-      this.cart.push(product)
-      localStorage.setItem('cart', JSON.stringify(this.cart))
+      this.store.cart.push(product)
+      localStorage.setItem('cart', JSON.stringify(this.store.cart))
       alert('เพิ่มสิงค้าลงตะกร้าแล้ว')
       this.$router.back()
     },
@@ -49,12 +50,12 @@ export default {
   mounted() {
     this.productId = this.$route.params.id
     this.getProductDetail()
-    this.cart = JSON.parse(localStorage.getItem('cart') || '[]')
-    for (let i=0; i<this.cart.length; i++) {
-      if (this.productId == this.cart[i].id) {
+    this.store.cart = JSON.parse(localStorage.getItem('cart') || '[]')
+    for (let i=0; i<this.store.cart.length; i++) {
+      if (this.productId == this.store.cart[i].id) {
         this.alreadyAdded = true
         this.cartIndex = i
-        this.quantity = this.cart[i].quantity
+        this.quantity = this.store.cart[i].quantity
       }
     }
     window.scrollTo(0, 0)

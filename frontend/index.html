@@ -9,9 +9,26 @@
   <body>
     <div id="app" class="bg-main min-h-[100%]">
       <NavBar></NavBar>
-      <router-view></router-view>
+      <router-view v-slot="{ Component }">
+        <transition name="page-opacity" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
       <Foot></Foot>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
+
+<style>
+.page-opacity-enter-active,
+.page-opacity-leave-active {
+  transition: .15s ease all;
+}
+
+.page-opacity-enter-from,
+.page-opacity-leave-to {
+  opacity: 0;
+  transform: translateY(-50px) scale(0.95);
+}
+</style>

@@ -12,10 +12,10 @@ export const showProducts = (req, res) => {
 
 export const showProductById = (req, res) => {
   getProductById(req.params.id, (err, results) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json(results);
-      }
+    if (err) {
+      res.send(err);
+    } else {
+      res.json(results);
+    }
   });
 }

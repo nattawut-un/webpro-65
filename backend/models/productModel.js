@@ -6,7 +6,7 @@ export const getProducts = (result) => {
       console.log(err);
       result(err, null);
     } else {
-        result(null, results);
+      result(null, results);
     }
   })
 }
@@ -14,10 +14,10 @@ export const getProducts = (result) => {
 export const getProductById = (id, result) => {
   db.query("SELECT * FROM products WHERE id = ?", [id], (err, results) => {
     if (err) {
-        console.log(err);
-        result(err, null);
+      console.log(err);
+      result(err, null);
     } else {
-        result(null, results[0]);
+      result(null, results[0]);
     }
   });
 }

@@ -3,24 +3,35 @@ import Section from './components/Section.vue'
 </script>
 
 <script>
+import axios from 'axios'
+
 export default {
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
     }
   },
   methods: {
-    login() {
-      console.log('haha funny')
-      console.log(this.username)
-      console.log(this.password)
+    async login() {
+      console.log(this.username + '\n' + this.password)
+      await axios.post('http://localhost:3000/login', {
+        username: this.username,
+        password: this.password
+      }, {
+        withCredentials: true
+      }).then(response => {
+        console.log('Cookie:', document.cookie)
+      }).catch(err => {
+        console.log(err)
+      })
     },
   },
   mounted() {
     window.scrollTo(0, 0)
     this.username = ''
     this.password = ''
+    this.authPassed = 0
   }
 }
 </script>
@@ -29,7 +40,7 @@ export default {
   <div class="bg-white/80 font-mali">
     <img src="./images/homepage.jpg" class="w-full h-[30vh] object-cover">
     <Section title="ลงชื่อเข้าใช้"></Section>
-    <div class="containter mx-auto p-16 my-16 w-1/2 min-w-[500px] bg-white rounded-xl border-4 text-[200%]">
+    <div class="containter mx-auto p-16 w-1/2 min-w-[500px] bg-white my-16 rounded-xl border-4 text-[200%]">
       <form>
         <label class="font-pattaya">Username:</label><br>
         <input type="text" v-model="username" placeholder="Username" class="border-2 rounded-full ml-4 px-4"><br>

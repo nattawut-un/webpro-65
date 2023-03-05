@@ -6,18 +6,32 @@ export const getUsers = (result) => {
       console.log(err);
       result(err, null);
     } else {
-        result(null, results);
+      result(null, results);
     }
   })
 }
 
 export const checkUser = (usr, pw, result) => {
-  db.query('SELECT * FROM users WHERE name = ? AND password = ?', [usr, pw], (err, results) => {
+  let sql = 'SELECT EXISTS (SELECT * FROM users WHERE username = ? AND password = ?) AS auth'
+  db.query(sql, [usr, pw],
+  (err, results) => {
     if (err) {
       console.log(err);
       result(err, null);
     } else {
-        result(null, results);
+      result(null, results);
+    }
+  })
+}
+export const addUser = (data, result) => {
+  let sql = 'INSERT INTO users (username, password) VALUES (?, ?)'
+  db.query(sql, data,
+  (err, results) => {
+    if (err) {
+      console.log(err);
+      result(err, null);
+    } else {
+      result(null, results);
     }
   })
 }

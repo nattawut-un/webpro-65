@@ -1,8 +1,10 @@
 <script lang="ts">
+import { store } from '../store.js'
+
 export default {
   data() {
     return {
-      cart: [],
+      store,
       navList: [
         { title: 'หน้าหลัก', url: '/', icon: null },
         { title: 'รายการ', url: '/products', icon: null },
@@ -24,7 +26,7 @@ export default {
     }
   },
   mounted() {
-    this.cart = JSON.parse(localStorage.getItem('cart') || '[]')
+    this.store.cart = JSON.parse(localStorage.getItem('cart') || '[]')
   },
 }
 </script>
@@ -43,7 +45,7 @@ export default {
           <h1 class="font-bold text-lg">{{ profileDropdown }}</h1>&nbsp;<img class="h-7" src="./icons/User.svg">
         </div> -->
         <router-link class="text-white rounded-full px-3 flex cursor-pointer" to="/cart">
-          <h1 class="font-bold text-lg">ตะกร้า ({{ cart.length }})</h1>&nbsp;<img class="h-7" src="../svg/Cart.svg">
+          <h1 class="font-bold text-lg">ตะกร้า ({{ store.cart.length }})</h1>&nbsp;<img class="h-7" src="../svg/Cart.svg">
         </router-link>
       </div>
     </div>
