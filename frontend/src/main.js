@@ -1,5 +1,9 @@
 import { createApp } from 'vue/dist/vue.esm-bundler'
 import { createRouter, createWebHistory } from 'vue-router'
+import VueCookies from 'vue-cookies'
+import 'tw-elements'
+
+import { store } from './store.js'
 
 // tailwind
 import './style.css'
@@ -7,24 +11,9 @@ import './style.css'
 // components
 import NavBar from './components/NavBar.vue'
 import Footer from './components/Footer.vue'
-import NotFound from './NotFound.vue'
-import Home from './Home.vue'
-import ProductList from './ProductList.vue'
-import ProductDetails from './ProductDetails.vue'
-import Cart from './CartPage.vue'
-import Login from './LoginPage.vue'
-import Register from './RegisterPage.vue'
 
 // setting router
-const routes = [
-  { path: '/', component: Home },
-  { path: '/login', component: Login },
-  { path: '/register', component: Register },
-  { path: '/products', component: ProductList },
-  { path: '/products/:id', component: ProductDetails },
-  { path: '/cart', component: Cart },
-  { path: '/:pathMatch(.*)*', name:'not-found', component: NotFound },
-]
+import routes from './router/routes.js'
 const router = createRouter({
   history: createWebHistory(),
   routes,
@@ -35,12 +24,30 @@ router.resolve({
 }).href
 
 const app = createApp({
+  data() {
+    return {
+      store
+    }
+  },
+  methods: {
+    update() {
+      if (this.$cookies.isKey('session_token')) { this.store.session = this.$cookies.get('session_token') }
+      else { this.store.session = '' }
+      if (this.$cookies.isKey('username')) { this.store.username = this.$cookies.get('username') }
+      else { this.store.username = '' }
+    }
+  },
   created() {
     if (!localStorage.getItem('cart')) {
-      console.log('lol')
       localStorage.setItem('cart', '[]')
     }
-  }
+    // this.update()
+  },
+  // watch: {
+  //   '$route' (to, from) {
+  //     this.update()
+  //   }
+  // }
 })
 
 app.component('navbar', NavBar)
@@ -49,5 +56,6 @@ app.component('foot', Footer)
 app.config.globalProperties.$shopName = 'ชื่อร้าน'
 
 app.use(router)
+app.use(VueCookies)
 
 app.mount('#app')

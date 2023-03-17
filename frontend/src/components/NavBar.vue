@@ -5,6 +5,8 @@ export default {
   data() {
     return {
       store,
+      username: '',
+      loggedIn: false,
       navList: [
         { title: 'หน้าหลัก', url: '/', icon: null },
         { title: 'รายการ', url: '/products', icon: null },
@@ -14,9 +16,14 @@ export default {
         { title: 'แก้ไขข้อมูล', url: '/', icon: null },
         { title: 'ลงชื่อออก', url: '/', icon: null },
       ],
-      mainList: [
+      guestMenu: [
         { title: 'สมัครสมาชิก', url: '/register' },
         { title: 'ลงชื่อเข้าใช้', url: '/login' },
+      ],
+      userMenu: [
+        { title: 'ประวัติ', url: '/history' },
+        { title: 'ข้อมูล', url: '/profile' },
+        { title: 'ลงชื่อออก', url: '/logout' },
       ],
       categoryList: [
         { title: 'ข้าว', url: './products?category=rice' },
@@ -25,9 +32,23 @@ export default {
       ],
     }
   },
-  mounted() {
-    this.store.cart = JSON.parse(localStorage.getItem('cart') || '[]')
+  methods: {
+    init() {
+      this.store.cart = JSON.parse(localStorage.getItem('cart') || '[]')
+      if (this.$cookies.isKey('username')) {
+        this.loggedIn = true
+        this.username = this.$cookies.get('username')
+      }
+    }
   },
+  mounted() {
+    this.init()
+  },
+  watch: {
+    '$route' (to, from) {
+      this.init()
+    }
+  }
 }
 </script>
 
@@ -52,9 +73,13 @@ export default {
     <div class="bg-red-200/80 hover:bg-secondary transition duration-300 ease-out py-1 font-mali">
       <div class="container flex justify-end mx-auto px-4">
         <!-- <p>⭐⭐⭐ Work In Progress ⭐⭐⭐</p> -->
-        <router-link class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in mainList" :to="item.url">
+        <router-link v-if="loggedIn" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in userMenu" :to="item.url">
           {{ item.title }}
         </router-link>
+        <router-link v-else class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in guestMenu" :to="item.url">
+          {{ item.title }}
+        </router-link>
+        <h1 v-show="loggedIn">User: <span class="font-bold">{{ username }}</span> </h1>
       </div>
     </div>
     <!-- <div class="absolute right-2 top-12 shadow-xl" v-show="profileDropdown">

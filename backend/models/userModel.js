@@ -12,7 +12,7 @@ export const getUsers = (result) => {
 }
 
 export const checkUser = (usr, pw, result) => {
-  let sql = 'SELECT EXISTS (SELECT * FROM users WHERE username = ? AND password = ?) AS auth'
+  let sql = 'SELECT * FROM users WHERE username = ? AND password = ?'
   db.query(sql, [usr, pw],
   (err, results) => {
     if (err) {
@@ -23,6 +23,7 @@ export const checkUser = (usr, pw, result) => {
     }
   })
 }
+
 export const addUser = (data, result) => {
   let sql = 'INSERT INTO users (username, password) VALUES (?, ?)'
   db.query(sql, data,

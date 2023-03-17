@@ -1,18 +1,29 @@
 <script setup>
-import Section from './components/Section.vue';
+import Section from '../components/Section.vue';
 </script>
 
 <script>
 export default {
+  data() {
+    return {
+      username: ''
+    }
+  },
+  methods: {
+    getUserData() {
+      //
+    }
+  },
   mounted() {
     window.scrollTo(0, 0)
+    this.getUserData()
   }
 }
 </script>
 
 <template>
   <main>
-    <img src="./images/homepage.jpg" class="w-full h-[50vh] object-cover">
+    <img src="../assets/images/homepage.jpg" class="w-full h-[50vh] object-cover">
     <Section title="ยินดีต้อนรับ">
       <p class="indent-12">
         ปัจฉิมนิเทศอิมพีเรียลไทม์ โฮลวีต กัมมันตะเบบี้ยิมเซ็กซ์ปาสกาล อิออนโฮสเตสวาไรตี้ แตงกวาซานตาคลอสอพาร์ตเมนท์

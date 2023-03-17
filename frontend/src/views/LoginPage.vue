@@ -1,5 +1,5 @@
 <script setup>
-import Section from './components/Section.vue'
+import Section from '../components/Section.vue'
 </script>
 
 <script>
@@ -14,31 +14,33 @@ export default {
   },
   methods: {
     async login() {
-      console.log(this.username + '\n' + this.password)
+      // console.log(this.username + '\n' + this.password)
       await axios.post('http://localhost:3000/login', {
         username: this.username,
         password: this.password
       }, {
         withCredentials: true
       }).then(response => {
-        console.log('Cookie:', document.cookie)
+        // console.log('Cookie:', document.cookie)
+        this.$router.push('/')
       }).catch(err => {
         console.log(err)
       })
+      // if (this.$cookies.isKey('session_token')) {
+      // }
     },
   },
   mounted() {
     window.scrollTo(0, 0)
-    this.username = ''
-    this.password = ''
-    this.authPassed = 0
+    this.username = 'admin'
+    this.password = 'password'
   }
 }
 </script>
 
 <template>
   <div class="bg-white/80 font-mali">
-    <img src="./images/homepage.jpg" class="w-full h-[30vh] object-cover">
+    <img src="../assets/images/homepage.jpg" class="w-full h-[30vh] object-cover">
     <Section title="ลงชื่อเข้าใช้"></Section>
     <div class="containter mx-auto p-16 w-1/2 min-w-[500px] bg-white my-16 rounded-xl border-4 text-[200%]">
       <form>

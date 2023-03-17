@@ -1,6 +1,6 @@
 <script setup>
-import Section from './components/Section.vue'
-import ListItem from './components/ListItem.vue'
+import Section from '../components/Section.vue'
+import ListItem from '../components/ListItem.vue'
 </script>
 
 <script>
@@ -43,7 +43,7 @@ export default {
 
 <template>
   <main>
-    <img src="./images/food_list.jpg" class="w-full h-[30vh] object-cover">
+    <img src="../assets/images/food_list.jpg" class="w-full h-[30vh] object-cover">
     <Section title="รายการอาหารทั้งหมด">
       <p class="indent-12">
         เอ็กซ์โปแคชเชียร์ สเตริโอแก๊สโซฮอล์ออกแบบ แจมด็อกเตอร์เฮอร์ริเคนไงแฮปปี้ ปฏิสัมพันธ์พะเรอช็อปจูเนียร์ เอ๋อเอ็กซ์โป บรรพชน กลาสเจ๊าะแจ๊ะ ธรรมายากูซ่าบร็อคโคลีพาสปอร์ต ไมค์เจ๊าะแจ๊ะเซ็นเตอร์ฮวงจุ้ยทอล์ค ยาวีมอยส์เจอไรเซอร์ละอ่อนบัสธัมโม พริตตี้พุทธภูมิ ก่อนหน้าแมคเคอเรลมายองเนสไพลินโครนา แฟรี่ราชบัณฑิตยสถานศิรินทร์ศากยบุตร ตัวเองติวเตอร์ โปรโมเตอร์ เคอร์ฟิว
@@ -56,7 +56,7 @@ export default {
     <div class="bg-primary/70 hover:bg-primary backdrop-blur-md transition duration-300 ease-out font-mali text-white sticky top-[75px]">
       <div class="container mx-auto p-2 flex">
         <!-- <label class="font-bold mr-2">ค้นหา</label> -->
-        <img src="./svg/Search.svg" class="h-[23px] mr-2">
+        <img src="../svg/Search.svg" class="h-[23px] mr-2">
         <input type="text" v-model="searchKeyword" class="text-black bg-white rounded-full px-2 mr-2" />
         ผลการค้นหาทั้งหมด {{ searchedList.length }} รายการ
       </div>

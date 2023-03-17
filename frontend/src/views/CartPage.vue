@@ -1,5 +1,5 @@
 <script>
-import { store } from './store.js'
+import { store } from '../store.js'
 
 export default {
   data() {
@@ -37,10 +37,10 @@ export default {
 <template>
   <main class="backdrop-blur-lg min-h-[75vh] flex font-mali">
     <div class="w-1/2 bg-gray-300/80">
-      <img src="./images/food_cart.jpg" class="w-[100%] h-[100%] object-cover">
+      <img src="../assets/images/food_cart.jpg" class="w-[100%] h-[100%] object-cover">
     </div>
     <div class="w-1/2 bg-white/80 p-12">
-      <button class="bg-red-200 hover:bg-primary transition ease-in-out duration-200 text-black hover:text-white rounded-full px-4 py-2" @click="$router.back()"><img class="h-7" src="./svg/NavBack.svg"></button><br><br>
+      <button class="bg-red-200 hover:bg-primary transition ease-in-out duration-200 text-black hover:text-white rounded-full px-4 py-2" @click="$router.back()"><img class="h-7" src="../svg/NavBack.svg"></button><br><br>
       <h1 class="text-[400%] font-pattaya">ตะกร้าสินค้า</h1>
       <br><br>
       <div v-show="store.cart.length == 0">
@@ -48,7 +48,7 @@ export default {
       </div>
       <div class="flex border-b-2 border-gray-200/50 pt-2 pb-8" v-for="item in store.cart">
         <div class="w-1/4 mr-8">
-          <img :src="'../src/images/products/' + item.id + '.jpg'" class="w-full aspect-square rounded-full object-cover shadow-lg">
+          <img :src="'../src/assets/images/products/' + item.id + '.jpg'" class="w-full aspect-square rounded-full object-cover shadow-lg">
         </div>
         <div class="w-3/4 flex">
           <div class="w-2/3">
@@ -70,13 +70,23 @@ export default {
       </div>
       <div class="flex">
         <button
-          class="rounded-full px-4 py-2 transition ease-out duration-100"
+          class="rounded-full px-4 py-2 transition ease-out duration-100 mr-2"
           :class="[store.cart.length == 0 ? 'bg-gray-200 text-black opacity-50' : 'bg-red-500 text-white']"
           @click="clearCart()"
           :disabled="store.cart.length == 0"
         >
           ลบทั้งหมด
         </button>
+        <router-link
+          to="/checkout"
+          class="rounded-full px-4 py-2 transition ease-out duration-100"
+          :class="[!store.session || store.cart.length == 0 ? 'bg-gray-200 text-black opacity-50' : 'bg-red-500 text-white']"
+          :disabled="!store.session || store.cart.length == 0"
+          :event="!(!store.session || store.cart.length) ? 'click' : ''"
+        >
+          <span v-if="store.session">สั่งซื้อ</span>
+          <span v-else>โปรด login เพื่อสั่งซื้อ</span>
+        </router-link>
       </div>
     </div>
   </main>

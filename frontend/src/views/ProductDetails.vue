@@ -1,5 +1,5 @@
 <script>
-import { store } from './store.js'
+import { store } from '../store.js'
 import axios from 'axios'
 
 export default {
@@ -66,10 +66,10 @@ export default {
 <template>
   <main class="backdrop-blur-lg min-h-[75vh] md:flex font-mali">
     <div class="md:w-1/2 bg-gray-300/80">
-      <img :src="'../src/images/products/' + productId + '.jpg'" class="w-full">
+      <img :src="'../src/assets/images/products/' + productId + '.jpg'" class="w-full">
     </div>
     <div class="md:w-1/2 bg-white/80 p-12">
-      <button class="bg-red-200 hover:bg-primary transition ease-in-out duration-200 text-black hover:text-white rounded-full px-4 py-2" @click="$router.back()"><img class="h-7" src="./svg/NavBack.svg"></button><br><br>
+      <button class="bg-red-200 hover:bg-primary transition ease-in-out duration-200 text-black hover:text-white rounded-full px-4 py-2" @click="$router.back()"><img class="h-7" src="../svg/NavBack.svg"></button><br><br>
       <h1 class="text-[400%] font-pattaya">{{ details.name }}</h1>
       <h2 class="text-[200%]">{{ details.price }} บาท</h2>
       <br><hr><br>

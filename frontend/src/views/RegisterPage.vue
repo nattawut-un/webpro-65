@@ -1,3 +1,3 @@
 <template>
-  kuy
+  <div>kuy</div>
 </template>

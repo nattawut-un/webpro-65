@@ -4,6 +4,9 @@ module.exports = {
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
+  plugins: [
+    require('tw-elements/dist/plugin')
+  ],
   theme: {
     extend: {
       colors: {
@@ -16,7 +19,7 @@ module.exports = {
         'pattaya': ['Pattaya', 'sans-serif'],
       },
       backgroundImage: {
-        'main': "url('/src/images/food_bg.png')"
+        'main': "url('/src/assets/images/food_bg.png')"
       }
     },
   },
