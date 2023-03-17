@@ -16,7 +16,7 @@ export default {
   methods: {
     async getProductDetail() {
       try {
-        let url = 'http://localhost:3000/products/' + this.productId
+        let url = 'http://localhost:3000/api/products/' + this.productId
         let res = await axios
           .get(url)
           .then(response => (this.details = response.data))

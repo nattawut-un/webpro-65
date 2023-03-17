@@ -1,38 +1,31 @@
 import db from '../config/database.js'
+import bcrypt from 'bcryptjs'
 
-export const getUsers = (result) => {
-  db.query('SELECT * FROM users', (err, results) => {
+export const checkUser = (username, password, res) => {
+  db.query(`SELECT username, password FROM users WHERE username = '${username}'`, (err, result) => {
+    // error
     if (err) {
-      console.log(err);
-      result(err, null);
-    } else {
-      result(null, results);
+      console.log(err)
+      res(username + ' error', null)
+      return
     }
-  })
-}
-
-export const checkUser = (usr, pw, result) => {
-  let sql = 'SELECT * FROM users WHERE username = ? AND password = ?'
-  db.query(sql, [usr, pw],
-  (err, results) => {
-    if (err) {
-      console.log(err);
-      result(err, null);
-    } else {
-      result(null, results);
+    // username is not found
+    if (!result.length) {
+      res(username + ' not found', null)
+      return
     }
-  })
-}
-
-export const addUser = (data, result) => {
-  let sql = 'INSERT INTO users (username, password) VALUES (?, ?)'
-  db.query(sql, data,
-  (err, results) => {
-    if (err) {
-      console.log(err);
-      result(err, null);
-    } else {
-      result(null, results);
-    }
+    // compare password with hash
+    bcrypt.compare(
+      password,
+      result[0].password,
+      (err, isMatch) => {
+        if (isMatch) {
+          // some shit about cookie or something idk
+          res(null, username + ' password right')
+        } else {
+          res(username + ' password wrong', null)
+        }
+      }
+    )
   })
 }

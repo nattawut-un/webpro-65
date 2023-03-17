@@ -1,6 +1,7 @@
 import express from 'express'
 import { showProducts, showProductById } from '../controllers/productController.js'
-import { showAllUsers, authenticateUser } from '../controllers/userController.js'
+import { loginUser } from '../controllers/userController.js'
+import { loginValidation } from '../validation/validation.js';
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ router.get("/", (req, res) => {
 });
 router.get('/products', showProducts)
 router.get('/products/:id', showProductById)
-router.get('/users', showAllUsers)
-router.post('/login', authenticateUser)
+// router.get('/users', showAllUsers)
+router.post('/login', loginValidation, loginUser)
 
 export default router

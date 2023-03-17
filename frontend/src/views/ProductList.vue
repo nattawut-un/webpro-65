@@ -17,7 +17,7 @@ export default {
     async getProducts() {
       try {
         let res = await axios
-          .get('http://localhost:3000/products')
+          .get('http://localhost:3000/api/products')
           .then(response => (this.products = response.data))
       } catch (err) {
         console.log(err);

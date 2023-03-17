@@ -15,7 +15,7 @@ export default {
   methods: {
     async login() {
       // console.log(this.username + '\n' + this.password)
-      await axios.post('http://localhost:3000/login', {
+      await axios.post('http://localhost:3000/api/login', {
         username: this.username,
         password: this.password
       }, {
