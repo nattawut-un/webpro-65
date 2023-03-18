@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 03, 2023 at 11:33 AM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 7.4.29
+-- Generation Time: Mar 18, 2023 at 11:07 AM
+-- Server version: 10.4.27-MariaDB
+-- PHP Version: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -31,7 +31,7 @@ CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
   `description` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `categories`
@@ -54,7 +54,7 @@ CREATE TABLE `products` (
   `description` varchar(255) DEFAULT NULL,
   `price` float(8,2) DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `products`
@@ -85,22 +85,23 @@ INSERT INTO `products` (`id`, `name`, `category_id`, `description`, `price`, `im
 --
 
 CREATE TABLE `users` (
-  `id` int(10) NOT NULL,
-  `name` varchar(30) NOT NULL,
+  `id` varchar(50) NOT NULL,
+  `username` varchar(30) NOT NULL,
   `password` varchar(255) NOT NULL,
   `is_admin` tinyint(1) NOT NULL,
+  `last_login` datetime DEFAULT NULL,
   `phone` varchar(10) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
   `favorites` mediumtext DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `password`, `is_admin`, `phone`, `email`, `address`, `favorites`) VALUES
-(1, 'admin', 'password', 1, '0987654321', 'email@domain.com', 'Lat Krabang, Bangkok, Thailand, Earth', NULL);
+INSERT INTO `users` (`id`, `username`, `password`, `is_admin`, `last_login`, `phone`, `email`, `address`, `favorites`) VALUES
+('732a8609-7f23-4550-a22f-bc6764073e2c', 'admin', '$2a$12$txIEGWyZG7zVqfD5uPe2zuiHsE9nf1u3a/RXFzfUwZEa8VrVOQco2', 1, '2023-03-18 16:45:42', '0987654321', 'email@domain.com', 'Lat Krabang, Bangkok, Thailand, Earth', NULL);
 
 --
 -- Indexes for dumped tables
@@ -140,12 +141,6 @@ ALTER TABLE `categories`
 --
 ALTER TABLE `products`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables

@@ -31,8 +31,6 @@ const app = createApp({
   },
   methods: {
     update() {
-      if (this.$cookies.isKey('session_token')) { this.store.session = this.$cookies.get('session_token') }
-      else { this.store.session = '' }
       if (this.$cookies.isKey('username')) { this.store.username = this.$cookies.get('username') }
       else { this.store.username = '' }
     }
@@ -41,13 +39,13 @@ const app = createApp({
     if (!localStorage.getItem('cart')) {
       localStorage.setItem('cart', '[]')
     }
-    // this.update()
+    this.update()
   },
-  // watch: {
-  //   '$route' (to, from) {
-  //     this.update()
-  //   }
-  // }
+  watch: {
+    '$route' (to, from) {
+      this.update()
+    }
+  }
 })
 
 app.component('navbar', NavBar)

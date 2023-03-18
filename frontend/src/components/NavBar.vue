@@ -22,8 +22,8 @@ export default {
       ],
       userMenu: [
         { title: 'ประวัติ', url: '/history' },
-        { title: 'ข้อมูล', url: '/profile' },
-        { title: 'ลงชื่อออก', url: '/logout' },
+        { title: 'ข้อมูล', url: '/user' },
+        // { title: 'ลงชื่อออก', url: '/logout' },
       ],
       categoryList: [
         { title: 'ข้าว', url: './products?category=rice' },
@@ -33,12 +33,19 @@ export default {
     }
   },
   methods: {
+    logout() {
+      if (confirm('คุณต้องการลงชื่อออกหรือไม่\nOK เพื่อ ตกลง\nCancel เพื่อ ยกเลิก')) {
+        this.$cookies.remove('username')
+        this.$cookies.remove('jwt-token')
+        window.location.href = '/';
+      }
+    },
     init() {
       this.store.cart = JSON.parse(localStorage.getItem('cart') || '[]')
-      if (this.$cookies.isKey('username')) {
-        this.loggedIn = true
-        this.username = this.$cookies.get('username')
-      }
+      // if (this.$cookies.isKey('username')) {
+      //   this.store.username = this.$cookies.get('username')
+      // } else {
+      //   this.loggedIn = false
     }
   },
   mounted() {
@@ -73,13 +80,14 @@ export default {
     <div class="bg-red-200/80 hover:bg-secondary transition duration-300 ease-out py-1 font-mali">
       <div class="container flex justify-end mx-auto px-4">
         <!-- <p>⭐⭐⭐ Work In Progress ⭐⭐⭐</p> -->
-        <router-link v-if="loggedIn" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in userMenu" :to="item.url">
+        <router-link v-if="store.username" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in userMenu" :to="item.url">
           {{ item.title }}
         </router-link>
         <router-link v-else class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in guestMenu" :to="item.url">
           {{ item.title }}
         </router-link>
-        <h1 v-show="loggedIn">User: <span class="font-bold">{{ username }}</span> </h1>
+        <button v-if="store.username" @click="logout()" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4">ลงชื่อออก</button>
+        <h1 v-show="store.username">User: <span class="font-bold">{{ store.username }}</span> </h1>
       </div>
     </div>
     <!-- <div class="absolute right-2 top-12 shadow-xl" v-show="profileDropdown">
