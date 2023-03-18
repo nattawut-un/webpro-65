@@ -36,7 +36,6 @@ export default {
   },
   mounted() {
     this.getProducts()
-    window.scrollTo(0, 0)
   }
 }
 </script>

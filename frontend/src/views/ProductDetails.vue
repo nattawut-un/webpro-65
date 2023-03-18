@@ -58,7 +58,6 @@ export default {
         this.quantity = this.store.cart[i].quantity
       }
     }
-    window.scrollTo(0, 0)
   }
 }
 </script>

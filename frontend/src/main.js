@@ -17,6 +17,9 @@ import routes from './router/routes.js'
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior (to, from, savePosition) {
+    return { top: 0 }
+  }
 })
 router.resolve({
   name: 'not-found',
@@ -31,7 +34,7 @@ const app = createApp({
   },
   methods: {
     update() {
-      if (this.$cookies.isKey('username')) { this.store.username = this.$cookies.get('username') }
+      if (this.$cookies.isKey('jwt-token')) { this.store.username = this.$cookies.get('username') }
       else { this.store.username = '' }
     }
   },

@@ -32,6 +32,7 @@ export const authenticateUser = (username, password, res) => {
 
 export const setLogin = (id) => {
   db.query(`UPDATE users SET last_login = now() WHERE id = '${id}'`)
+  console.log('Login set: ' + id)
 }
 
 export const getUser = (id, res) => {
