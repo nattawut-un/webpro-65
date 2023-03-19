@@ -24,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 app.use('/api', Router)
+app.use('/images', express.static('images'))
 
 app.listen(port, () => {
   console.log("Starting node.js at port " + port);

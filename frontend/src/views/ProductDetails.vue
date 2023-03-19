@@ -5,6 +5,7 @@ import axios from 'axios'
 export default {
   data() {
     return {
+      loading: false,
       store,
       productId: null,
       details: {},
@@ -15,14 +16,16 @@ export default {
   },
   methods: {
     async getProductDetail() {
+      this.loading = true
       try {
         let url = 'http://localhost:3000/api/products/' + this.productId
         let res = await axios
-          .get(url)
-          .then(response => (this.details = response.data))
+        .get(url)
+        .then(response => (this.details = response.data))
       } catch (err) {
         console.log(err)
       }
+      this.loading = false
     },
     addToCart() {
       let product = JSON.parse(JSON.stringify(this.details))
@@ -62,14 +65,23 @@ export default {
 }
 </script>
 
+<script setup>
+import SectionFull from '../components/SectionFull.vue'
+</script>
+
 <template>
-  <main class="backdrop-blur-lg min-h-[75vh] md:flex font-mali">
-    <div class="md:w-1/2 bg-gray-300/80">
-      <img :src="'../src/assets/images/products/' + productId + '.jpg'" class="w-full">
+  <SectionFull :title="details.name" :imageApi="`products/${productId}`" backButton="true">
+    <div v-show="loading" class="flex items-center justify-center space-x-2">
+      <div
+        class="inline-block h-24 w-24 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+        role="status">
+        <span
+          class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+          >Loading...</span
+        >
+      </div>
     </div>
-    <div class="md:w-1/2 bg-white/80 p-12">
-      <button class="bg-red-200 hover:bg-primary transition ease-in-out duration-200 text-black hover:text-white rounded-full px-4 py-2" @click="$router.back()"><img class="h-7" src="../svg/NavBack.svg"></button><br><br>
-      <h1 class="text-[400%] font-pattaya">{{ details.name }}</h1>
+    <div v-show="!loading">
       <h2 class="text-[200%]">{{ details.price }} บาท</h2>
       <br><hr><br>
       <h3 class="text-3xl font-pattaya">คำอธิบาย</h3>
@@ -82,5 +94,5 @@ export default {
         <button v-else class="bg-red-200 hover:bg-primary transition ease-in-out duration-200 text-black hover:text-white rounded-full px-4 py-2 font-bold" @click="addToCart()">เพิ่มลงตะกร้า ({{ totalPrice }} บาท)</button>
       </div>
     </div>
-  </main>
+  </SectionFull>
 </template>

@@ -16,13 +16,11 @@ export default {
     async loadProfile() {
       this.loading = true
       if (this.$cookies.isKey('jwt-token')) {
-        console.log(this.$cookies.get('jwt-token'))
         const result = await axios.post('http://localhost:3000/api/get-user', {}, {
           headers: {
             'authorization': `Bearer ${this.$cookies.get('jwt-token')}`
           }
         }).then(response => {
-          console.log(response)
           if (response.error) {
             alert('โปรดลงชื่อเข้าใช้ใหม่')
             this.$router.push('/login')
@@ -53,17 +51,12 @@ export default {
     <img src="../assets/images/food_profile.jpg" class="w-full h-[40vh] object-cover">
     <Section v-show="loading">
       <div class="flex items-center justify-center h-[45vh]">
-        <div
-          class="inline-block h-32 w-32 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-          role="status">
-          <span
-            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
-            >Loading...</span
-          >
+        <div class="inline-block h-32 w-32 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
+          <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
         </div>
       </div>
     </Section>
-    <Section v-show="!loading" title="You are logged in.">
+    <Section v-show="!loading" title="ข้อมูลผู้ใช้">
       <p>id: {{ userInfo.id }}</p>
       <p>username: {{ userInfo.username }}</p>
       <p>password: {{ userInfo.password }}</p>

@@ -7,7 +7,7 @@ import { loginValidation } from '../validation/validation.js';
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+  res.redirect("https://media.tenor.com/71bZdJOKqqgAAAAC/spideyvivi.gif")
 });
 router.get('/products', showProducts)
 router.get('/products/:id', showProductById)
