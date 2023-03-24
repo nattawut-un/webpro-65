@@ -57,15 +57,7 @@ export default {
       </div>
     </Section>
     <Section v-show="!loading" title="ข้อมูลผู้ใช้">
-      <p>id: {{ userInfo.id }}</p>
-      <p>username: {{ userInfo.username }}</p>
-      <p>password: {{ userInfo.password }}</p>
-      <p>is_admin: {{ userInfo.is_admin }}</p>
-      <p>last_login: {{ userInfo.last_login }}</p>
-      <p>phone: {{ userInfo.phone }}</p>
-      <p>email: {{ userInfo.email }}</p>
-      <p>address: {{ userInfo.address }}</p>
-      <p>favorites: {{ userInfo.favorites }}</p>
+      <p v-for="(value, key) in userInfo">{{ key }}: {{ value }}</p>
       <br><hr><br>
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores, rem! Ipsum quaerat vitae atque beatae, blanditiis perspiciatis natus dicta esse maiores iure, sit doloremque earum minima voluptatum? Hic, repudiandae earum?<br>
       Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perspiciatis hic quis dolores. Cum placeat repellat non sint, cumque voluptatibus? Placeat enim provident ipsa officia alias similique ullam pariatur aperiam perspiciatis.<br>

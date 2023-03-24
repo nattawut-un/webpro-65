@@ -44,3 +44,25 @@ export const getUser = (id, res) => {
     }
   })
 }
+
+export const checkUser = (username, email, res) => {
+  db.query('SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)',
+  [username, email], (err, results) => {
+    if (err) {
+      res(err, null)
+    } else {
+      res(null, results)
+    }
+  })
+}
+
+export const addUser = (uid, username, email, password) => {
+  db.query('INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)',
+  [uid, username, email, password], (err, results) => {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log(results)
+    }
+  })
+}

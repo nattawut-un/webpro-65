@@ -1,7 +1,8 @@
-import { authenticateUser, setLogin, getUser } from "../models/userModel.js"
-import { v4 } from 'uuid'
+import { authenticateUser, setLogin, getUser, addUser, checkUser } from "../models/userModel.js"
+import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
 import secret from '../config/auth.js'
+import bcrypt from 'bcryptjs'
 
 const cookieLengthJWT = '2m' // for jwt
 const cookieLengthExpress = () => new Date(+new Date() + 120 * 1000) // for express
@@ -75,6 +76,40 @@ export const authorizeUser = (req, res, next) => {
         message: "Fetch Successfully.",
       })
       console.log(`User fetched: ${decoded.id}`)
+    }
+  })
+}
+
+export const registeringUser = (req, res, next) => {
+  let { username, password, email } = req.body
+  checkUser(username, email, (err, results) => {
+    if (err) {
+      res.status(400).send(err)
+    } else if (results.length) {
+      if (results[0].username == username) {
+        res.status(409).send({ error: `Username "${username}" has already taken,` })
+      } else if (results[0].email == email) {
+        res.status(409).send({ error: `Email "${email}" has already taken,` })
+      }
+    } else {
+      bcrypt.hash(password, secret['salt-rounds'])
+      .then(hash => {
+        // console.log('hash: ', hash)
+        // res.json({ hash: hash })
+        let uuid = uuidv4()
+        addUser(uuid, username, email, hash)
+        res.status(200).send({
+          status: 'Register successfully.',
+          user: {
+            id: uuid,
+            username: username,
+            email: email
+          }
+        })
+      }).catch(err => {
+        console.log(err)
+        res.status(500).send(err)
+      })
     }
   })
 }

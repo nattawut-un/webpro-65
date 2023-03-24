@@ -17,18 +17,20 @@ export default {
     }
   },
   methods: {
-    register() {
-      alert(this.username + '\n' + this.password)
-      // await axios.post('http://localhost:3000/api/login', {
-      //   username: this.username,
-      //   password: this.password
-      // }, {
-      //   withCredentials: true
-      // }).then(response => {
-      //   this.$router.push('/')
-      // }).catch(err => {
-      //   console.log(err)
-      // })
+    async register() {
+      // alert(this.username + '\n' + this.password)
+      await axios.post('http://localhost:3000/api/register', {
+        username: this.username,
+        password: this.password,
+        email: this.email,
+      }, {
+        withCredentials: true
+      }).then(response => {
+        this.$router.push('/')
+      }).catch(err => {
+        console.log(err)
+        this.serverErr = err.response.data.error
+      })
     },
   },
   computed: {
@@ -94,6 +96,7 @@ export default {
     this.email = ''
     this.password = ''
     this.passwordRe = ''
+    this.serverErr = ''
   }
 }
 </script>
@@ -133,7 +136,7 @@ export default {
       <div class="my-4">
         <label>รหัสผ่านอีกครั้ง:</label><br>
         <input type="text" v-model="passwordRe" placeholder="Password" class="border-2 rounded-full mt-2 px-4 text-xl">
-        <span v-show="isPwReRight" class="ml-3 text-red-600">รหัสผ่านไม่ตรงกับที่กรอกด้านบน</span>
+        <span v-show="!isPwReRight" class="ml-3 text-red-600">รหัสผ่านไม่ตรงกับที่กรอกด้านบน</span>
       </div>
     </form><br><hr><br><br>
     <button
@@ -141,6 +144,6 @@ export default {
       class="text-white font-bold px-6 py-2 rounded-full text-2xl"
       :class="[ validated ? 'bg-primary' : 'bg-secondary' ]"
     >สมัครสมาชิก</button>
-    <p class="mt-6 text-red-560">{{ serverErr }}</p>
+    <p class="mt-6 text-red-500 font-bold">{{ serverErr }}</p>
   </SectionFull>
 </template>
