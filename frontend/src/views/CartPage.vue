@@ -53,7 +53,7 @@ import SectionFull from '../components/SectionFull.vue'
           <p>จำนวน {{ item.quantity }} ที่</p>
         </div>
         <div class="w-1/3 text-end">
-          <h1 class="text-6xl font-bold mb-2">{{ item.price*item.quantity }}.-</h1>
+          <h1 class="text-6xl font-bold mb-2 font-chonburi">{{ item.price*item.quantity }}.-</h1>
           <button class="bg-red-500 text-white rounded-full px-4 py-2" @click="removeFromCart(this.store.cart.indexOf(item))" :disabled="store.cart.length == 0">
             ลบ
           </button>
@@ -73,15 +73,9 @@ import SectionFull from '../components/SectionFull.vue'
       >
         ลบทั้งหมด
       </button>
-      <router-link
-        to="/checkout"
-        class="rounded-full px-4 py-2 transition ease-out duration-100"
-        :class="[!store.session || store.cart.length == 0 ? 'bg-gray-200 text-black opacity-50' : 'bg-red-500 text-white']"
-        :disabled="!store.session || store.cart.length == 0"
-        :event="!(!store.session || store.cart.length) ? 'click' : ''"
-      >
-        <span v-if="store.session">สั่งซื้อ</span>
-        <span v-else>โปรด login เพื่อสั่งซื้อ</span>
+      <button v-show="!store.username || store.cart.length == 0" disabled class="rounded-full px-4 py-2 bg-gray-200 text-black opacity-50">โปรด login และเพิ่มสินค้าลงตะกร้าเพื่อสั่งซื้อ</button>
+      <router-link v-show="store.username && store.cart.length" to="/checkout" class="rounded-full px-4 py-2 transition ease-out duration-100 bg-red-500 text-white">
+        สั่งซื้อ
       </router-link>
     </div>
   </SectionFull>

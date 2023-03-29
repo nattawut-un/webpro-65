@@ -12,6 +12,7 @@ module.exports = {
       colors: {
         'primary': '#ff5f5f',
         'secondary': '#ffc0cb',
+        'light': '#ffdee4',
       },
       fontFamily: {
         'mali': ['Mali', 'cursive'],

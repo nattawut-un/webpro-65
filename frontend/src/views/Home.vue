@@ -1,5 +1,6 @@
 <script setup>
 import Section from '../components/Section.vue';
+import VueCountdown from '@chenfengyuan/vue-countdown'
 </script>
 
 <script>
@@ -23,7 +24,11 @@ export default {
 <template>
   <main>
     <img src="../assets/images/homepage.jpg" class="w-full h-[50vh] object-cover">
-    <Section title="ยินดีต้อนรับ">
+    <Section title="Deadline: 28 เม.ย. 2565">
+      <vue-countdown class="font-pattaya text-6xl" :time="Date.parse(new Date('2023-04-28')) - Date.parse(new Date())" v-slot="{ days, hours, minutes, seconds }">
+        {{ days }} วัน ({{ Math.floor(days / 7) }} สัปดาห์ {{ days % 7 }} วัน) {{ hours }} ชั่วโมง {{ minutes }} นาที {{ seconds }} วินาที
+      </vue-countdown>
+      <br><br>
       <p class="indent-12">
         ปัจฉิมนิเทศอิมพีเรียลไทม์ โฮลวีต กัมมันตะเบบี้ยิมเซ็กซ์ปาสกาล อิออนโฮสเตสวาไรตี้ แตงกวาซานตาคลอสอพาร์ตเมนท์
         ถูกต้องต้าอ่วยแคมป์เดโมล็อบบี้ รวมมิตร รีไทร์จิตเภทบาร์บี้ฟอยล์เซ็กซ์ เซี้ยวเปปเปอร์มินต์กรอบรูปสตีล แซ็กโซโฟนติ่มซำ

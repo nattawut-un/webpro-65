@@ -40,6 +40,7 @@ const app = createApp({
   },
   created() {
     if (!localStorage.getItem('cart')) {
+      console.log('Intialize cart')
       localStorage.setItem('cart', '[]')
     }
     this.update()
@@ -54,7 +55,7 @@ const app = createApp({
 app.component('navbar', NavBar)
 app.component('foot', Footer)
 
-app.config.globalProperties.$shopName = 'ชื่อร้าน'
+// app.config.globalProperties.$shopName = 'ชื่อร้าน'
 
 app.use(router)
 app.use(VueCookies)

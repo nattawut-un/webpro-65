@@ -32,11 +32,41 @@ export const authenticateUser = (username, password, res) => {
 
 export const setLogin = (id) => {
   db.query(`UPDATE users SET last_login = now() WHERE id = '${id}'`)
-  console.log('Login set: ' + id)
+  // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Login set '.bgBrightGreen + ' id: ' + id)
 }
 
 export const getUser = (id, res) => {
   db.query(`SELECT * FROM users WHERE id = '${id}'`, (err, results) => {
+    if (err) {
+      res(err, null)
+    } else {
+      res(null, results)
+    }
+  })
+}
+
+export const getUserAddress = (id, res) => {
+  db.query(`SELECT id, address, main_addr FROM address WHERE user_id = '${id}'`, (err, results) => {
+    if (err) {
+      res(err, null)
+    } else {
+      res(null, results)
+    }
+  })
+}
+
+export const getMainAddress = (id, res) => {
+  db.query(`SELECT id, address, main_addr FROM address WHERE user_id = '${id}' AND main_addr = 1`, (err, results) => {
+    if (err) {
+      res(err, null)
+    } else {
+      res(null, results[0])
+    }
+  })
+}
+
+export const getAddressFromID = (id, res) => {
+  db.query(`SELECT id, address, main_addr FROM address WHERE id = '${id}'`, (err, results) => {
     if (err) {
       res(err, null)
     } else {
@@ -56,9 +86,20 @@ export const checkUser = (username, email, res) => {
   })
 }
 
-export const addUser = (uid, username, email, password) => {
+export const checkAdmin = (user_id) => {
+  db.query('SELECT is_admin FROM users WHERE id = ?',
+  [user_id], (err, results) => {
+    if (err) {
+      res(err, null)
+    } else {
+      res(null, results)
+    }
+  })
+}
+
+export const addUser = (user_id, username, email, password) => {
   db.query('INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)',
-  [uid, username, email, password], (err, results) => {
+  [user_id, username, email, password], (err, results) => {
     if (err) {
       console.log(err)
     } else {

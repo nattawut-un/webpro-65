@@ -11,17 +11,20 @@ export default {
     return {
       products: [],
       searchKeyword: '',
+      loading: false
     }
   },
   methods: {
     async getProducts() {
+      this.loading = true
       try {
         let res = await axios
-          .get('http://localhost:3000/api/products')
-          .then(response => (this.products = response.data))
+        .get('http://localhost:3000/api/products')
+        .then(response => (this.products = response.data))
       } catch (err) {
         console.log(err);
       }
+      this.loading = false
     }
   },
   computed: {
@@ -61,10 +64,21 @@ export default {
       </div>
     </div>
     <!-- if 0 result -->
-    <div v-show="searchedList.length == 0" class="bg-white/80">
+    <div v-show="searchedList.length == 0 && !loading" class="bg-white/80">
       <div class="container mx-auto pt-16">
         <h1 class="text-[600%] font-pattaya">ไม่พบสิ่งที่ท่านค้นหา</h1>
         <p class="text-[200%] font-mali">โปรดกรอกคำค้นหาใหม่</p>
+      </div>
+    </div>
+    <!-- loading -->
+    <div v-show="loading == true" class="flex items-center justify-center space-x-2 bg-white/80 py-16">
+      <div
+        class="inline-block h-48 w-48 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+        role="status">
+        <span
+          class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+          >Loading...</span
+        >
       </div>
     </div>
     <!-- items -->

@@ -1,5 +1,5 @@
 <template>
-  <section class="w-100 bg-secondary px-4 py-8 font-mali">
+  <section class="w-100 bg-light backdrop-blur-xl px-4 py-8 font-mali">
     <div class="container mx-auto">
       <h1 class="text-4xl text-black font-pattaya mb-2">{{ title }}</h1>
       <slot></slot>

@@ -29,7 +29,7 @@ export default {
         this.$router.push('/')
       }).catch(err => {
         console.log(err)
-        this.serverErr = err.response.data.error
+        this.serverErr = err.response.data
       })
     },
   },
@@ -116,7 +116,7 @@ export default {
       </div>
       <div class="my-4">
         <label>รหัสผ่าน:</label><br>
-        <input type="text" v-model="password" placeholder="Password" class="border-2 rounded-full mt-2 px-4 text-xl">
+        <input type="password" v-model="password" placeholder="Password" class="border-2 rounded-full mt-2 px-4 text-xl">
         <span class="ml-3" :class="[ isPwValid ? 'text-gray-500' : 'text-red-600' ]">ความปลอดภัย: {{ isPwSafe.message }}</span>
         <div class="h-1 w-[275px] mt-1 bg-neutral-200">
           <div
@@ -135,7 +135,7 @@ export default {
       </div>
       <div class="my-4">
         <label>รหัสผ่านอีกครั้ง:</label><br>
-        <input type="text" v-model="passwordRe" placeholder="Password" class="border-2 rounded-full mt-2 px-4 text-xl">
+        <input type="password" v-model="passwordRe" placeholder="Password" class="border-2 rounded-full mt-2 px-4 text-xl">
         <span v-show="!isPwReRight" class="ml-3 text-red-600">รหัสผ่านไม่ตรงกับที่กรอกด้านบน</span>
       </div>
     </form><br><hr><br><br>

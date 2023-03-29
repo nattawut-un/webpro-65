@@ -10,6 +10,7 @@ export default {
     return {
       username: '',
       password: '',
+      serverErr: ''
     }
   },
   methods: {
@@ -23,6 +24,7 @@ export default {
         this.$router.push('/')
       }).catch(err => {
         console.log(err)
+        this.serverErr = err.response.data
       })
     },
   },
@@ -42,9 +44,10 @@ export default {
       </div>
       <div class="my-4">
         <label>รหัสผ่าน:</label><br>
-        <input type="text" v-model="password" placeholder="Password" class="border-2 rounded-full mt-2 px-4 text-xl">
+        <input type="password" v-model="password" placeholder="Password" class="border-2 rounded-full mt-2 px-4 text-xl">
       </div>
-      </form><br><hr><br><br>
+    </form><br><hr><br><br>
     <button @click="login()" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-2xl">ลงชื่อเข้าใช้</button>
+    <p class="mt-6 text-red-500 font-bold">{{ serverErr }}</p>
   </SectionFull>
 </template>

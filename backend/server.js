@@ -3,6 +3,7 @@ import cors from 'cors'
 import Router from './routes/routes.js'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
+import colors from 'colors'
 
 const app = express();
 const port = process.env.port || 3000;
@@ -27,5 +28,11 @@ app.use('/api', Router)
 app.use('/images', express.static('images'))
 
 app.listen(port, () => {
-  console.log("Starting node.js at port " + port);
+  console.log()
+  console.log('==================================='.rainbow)
+  console.log(' Web Programming 2023 '.bgBrightYellow)
+  console.log('by Nattawut Uniseth 64070035'.brightYellow)
+  console.log('Starting node.js at port '.brightYellow + colors.brightYellow.underline(port))
+  console.log('==================================='.rainbow)
+  console.log()
 });
