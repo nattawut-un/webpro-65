@@ -22,7 +22,7 @@ app.use(
 );
 app.use(express.json());
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 
 app.use('/api', Router)
@@ -30,10 +30,10 @@ app.use('/images', express.static('images'))
 
 app.listen(port, () => {
   console.log()
-  console.log('==================================='.rainbow)
-  console.log(' Web Programming 2023 '.bgBrightYellow)
-  console.log('by Nattawut Uniseth 64070035'.brightYellow)
-  console.log('Starting node.js at port '.brightYellow + colors.brightYellow.underline(port))
-  console.log('==================================='.rainbow)
+  console.log('======================================='.rainbow)
+  console.log('         Web Programming 2023          '.bgYellow.bold)
+  console.log('     by Nattawut Uniseth 64070035      '.yellow)
+  console.log('    Starting node.js at port: '.yellow + colors.yellow.bold.underline(port))
+  console.log('======================================='.rainbow)
   console.log()
 });

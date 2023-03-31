@@ -3,11 +3,11 @@ import { store } from '../store.js'
 import Section from '@/components/Section.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import AddressCard from '@/components/AddressCard.vue'
-
-import axios from 'axios';
 </script>
 
 <script>
+
+import http from '@/http';
 export default {
   data() {
     return {
@@ -19,11 +19,8 @@ export default {
   },
   methods: {
     async userFetch() {
-      const result = await axios.post('http://localhost:3000/api/get-user', {}, {
-        headers: {
-          'authorization': `Bearer ${this.$cookies.get('jwt-token')}`
-        }
-      }).then((res) => {
+      const result = await http.post('http://localhost:3000/api/get-user')
+      .then((res) => {
         if (res.error) {
           alert('โปรดลงชื่อเข้าใช้ใหม่')
           this.$router.push('/login')
@@ -48,15 +45,10 @@ export default {
           total: currentValue.quantity * currentValue.price
         }
       }))
-      const result = await axios.post('http://localhost:3000/api/place-order',
-      {
+      const result = await http.post('http://localhost:3000/api/place-order', {
         user_id: this.userInfo.id,
         address_id: this.selectedAddress.id,
         cart: JSON.stringify(cartClean)
-      }, {
-        headers: {
-          'authorization': `Bearer ${this.$cookies.get('jwt-token')}`
-        }
       }).then(res => {
         alert('การสั่งซื้อสำเร็จ')
         localStorage.removeItem('cart')

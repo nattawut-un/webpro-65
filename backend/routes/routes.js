@@ -1,5 +1,4 @@
 import express from 'express'
-import { body, validationResult } from 'express-validator'
 
 import { showProducts, showProductById } from '../controllers/productController.js'
 import { loginUser, authorizeUser, fetchUser, registeringUser } from '../controllers/userController.js'

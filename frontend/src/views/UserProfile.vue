@@ -4,7 +4,7 @@ import AddressCard from '@/components/AddressCard.vue'
 </script>
 
 <script>
-import axios from 'axios'
+import http from '@/http.js'
 
 export default {
   data() {
@@ -23,11 +23,8 @@ export default {
     async userFetch() {
       this.loading = true
       if (this.$cookies.isKey('jwt-token')) {
-        const result = await axios.post('http://localhost:3000/api/get-user', {}, {
-          headers: {
-            'authorization': `Bearer ${this.$cookies.get('jwt-token')}`
-          }
-        }).then(res => {
+        const result = await http.post('http://localhost:3000/api/get-user')
+        .then(res => {
           if (res.error) {
             alert('โปรดลงชื่อเข้าใช้ใหม่')
             this.$router.push('/login')
@@ -38,7 +35,7 @@ export default {
         }).catch((err) => {
           console.log(err)
           alert('[catch] ' + err)
-          this.$router.push('/login')
+          this.$router.push('/')
         })
       } else {
         alert('โปรดลงชื่อเข้าใช้ใหม่')

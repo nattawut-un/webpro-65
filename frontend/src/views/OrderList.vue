@@ -1,10 +1,11 @@
 <script setup>
 import { store } from '../store';
 import Section from '@/components/Section.vue'
-import axios from 'axios'
 </script>
 
 <script>
+import http from '@/http'
+
 export default {
   data() {
     return {
@@ -13,11 +14,8 @@ export default {
   },
   methods: {
     async fetchOrder() {
-      const result = await axios.post('http://localhost:3000/api/get-order', {}, {
-        headers: {
-          'authorization': `Bearer ${this.$cookies.get('jwt-token')}`
-        }
-      }).then(res => {
+      const result = await http.post('http://localhost:3000/api/get-order')
+      .then(res => {
         this.orders = res.data
       }).catch(err => {
         console.log(err)

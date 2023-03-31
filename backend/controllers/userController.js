@@ -1,57 +1,75 @@
-import { authenticateUser, setLogin, getUser, getUserAddress, addUser, checkUser } from "../models/userModel.js"
+import { setLogin, getUserFromName, getUserFromID, getUserAddress, addUser, checkUser } from "../models/userModel.js"
 import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
 import secret from '../config/auth.js'
 import bcrypt from 'bcryptjs'
+import colors from 'colors'
 
 const cookieLengthJWT = '1h' // for jwt
 const cookieLengthExpress = () => new Date(+new Date() + (60 * 60) * 1000) // for express
 
-export const loginUser = (req, res, next) => {
-  let { username, password } = req.body
-  authenticateUser(username, password, (err, results) => {
-    if (err) {
-      res.status(401).send(err)
-      console.log(err)
-    } else {
-      var token = jwt.sign(
-        { id: results[0].id },
-        secret["jwt-secret"],
-        { expiresIn: cookieLengthJWT }
-      )
-      setLogin(results[0].id)
+const cookieOptions = {
+  expires: cookieLengthExpress(),
+  sameSite: 'None',
+  secure: true,
+}
 
-      res.cookie('jwt-token', token, { expires: cookieLengthExpress() })
-      res.cookie('username', username)
+export const loginUser = async (req, res, next) => {
+  const { username, password } = req.body
+  const user = await getUserFromName(username)
 
-      console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User logged in '.bgGreen + ' id: ' + results[0].id)
-      console.log(results)
+  if (!user) {
+    console.log(username + ': user not found')
+    res.status(401).send(username + ': user not found')
+    return
+  }
 
-      res.status(200).send({
-        msg: "Logged in!",
-        token,
-        user: results[0].username,
-      })
+  bcrypt.compare(
+    password,
+    user.password,
+    (err, isMatch) => {
+      if (isMatch) {
+        const token = jwt.sign(
+          { id: user.id },
+          secret["jwt-secret"],
+          { expiresIn: cookieLengthJWT }
+        )
+
+        setLogin(user.id)
+
+        res.cookie('jwt-token', token, cookieOptions)
+        res.cookie('username', username, cookieOptions)
+
+        console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User logged in '.bgGreen + ' id: ' + user.id)
+
+        let data = {
+          msg: "Logged in!",
+          token,
+          user: user.username,
+        }
+        res.status(200).send(data)
+      } else {
+        console.log(username + ': password wrong')
+        res.status(401).send(username + ': password wrong')
+      }
     }
-  })
+  )
 }
 
 // check if user has access before fetch some data
 export const authorizeUser = (req, res, next) => {
-  console.log(req.cookies)
+  console.log(` req.cookies `.bgGray, req.cookies)
   if (
-    !req.headers.authorization ||
-    !req.headers.authorization.startsWith("Bearer") ||
-    !req.headers.authorization.split(" ")[1]
-  ) {
+    !req.cookies['jwt-token']) {
     res.status(422).json({
       message: "Please provide the token",
     })
+    console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' No token'.red.bold)
     return
   }
-  var theToken = req.headers.authorization.split(" ")[1]
+  var cookieToken = req.cookies['jwt-token']
   try {
-    var decoded = jwt.verify(theToken, secret["jwt-secret"])
+    var decoded = jwt.verify(cookieToken, secret["jwt-secret"])
   } catch (err) {
     console.log(err)
     res.status(401).json({
@@ -71,66 +89,50 @@ export const authorizeUser = (req, res, next) => {
   res.cookie('jwt-token', token, { expires: cookieLengthExpress() })
   setLogin(decoded.id)
 
-  console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User authorized '.bgGreen + ' id: ' + decoded.id)
+  console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User authorized'.green.bold + ' id: ' + decoded.id)
   req.userID = decoded.id
   next()
 }
 
-export const fetchUser = (req, res, next) => {
-  getUser(req.userID, (err, results) => {
-    if (err) {
-      res.status(400).send(err)
-      return
-    } else {
-      setLogin(results[0].id)
-      getUserAddress(results[0].id, (err, resultsAddr) => {
-        if (err) {
-          res.status(400).send(err)
-          return
-        } else {
-          res.status(200).send({
-            error: false,
-            data: results[0],
-            address: resultsAddr,
-            message: "Fetch Successfully.",
-          })
-          console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User fetched '.bgBrightGreen + ' id: ' + req.userID)
-        }
-      })
-    }
+export const fetchUser = async (req, res, next) => {
+  const id = req.userID
+  const user = await getUserFromID(id)
+  const address = await getUserAddress(id)
+
+  console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User data fetched'.brightGreen.bold + ' id: ' + req.userID)
+  res.status(200).send({
+    data: user,
+    address: address,
   })
 }
 
-export const registeringUser = (req, res, next) => {
+export const registeringUser = async (req, res, next) => {
   let { username, password, email } = req.body
-  checkUser(username, email, (err, results) => {
-    if (err) {
-      res.status(400).send(err)
-    } else if (results.length) {
-      if (results[0].username == username) {
-        res.status(409).send(`Username "${username}" has already taken,`)
-      } else if (results[0].email == email) {
-        res.status(409).send(`Email "${email}" has already taken,`)
-      }
-    } else {
-      bcrypt.hash(password, secret['salt-rounds'])
-      .then(hash => {
-        // console.log('hash: ', hash)
-        // res.json({ hash: hash })
-        let uuid = uuidv4()
-        addUser(uuid, username, email, hash)
-        res.status(200).send({
-          status: 'Register successfully.',
-          user: {
-            id: uuid,
-            username: username,
-            email: email
-          }
-        })
-      }).catch(err => {
-        console.log(err)
-        res.status(500).send(err)
-      })
+  const user = await checkUser(username, email)
+
+  if (user.length) {
+    if (results[0].username == username) {
+      res.status(409).send(`Username "${username}" has already taken,`)
+    } else if (results[0].email == email) {
+      res.status(409).send(`Email "${email}" has already taken,`)
     }
-  })
+  } else {
+    bcrypt.hash(password, secret['salt-rounds'])
+    .then(hash => {
+      let uuid = uuidv4()
+      addUser(uuid, username, email, hash)
+      console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' New user registered'.brightGreen.bold + ' id: ' + uuid)
+      res.status(200).send({
+        status: 'Register successfully.',
+        user: {
+          id: uuid,
+          username: username,
+          email: email
+        }
+      })
+    }).catch(err => {
+      console.log(err)
+      res.status(500).send(err)
+    })
+  }
 }

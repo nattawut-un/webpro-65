@@ -3,7 +3,7 @@ import Section from '@/components/Section.vue'
 </script>
 
 <script>
-import axios from 'axios'
+import http from '@/http.js'
 
 export default {
   data() {
@@ -54,11 +54,8 @@ export default {
   },
   methods: {
     async authorize() {
-      const result = await axios.post('http://localhost:3000/api/get-user', {}, {
-        headers: {
-          'authorization': `Bearer ${this.$cookies.get('jwt-token')}`
-        }
-      }).then(res => {
+      const result = await http.post('http://localhost:3000/api/get-user')
+      .then(res => {
         if (res.error) {
           alert('โปรดลงชื่อเข้าใช้ใหม่')
           this.$router.push('/login')

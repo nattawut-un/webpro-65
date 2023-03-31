@@ -1,58 +1,33 @@
 import db from '../config/database.js'
-import bcrypt from 'bcryptjs'
 
-export const authenticateUser = (username, password, res) => {
-  db.query(`SELECT id, username, password FROM users WHERE username = '${username}'`, (err, results) => {
-    // error
-    if (err) {
-      console.log(err)
-      res(username + ' error', null)
-      return
-    }
-    // username is not found
-    if (!results.length) {
-      res(username + ' not found', null)
-      return
-    }
-    // compare password with hash
-    bcrypt.compare(
-      password,
-      results[0].password,
-      (err, isMatch) => {
-        if (isMatch) {
-          // some shit about cookie or something idk
-          res(null, results)
-        } else {
-          res(username + ' password wrong', null)
-        }
-      }
-    )
-  })
+export const setLogin = async (id) => {
+  const conn = await db.getConnection()
+  await conn.beginTransaction()
+
+  try {
+    const [rows, fields] = await db.query('UPDATE users SET last_login = now() WHERE id = ?', [id])
+    conn.commit()
+  } catch (err) {
+    await conn.rollback()
+    return next(err)
+  } finally {
+    conn.release()
+  }
 }
 
-export const setLogin = (id) => {
-  db.query(`UPDATE users SET last_login = now() WHERE id = '${id}'`)
-  // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Login set '.bgBrightGreen + ' id: ' + id)
+export const getUserFromName = async (name) => {
+  const [rows, fields] = await db.query('SELECT * FROM users WHERE username = ?', [name])
+  return rows[0]
 }
 
-export const getUser = (id, res) => {
-  db.query(`SELECT * FROM users WHERE id = '${id}'`, (err, results) => {
-    if (err) {
-      res(err, null)
-    } else {
-      res(null, results)
-    }
-  })
+export const getUserFromID = async (id) => {
+  const [rows, fields] = await db.query('SELECT * FROM users WHERE id = ?', [id])
+  return rows[0]
 }
 
-export const getUserAddress = (id, res) => {
-  db.query(`SELECT id, address, main_addr FROM address WHERE user_id = '${id}'`, (err, results) => {
-    if (err) {
-      res(err, null)
-    } else {
-      res(null, results)
-    }
-  })
+export const getUserAddress = async (id) => {
+  const [rows, fields] = await db.query('SELECT id, address, main_addr FROM address WHERE user_id = ?', [id])
+  return rows
 }
 
 export const getMainAddress = (id, res) => {
@@ -65,25 +40,15 @@ export const getMainAddress = (id, res) => {
   })
 }
 
-export const getAddressFromID = (id, res) => {
-  db.query(`SELECT id, address, main_addr FROM address WHERE id = '${id}'`, (err, results) => {
-    if (err) {
-      res(err, null)
-    } else {
-      res(null, results)
-    }
-  })
+export const getAddressFromID = async (id) => {
+  const [rows, fields] = await db.query('SELECT id, address, main_addr FROM address WHERE id = ?', [id])
+  return rows[0].address
 }
 
-export const checkUser = (username, email, res) => {
-  db.query('SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)',
-  [username, email], (err, results) => {
-    if (err) {
-      res(err, null)
-    } else {
-      res(null, results)
-    }
-  })
+export const checkUser = async (username, email, res) => {
+  const [rows, fields] = await db.query('SELECT * FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)',
+  [username, email])
+  return rows
 }
 
 export const checkAdmin = (user_id) => {
@@ -97,13 +62,18 @@ export const checkAdmin = (user_id) => {
   })
 }
 
-export const addUser = (user_id, username, email, password) => {
-  db.query('INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)',
-  [user_id, username, email, password], (err, results) => {
-    if (err) {
-      console.log(err)
-    } else {
-      console.log(results)
-    }
-  })
+export const addUser = async (user_id, username, email, password) => {
+  const conn = await db.getConnection()
+  await conn.beginTransaction()
+
+  try {
+    const [rows, fields] = await db.query('INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)',
+    [user_id, username, email, password])
+    conn.commit()
+  } catch (err) {
+    await conn.rollback()
+    return next(err)
+  } finally {
+    conn.release()
+  }
 }

@@ -4,7 +4,7 @@ import LoginImage from '@/assets/images/login.jpg'
 </script>
 
 <script>
-import axios from 'axios'
+import http from '@/http'
 
 export default {
   data() {
@@ -16,11 +16,9 @@ export default {
   },
   methods: {
     async login() {
-      await axios.post('http://localhost:3000/api/login', {
+      await http.post('http://localhost:3000/api/login', {
         username: this.username,
         password: this.password
-      }, {
-        withCredentials: true
       }).then(response => {
         this.$router.push('/')
       }).catch(err => {
