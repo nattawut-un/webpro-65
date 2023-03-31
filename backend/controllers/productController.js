@@ -6,6 +6,7 @@ export const showProducts = (req, res) => {
       console.log('Fetched product list.')
       res.send(err);
     } else {
+      console.log('GET /products')
       res.json(results);
     }
   });

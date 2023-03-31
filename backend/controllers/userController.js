@@ -23,18 +23,22 @@ export const loginUser = (req, res, next) => {
 
       res.cookie('jwt-token', token, { expires: cookieLengthExpress() })
       res.cookie('username', username)
+
+      console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User logged in '.bgGreen + ' id: ' + results[0].id)
+      console.log(results)
+
       res.status(200).send({
         msg: "Logged in!",
         token,
         user: results[0].username,
       })
-      console.log(results, 'Date:', new Date())
     }
   })
 }
 
 // check if user has access before fetch some data
 export const authorizeUser = (req, res, next) => {
+  console.log(req.cookies)
   if (
     !req.headers.authorization ||
     !req.headers.authorization.startsWith("Bearer") ||
