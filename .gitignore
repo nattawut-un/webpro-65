@@ -27,3 +27,5 @@ coverage
 *.sln
 *.sw?
 backend/config/auth.js
+backend/config/database.js
+backend/.env

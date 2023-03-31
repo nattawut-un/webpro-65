@@ -1,5 +1,6 @@
 <script setup>
-import SectionFull from '../components/SectionFull.vue'
+import SectionFull from '@/components/SectionFull.vue'
+import LoginImage from '@/assets/images/login.jpg'
 </script>
 
 <script>
@@ -36,7 +37,7 @@ export default {
 </script>
 
 <template>
-  <SectionFull title="ลงชื่อเข้าใช้" image="login">
+  <SectionFull title="ลงชื่อเข้าใช้" :image="LoginImage">
     <form>
       <div class="my-4">
         <label>ชื่อผู้ใช้:</label><br>

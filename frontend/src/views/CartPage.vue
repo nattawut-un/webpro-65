@@ -1,3 +1,8 @@
+<script setup>
+import SectionFull from '../components/SectionFull.vue'
+import CartImage from '@/assets/images/food_cart.jpg'
+</script>
+
 <script>
 import { store } from '../store.js'
 
@@ -33,12 +38,8 @@ export default {
 }
 </script>
 
-<script setup>
-import SectionFull from '../components/SectionFull.vue'
-</script>
-
 <template>
-  <SectionFull title="ตะกร้าสินค้า" image="food_cart" backButton="true">
+  <SectionFull title="ตะกร้าสินค้า" :image="CartImage" backButton="true">
     <div v-show="store.cart.length == 0">
       <h1 class="text-2xl font-bold">ไม่มีอะไรในตะกร้า</h1>
     </div>

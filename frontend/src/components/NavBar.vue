@@ -70,7 +70,7 @@ export default {
       </div>
     </div>
     <div class="bg-red-200/80 hover:bg-secondary transition duration-300 ease-out py-1 font-mali">
-      <div class="container flex justify-end mx-auto px-4">
+      <div class="container flex justify-end mx-auto px-4 font-pattaya">
         <router-link v-if="store.username" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in userMenu" :to="item.url">
           {{ item.title }}
         </router-link>

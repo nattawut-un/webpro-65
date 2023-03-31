@@ -42,6 +42,7 @@ export default {
       let cartClean = this.store.cart.map((currentValue => {
         return {
           id: currentValue.id,
+          name: currentValue.name,
           quantity: currentValue.quantity,
           price: currentValue.price,
           total: currentValue.quantity * currentValue.price

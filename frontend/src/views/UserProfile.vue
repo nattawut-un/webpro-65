@@ -70,10 +70,6 @@ export default {
     </Section>
     <Section v-show="!loading" title="ข้อมูลผู้ใช้">
       <p v-for="(value, key) in userInfo">{{ key }}: {{ value }}</p>
-      <br>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores, rem! Ipsum quaerat vitae atque beatae, blanditiis perspiciatis natus dicta esse maiores iure, sit doloremque earum minima voluptatum? Hic, repudiandae earum?<br>
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perspiciatis hic quis dolores. Cum placeat repellat non sint, cumque voluptatibus? Placeat enim provident ipsa officia alias similique ullam pariatur aperiam perspiciatis.<br>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad consequatur fuga quos? Odit, quos dolorem? Aperiam rem enim facere, esse vel culpa ipsa fugiat ut dignissimos provident corporis minus dolores!
     </Section>
     <Section title="ที่อยู่">
       <AddressCard v-for="addr in address" :main="addr.main_addr">

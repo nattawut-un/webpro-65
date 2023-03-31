@@ -1,5 +1,6 @@
 <script setup>
-import SectionFull from '../components/SectionFull.vue'
+import SectionFull from '@/components/SectionFull.vue'
+import RegisterImage from '@/assets/images/register.jpg'
 </script>
 
 <script>
@@ -102,7 +103,7 @@ export default {
 </script>
 
 <template>
-  <SectionFull title="สมัครสมาชิก" image="register">
+  <SectionFull title="สมัครสมาชิก" :image="RegisterImage">
     <form>
       <div class="my-4">
         <label>ชื่อผู้ใช้:</label><br>

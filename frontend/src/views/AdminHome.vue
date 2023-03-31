@@ -89,7 +89,7 @@ export default {
       <h2>{{ userInfo }}</h2>
       <br><hr class="border-primary border-2 rounded-full"><br>
       <div class="grid grid-cols-2">
-        <router-link v-for="(item, index) in menus" :to="item.to" :style="{ backgroundColor: colors[index % this.colors.length] }" class="text-white p-6 mx-4 my-2 rounded-lg shadow-lg flex">
+        <router-link v-for="(item, index) in menus" :to="item.to" :style="{ backgroundColor: colors[index % this.colors.length] }" class="text-white p-6 mx-4 my-2 rounded-lg shadow-lg hover:shadow-xl flex hover:scale-105 transition duration-150">
           <div class="w-1/3">
             <span class="text-[120px]">{{ item.icon }}</span>
           </div>
