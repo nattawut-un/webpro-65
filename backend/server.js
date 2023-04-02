@@ -4,9 +4,13 @@ import Router from './routes/routes.js'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import colors from 'colors'
+import * as dotenv from 'dotenv'
+dotenv.config()
 
 const app = express();
 const port = process.env.port || 3000;
+
+// console.log(' process.env '.bgGray, process.env)
 
 app.use(
   cors({
