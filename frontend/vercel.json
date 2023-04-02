@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "webpro_2565_frontend",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
+}
