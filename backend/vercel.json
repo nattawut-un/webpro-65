@@ -1,15 +1,20 @@
 {
   "version": 2,
+  "name": "webpro_2565_backend",
   "builds": [
     {
       "src": "server.js",
-      "use": "@now/node"
+      "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "redirects": [
     {
-      "src": "/(.*)",
-      "dest": "server.js"
+      "source": "/:path*",
+      "destination": "/server.js"
+    },
+    {
+      "source": "/source",
+      "destination": "https://github.com/nattawut-un/webpro-65"
     }
   ]
 }
