@@ -1,5 +1,6 @@
 <script setup>
 import Section from '@/components/Section.vue'
+import { store } from '@/store'
 </script>
 
 <script>
@@ -8,6 +9,7 @@ import http from '@/http.js'
 export default {
   data() {
     return {
+      store,
       userInfo: {},
       menus: [
         {
@@ -83,6 +85,7 @@ export default {
   <main>
     <img src="../assets/images/admin_home.jpg" class="w-full h-[30vh] object-cover">
     <Section title="Admin Home">
+      <h2>{{ store.apiURL }}</h2><br>
       <h2>{{ userInfo }}</h2>
       <br><hr class="border-primary border-2 rounded-full"><br>
       <div class="grid grid-cols-2">

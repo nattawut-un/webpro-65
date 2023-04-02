@@ -3,7 +3,7 @@ import { getProducts, getProductById } from '../models/productModel.js'
 export const showProducts = async (req, res, next) => {
   try {
     const results = await getProducts()
-    res.json(results)
+    res.send(results)
   } catch (err) {
     console.log(err)
     next(err)
@@ -13,7 +13,7 @@ export const showProducts = async (req, res, next) => {
 export const showProductById = async (req, res, next) => {
   try {
     const results = await getProductById(req.params.id)
-    res.json(results)
+    res.send(results)
   } catch (err) {
     console.log(err)
     next(err)
