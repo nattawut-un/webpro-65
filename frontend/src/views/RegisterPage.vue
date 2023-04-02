@@ -5,11 +5,13 @@ import RegisterImage from '@/assets/images/register.jpg'
 
 <script>
 import http from '@/http'
+import { store } from '@/store'
 import validator from 'validator'
 
 export default {
   data() {
     return {
+      store,
       username: '',
       email: '',
       password: '',
@@ -20,7 +22,7 @@ export default {
   methods: {
     async register() {
       // alert(this.username + '\n' + this.password)
-      await http.post('http://localhost:3000/api/register', {
+      await http.post(this.store.apiURL + '/api/register', {
         username: this.username,
         password: this.password,
         email: this.email,

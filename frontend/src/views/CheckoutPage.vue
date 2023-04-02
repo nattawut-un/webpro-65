@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     async userFetch() {
-      const result = await http.post('http://localhost:3000/api/get-user')
+      const result = await http.post(this.store.apiURL + '/api/get-user')
       .then((res) => {
         if (res.error) {
           alert('โปรดลงชื่อเข้าใช้ใหม่')
@@ -45,7 +45,7 @@ export default {
           total: currentValue.quantity * currentValue.price
         }
       }))
-      const result = await http.post('http://localhost:3000/api/place-order', {
+      const result = await http.post(this.store.apiURL + '/api/place-order', {
         user_id: this.userInfo.id,
         address_id: this.selectedAddress.id,
         cart: JSON.stringify(cartClean)

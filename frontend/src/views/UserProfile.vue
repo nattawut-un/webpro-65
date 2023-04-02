@@ -4,11 +4,13 @@ import AddressCard from '@/components/AddressCard.vue'
 </script>
 
 <script>
-import http from '@/http.js'
+import http from '@/http'
+import { store } from '@/store'
 
 export default {
   data() {
     return {
+      store,
       userInfo: {},
       address: [],
       loading: false,
@@ -23,7 +25,7 @@ export default {
     async userFetch() {
       this.loading = true
       if (this.$cookies.isKey('jwt-token')) {
-        const result = await http.post('http://localhost:3000/api/get-user')
+        const result = await http.post(this.store.apiURL + '/api/get-user')
         .then(res => {
           if (res.error) {
             alert('โปรดลงชื่อเข้าใช้ใหม่')

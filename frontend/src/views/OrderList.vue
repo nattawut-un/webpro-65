@@ -5,16 +5,18 @@ import Section from '@/components/Section.vue'
 
 <script>
 import http from '@/http'
+import { store } from '../store'
 
 export default {
   data() {
     return {
+      store,
       orders: []
     }
   },
   methods: {
     async fetchOrder() {
-      const result = await http.post('http://localhost:3000/api/get-order')
+      const result = await http.post(this.store.apiURL + '/api/get-order')
       .then(res => {
         this.orders = res.data
       }).catch(err => {

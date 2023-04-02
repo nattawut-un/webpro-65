@@ -4,7 +4,9 @@ import { store } from '@/store'
 </script>
 
 <script>
-import http from '@/http.js'
+import http from '@/http'
+import { store } from '@/store'
+
 
 export default {
   data() {
@@ -56,7 +58,7 @@ export default {
   },
   methods: {
     async authorize() {
-      const result = await http.post('http://localhost:3000/api/get-user')
+      const result = await http.post(this.store.apiURL + '/api/get-user')
       .then(res => {
         if (res.error) {
           alert('โปรดลงชื่อเข้าใช้ใหม่')

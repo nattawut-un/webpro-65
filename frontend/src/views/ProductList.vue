@@ -5,10 +5,12 @@ import ListItem from '../components/ListItem.vue'
 
 <script>
 import axios from 'axios'
+import { store } from '@/store'
 
 export default {
   data() {
     return {
+      store,
       products: [],
       searchKeyword: '',
       loading: false
@@ -19,7 +21,7 @@ export default {
       this.loading = true
       try {
         let res = await axios
-        .get('http://localhost:3000/api/products')
+        .get(this.store.apiURL + '/api/products')
         .then(response => (this.products = response.data))
       } catch (err) {
         console.log(err);

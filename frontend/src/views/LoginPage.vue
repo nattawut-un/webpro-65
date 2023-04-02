@@ -5,10 +5,12 @@ import LoginImage from '@/assets/images/login.jpg'
 
 <script>
 import http from '@/http'
+import { store } from '@/store'
 
 export default {
   data() {
     return {
+      store,
       username: '',
       password: '',
       serverErr: ''
@@ -16,7 +18,7 @@ export default {
   },
   methods: {
     async login() {
-      await http.post('http://localhost:3000/api/login', {
+      await http.post(this.store.apiURL + '/api/login', {
         username: this.username,
         password: this.password
       }).then(response => {
