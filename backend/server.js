@@ -33,7 +33,7 @@ app.use('/api', Router)
 app.use('/images', express.static('images'))
 
 app.get('/', (req, res, next) => {
-  res.send(process.env)
+  res.send('<h1>Web Programming 2023</h1><p>by Nattawut Unwiseth 64070035</p><a href="https://github.com/nattawut-un/webpro-65">GitHub</a><br><img src="https://media.tenor.com/71bZdJOKqqgAAAAC/spideyvivi.gif">')
 })
 
 app.listen(port, () => {
