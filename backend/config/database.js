@@ -3,10 +3,10 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 const db = mysql.createPool({
-  host: process.env.webpro_db_host,
-  user: process.env.webpro_db_username,
-  password: process.env.webpro_db_password,
-  database: process.env.webpro_db_database,
+  host: process.env.WEBPRO_DB_HOST,
+  user: process.env.WEBPRO_DB_USERNAME,
+  password: process.env.WEBPRO_DB_PASSWORD,
+  database: process.env.WEBPRO_DB_DATABASE,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
