@@ -7,14 +7,10 @@
       "use": "@vercel/node"
     }
   ],
-  "redirects": [
+  "routes": [
     {
-      "source": "/:path*",
-      "destination": "/server.js"
-    },
-    {
-      "source": "/source",
-      "destination": "https://github.com/nattawut-un/webpro-65"
+      "src": "/(.*)",
+      "dest": "server.js"
     }
   ]
 }
