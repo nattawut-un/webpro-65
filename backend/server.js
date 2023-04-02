@@ -32,6 +32,10 @@ app.use(cookieParser())
 app.use('/api', Router)
 app.use('/images', express.static('images'))
 
+app.get('/', (req, res, next) => {
+  res.send(process.env)
+})
+
 app.listen(port, () => {
   console.log()
   console.log('======================================='.rainbow)
