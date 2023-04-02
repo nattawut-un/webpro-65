@@ -8,7 +8,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 const app = express();
-const port = process.env.port || 3000;
+const port = process.env.PORT || 3000;
 
 // console.log(' process.env '.bgGray, process.env)
 
@@ -20,7 +20,7 @@ app.use(
       'https://localhost:5173',
       'http://127.0.0.1:5173',
       'https://127.0.0.1:5173',
-      'https://webpro-65.vercel.app'
+      process.env.CLIENT_ORIGIN
     ]
   })
 );
