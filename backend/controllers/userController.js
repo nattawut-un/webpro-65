@@ -58,7 +58,7 @@ export const loginUser = async (req, res, next) => {
 
 // check if user has access before fetch some data
 export const authorizeUser = (req, res, next) => {
-  console.log(` req.cookies `.bgGray, req.cookies)
+  // console.log(` req.cookies `.bgGray, req.cookies)
   if (
     !req.cookies['jwt-token']) {
     res.status(422).json({
@@ -89,7 +89,7 @@ export const authorizeUser = (req, res, next) => {
   res.cookie('jwt-token', token, { expires: cookieLengthExpress() })
   setLogin(decoded.id)
 
-  console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User authorized'.green.bold + ' id: ' + decoded.id)
+  // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User authorized'.green.bold + ' id: ' + decoded.id)
   req.userID = decoded.id
   next()
 }

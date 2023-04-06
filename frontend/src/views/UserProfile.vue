@@ -70,12 +70,14 @@ export default {
     <Section v-show="!loading" title="ข้อมูลผู้ใช้">
       <p v-for="(value, key) in userInfo">{{ key }}: {{ value }}</p>
     </Section>
-    <Section title="ที่อยู่">
-      <AddressCard v-for="addr in address" :main="addr.main_addr">
-        {{ addr.address }}
-      </AddressCard>
+    <Section v-show="!loading" title="ที่อยู่">
+      <div class="grid grid-cols-2 gap-4">
+        <AddressCard v-for="addr in address" :main="addr.main_addr">
+          {{ addr.address }}
+        </AddressCard>
+      </div>
     </Section>
-    <Section title="ตั้งค่า">
+    <Section v-show="!loading" title="ตั้งค่า">
       <form @submit="changePassword">
         <div>
           <label>รหัสเก่า</label><br>
@@ -92,7 +94,7 @@ export default {
         <input type="submit" value="แก้ไขรหัสผ่าน" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-lg cursor-pointer">
       </form>
     </Section>
-    <Section title="ผู้ดูแลระบบ" v-show="userInfo.is_admin">
+    <Section v-show="!loading && userInfo.is_admin" title="ผู้ดูแลระบบ">
       <br>
       <router-link to="/admin" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-lg cursor-pointer">แอดมิน</router-link>
     </Section>

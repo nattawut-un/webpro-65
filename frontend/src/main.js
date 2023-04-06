@@ -1,5 +1,4 @@
 import { createApp } from 'vue/dist/vue.esm-bundler'
-import { createRouter, createWebHistory } from 'vue-router'
 import VueCookies from 'vue-cookies'
 import 'tw-elements'
 
@@ -13,18 +12,7 @@ import NavBar from './components/NavBar.vue'
 import Footer from './components/Footer.vue'
 
 // setting router
-import routes from './router/routes.js'
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-  scrollBehavior (to, from, savePosition) {
-    return { top: 0 }
-  }
-})
-router.resolve({
-  name: 'not-found',
-  params: { pathMatch: ['not', 'found'] },
-}).href
+import router from './router/routes.js'
 
 const app = createApp({
   data() {

@@ -10,7 +10,7 @@ export const addOrder = async (order_id, user_id, address, cart) => {
     conn.commit()
   } catch (err) {
     await conn.rollback()
-    return next(err)
+    return err
   } finally {
     conn.release()
   }

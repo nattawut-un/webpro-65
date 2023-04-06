@@ -1,6 +1,6 @@
 <script>
-import { store } from '../store.js'
-import axios from 'axios'
+import { store } from '@/store'
+import http from '@/http'
 
 export default {
   data() {
@@ -19,7 +19,7 @@ export default {
       this.loading = true
       try {
         let url = this.store.apiURL + '/api/products/' + this.productId
-        let res = await axios
+        let res = await http
         .get(url)
         .then(response => (this.details = response.data))
       } catch (err) {
