@@ -58,11 +58,11 @@ export default {
   },
   methods: {
     async authorize() {
-      const result = await http.post(this.store.apiURL + '/api/get-user')
+      const result = await http.post('/api/get_user')
       .then(res => {
         if (res.error) {
-          alert('โปรดลงชื่อเข้าใช้ใหม่')
-          this.$router.push('/login')
+          alert(res.error)
+          this.$router.back()
         } else if (res.data.data.is_admin != 1) {
           this.$router.push('/')
         } else {
@@ -87,8 +87,8 @@ export default {
   <main>
     <img src="../assets/images/admin_home.jpg" class="w-full h-[30vh] object-cover">
     <Section title="Admin Home">
-      <h2>{{ store.apiURL }}</h2><br>
-      <h2>{{ userInfo }}</h2>
+      <!-- <h2>{{ store.apiURL }}</h2><br>
+      <h2>{{ userInfo }}</h2> -->
       <br><hr class="border-primary border-2 rounded-full"><br>
       <div class="grid grid-cols-2">
         <router-link v-for="(item, index) in menus" :to="item.to" :style="{ backgroundColor: colors[index % this.colors.length] }" class="text-white p-6 mx-4 my-2 rounded-lg shadow-lg hover:shadow-xl flex hover:scale-105 transition duration-150">

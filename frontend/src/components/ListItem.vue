@@ -1,6 +1,6 @@
 <template>
-  <router-link :to="'/products/'+ link" class="bg-secondary hover:bg-primary rounded-[1.5rem] font-mali text-black hover:text-white transition ease-out duration-100 shadow-lg border-primary border-4">
-    <img class="rounded-[1.3rem] aspect-square object-cover" :src="store.apiURL + '/images/products/' + link + '.jpg'" @error="setToDefaultImg">
+  <router-link :to="'/products/'+ prod_id" class="bg-secondary hover:bg-primary rounded-[1.5rem] font-mali text-black hover:text-white transition ease-out duration-100 shadow-lg border-primary border-4">
+    <img class="rounded-[1.3rem] aspect-square object-cover w-full" :src="store.apiURL + link" @error="setToDefaultImg">
     <div class="flex">
       <div class="p-6 w-4/5">
         <h1 class="text-2xl">{{ name }}</h1>
@@ -17,9 +17,10 @@
 
 <script lang="ts">
 import { store } from '../store.js'
+import NotFoundImage from '../assets/images/notfound.png'
 
 export default {
-  props: ['name', 'price', 'link'],
+  props: ['prod_id', 'name', 'price', 'link'],
   data() {
     return {
       store
@@ -27,7 +28,7 @@ export default {
   },
   methods: {
     setToDefaultImg(e) {
-      e.target.src = './src/assets/images/notfound.png'
+      e.target.src = NotFoundImage
     }
   }
 }

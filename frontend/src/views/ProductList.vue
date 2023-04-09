@@ -4,7 +4,7 @@ import ListItem from '../components/ListItem.vue'
 </script>
 
 <script>
-import axios from 'axios'
+import http from '@/http'
 import { store } from '@/store'
 
 export default {
@@ -20,8 +20,8 @@ export default {
     async getProducts() {
       this.loading = true
       try {
-        let res = await axios
-        .get(this.store.apiURL + '/api/products')
+        let res = await http
+        .get('/api/products')
         .then(response => (this.products = response.data))
       } catch (err) {
         console.log(err);
@@ -85,7 +85,7 @@ export default {
     </div>
     <!-- items -->
     <div class="bg-white/80 grid place-content-center 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 p-8">
-      <ListItem v-for="item in searchedList" :name="item.name" :price="item.price" :link="item.id" />
+      <ListItem v-for="item in searchedList" :name="item.name" :price="item.price" :link="item.file_path" :prod_id="item.id" />
     </div>
   </main>
 </template>

@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     async login() {
-      await http.post(this.store.apiURL + '/api/login', {
+      await http.post('/api/login', {
         username: this.username,
         password: this.password
       }).then(response => {

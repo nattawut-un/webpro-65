@@ -1,4 +1,4 @@
-import { setLogin, getUserFromName, getUserFromID, getUserAddress, addUser, checkUser } from "../models/userModel.js"
+import { setLogin, getUserFromName, getUserFromID, getUserAddress, addUser, checkUser, updateUser } from "../models/userModel.js"
 import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
 import secret from '../config/auth.js'
@@ -40,7 +40,7 @@ export const loginUser = async (req, res, next) => {
         res.cookie('jwt-token', token, cookieOptions)
         res.cookie('username', username, cookieOptions)
 
-        console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User logged in '.bgGreen + ' id: ' + user.id)
+        console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User logged in '.brightGreen.bold + ' id: ' + user.id)
 
         let data = {
           msg: "Logged in!",
@@ -86,7 +86,7 @@ export const authorizeUser = (req, res, next) => {
     secret["jwt-secret"],
     { expiresIn: cookieLengthJWT }
   )
-  res.cookie('jwt-token', token, { expires: cookieLengthExpress() })
+  res.cookie('jwt-token', token, cookieOptions)
   setLogin(decoded.id)
 
   // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User authorized'.green.bold + ' id: ' + decoded.id)
@@ -123,7 +123,7 @@ export const registeringUser = async (req, res, next) => {
       addUser(uuid, username, email, hash)
       console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' New user registered'.brightGreen.bold + ' id: ' + uuid)
       res.status(200).send({
-        status: 'Register successfully.',
+        msg: 'Register successfully.',
         user: {
           id: uuid,
           username: username,
@@ -135,4 +135,37 @@ export const registeringUser = async (req, res, next) => {
       res.status(500).send(err)
     })
   }
+}
+
+export const changePassword = async (req, res, next) => {
+  const { id, oldPassword, newPassword } = req.body
+  const user = await getUserFromID(id)
+  const currentPassword = user.password
+
+  console.log(id, currentPassword, oldPassword, newPassword)
+
+  bcrypt.compare(oldPassword, currentPassword,
+  (err, isMatch) => {
+    if (isMatch) {
+      // updateUser(req.body.id, { password: newPassword }, 'password')
+      bcrypt.hash(newPassword, secret['salt-rounds'])
+      .then(hash => {
+        updateUser(id, { password: hash }, 'password')
+        console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Password changed'.brightGreen.bold + ' user: ' + user.username)
+        res.send({
+          msg: 'Password changed.',
+          id: id
+        })
+      }).catch(err => {
+        console.log(err)
+        res.status(500).send(err)
+      })
+    } else {
+      console.log('Wrong password:', err)
+      res.status(401).send({
+        msg: 'Password wrong.',
+        id: req.body.id
+      })
+    }
+  })
 }

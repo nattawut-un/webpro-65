@@ -43,13 +43,15 @@ export default {
     <div v-show="store.cart.length == 0">
       <h1 class="text-2xl font-bold">ไม่มีอะไรในตะกร้า</h1>
     </div>
-    <div class="flex border-b-2 border-gray-200/50 pt-2 pb-8" v-for="item in store.cart">
+    <div class="flex my-4" v-for="item in store.cart">
       <div class="w-1/6 mr-8">
-        <img :src="store.apiURL + '/images/products/' + item.id + '.jpg'" class="w-full aspect-square rounded-full object-cover shadow-lg">
+        <img :src="store.apiURL + item.file_path" class="w-full aspect-square rounded-full object-cover shadow-lg">
       </div>
       <div class="w-3/4 flex">
         <div class="w-5/6">
-          <h3 class="text-2xl font-bold">{{ item.name }}</h3>
+          <router-link :to="'/products/' + item.id">
+            <h3 class="text-2xl font-bold">{{ item.name }}</h3>
+          </router-link>
           <p>ราคา {{ item.price }} บาท</p>
           <p>จำนวน {{ item.quantity }} ที่</p>
         </div>
@@ -61,7 +63,7 @@ export default {
         </div>
       </div>
     </div>
-    <br><br><br>
+    <br><hr><br><br>
     <div class="mb-8">
       <h2 class="text-3xl font-bold">ราคารวม: {{ totalPrice }} บาท</h2>
     </div>

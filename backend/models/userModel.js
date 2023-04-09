@@ -9,7 +9,7 @@ export const setLogin = async (id) => {
     conn.commit()
   } catch (err) {
     await conn.rollback()
-    return next(err)
+    throw new Error(err)
   } finally {
     conn.release()
   }
@@ -72,7 +72,33 @@ export const addUser = async (user_id, username, email, password) => {
     conn.commit()
   } catch (err) {
     await conn.rollback()
-    return next(err)
+    throw new Error(err)
+  } finally {
+    conn.release()
+  }
+}
+
+export const updateUser = async (user_id, data, mode) => {
+  const conn = await db.getConnection()
+  await conn.beginTransaction()
+
+  let sql
+  let params
+
+  if (mode === 'password') {
+    sql = 'UPDATE users SET password = ? where id = ?'
+    params = [data.password, user_id]
+  } else {
+    throw new Error('Wrong mode.')
+  }
+
+  try {
+    const [rows, fields] = await db.query(sql, params)
+    conn.commit()
+    return rows
+  } catch (err) {
+    await conn.rollback()
+    throw new Error(err)
   } finally {
     conn.release()
   }

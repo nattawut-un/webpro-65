@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 
 app.use('/api', Router)
-app.use('/images', express.static('images'))
+app.use(express.static('static'))
 
 app.get('/', (req, res, next) => {
   res.send('<h1>Web Programming 2023</h1><p>by Nattawut Unwiseth 64070035</p><a href="https://github.com/nattawut-un/webpro-65">GitHub</a><br><img src="https://media.tenor.com/71bZdJOKqqgAAAAC/spideyvivi.gif">')
@@ -38,10 +38,10 @@ app.get('/', (req, res, next) => {
 
 app.listen(port, () => {
   console.log()
-  console.log('======================================='.rainbow)
-  console.log('         Web Programming 2023          '.bgYellow.bold)
-  console.log('     by Nattawut Uniseth 64070035      '.yellow)
-  console.log('    Starting node.js at port: '.yellow + colors.yellow.bold.underline(port))
-  console.log('======================================='.rainbow)
+  console.log('========================================'.rainbow)
+  console.log('          Web Programming 2023          '.bgYellow.bold)
+  console.log('      by Nattawut Uniseth 64070035      '.yellow)
+  console.log('     Starting node.js at port: '.yellow + colors.yellow.bold.underline(port))
+  console.log('========================================'.rainbow)
   console.log()
 });

@@ -11,6 +11,7 @@ import OrderList from '@/views/OrderList.vue'
 import AdminHome from '@/views/AdminHome.vue'
 import AdminProductList from '@/views/AdminProductList.vue'
 import AdminProductDetails from '@/views/AdminProductDetails.vue'
+import AdminProductAdd from '@/views/AdminProductAdd.vue'
 
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -63,6 +64,10 @@ const routes = [
     name: 'admin-product-details',
     path: '/admin/products/:id',
     component: AdminProductDetails
+  }, {
+    name: 'admin-product-add',
+    path: '/admin/products/add',
+    component: AdminProductAdd
   }, {
     name: 'not-found',
     path: '/:pathMatch(.*)*',

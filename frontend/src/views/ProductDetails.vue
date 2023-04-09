@@ -18,7 +18,7 @@ export default {
     async getProductDetail() {
       this.loading = true
       try {
-        let url = this.store.apiURL + '/api/products/' + this.productId
+        let url = '/api/products/' + this.productId
         let res = await http
         .get(url)
         .then(response => (this.details = response.data))
@@ -70,7 +70,7 @@ import SectionFull from '../components/SectionFull.vue'
 </script>
 
 <template>
-  <SectionFull :title="details.name" :imageApi="`products/${productId}`" backButton="true">
+  <SectionFull :title="details.name" :imageApi="`${details.file_path}`" backButton="true">
     <div v-show="loading" class="flex items-center justify-center space-x-2">
       <div
         class="inline-block h-24 w-24 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"

@@ -16,7 +16,7 @@ export default {
   },
   methods: {
     async fetchOrder() {
-      const result = await http.post(this.store.apiURL + '/api/get-order')
+      const result = await http.post('/api/get_order')
       .then(res => {
         this.orders = res.data
       }).catch(err => {

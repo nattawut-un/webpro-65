@@ -22,7 +22,7 @@ export default {
   methods: {
     async register() {
       // alert(this.username + '\n' + this.password)
-      await http.post(this.store.apiURL + '/api/register', {
+      await http.post('/api/register', {
         username: this.username,
         password: this.password,
         email: this.email,
