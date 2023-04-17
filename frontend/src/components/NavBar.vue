@@ -43,7 +43,7 @@ export default {
       this.store.cart = JSON.parse(localStorage.getItem('cart') || '[]')
     }
   },
-  mounted() {
+  created() {
     this.getCart()
   },
   watch: {

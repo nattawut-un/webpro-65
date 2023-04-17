@@ -1,4 +1,4 @@
-import { getProducts, getProductById, addProduct, editProduct, getCategories, deleteProduct } from '../models/productModel.js'
+import { getProducts, getProductById, addProduct, editProduct, getCategories, deleteProduct, insertCategory } from '../models/productModel.js'
 
 export const showProducts = async (req, res, next) => {
   try {
@@ -56,6 +56,7 @@ export const updateProduct = async (req, res, next) => {
     req.body.name,
     req.body.price,
     req.body.description,
+    req.body.category_id,
     req.body.id,
   ]
   console.log(' data '.bgGray, data)
@@ -94,5 +95,15 @@ export const removeProduct = async (req, res, next) => {
       msg: 'ERROR: Product is not removed.',
       data: err
     })
+  }
+}
+
+export const addCategory = async (req, res, next) => {
+  try {
+    const results = await insertCategory(req.body)
+    res.send(results)
+  } catch (err) {
+    console.log(err)
+    res.status(500).send(err)
   }
 }

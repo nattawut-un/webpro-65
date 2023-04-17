@@ -21,8 +21,13 @@ export const getUserFromName = async (name) => {
 }
 
 export const getUserFromID = async (id) => {
-  const [rows, fields] = await db.query('SELECT * FROM users WHERE id = ?', [id])
-  return rows[0]
+  try {
+    const [rows, fields] = await db.query('SELECT * FROM users WHERE id = ?', [id])
+    return rows[0]
+  } catch (err) {
+    console.log(err)
+    throw new Error(err)
+  }
 }
 
 export const getUserAddress = async (id) => {

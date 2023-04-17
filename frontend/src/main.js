@@ -14,6 +14,8 @@ import Footer from './components/Footer.vue'
 // setting router
 import router from './router/routes.js'
 
+const DEFAULT_TITLE = 'Web Programming 2565'
+
 const app = createApp({
   data() {
     return {
@@ -36,6 +38,7 @@ const app = createApp({
   watch: {
     '$route' (to, from) {
       this.update()
+      document.title = to.meta.title + ' | ' + DEFAULT_TITLE || DEFAULT_TITLE
     }
   }
 })

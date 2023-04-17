@@ -50,7 +50,7 @@ export default {
       return this.details.price * this.quantity
     }
   },
-  mounted() {
+  created() {
     this.productId = this.$route.params.id
     this.getProductDetail()
     this.store.cart = JSON.parse(localStorage.getItem('cart') || '[]')

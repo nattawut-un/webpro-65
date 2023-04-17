@@ -1,5 +1,6 @@
 <script setup>
 import Section from '@/components/Section.vue'
+import AdminHomeHeader from '@/assets/images/admin_home.jpg'
 import { store } from '@/store'
 </script>
 
@@ -73,7 +74,7 @@ export default {
       })
     }
   },
-  mounted() {
+  created() {
     if (!this.$cookies.isKey('jwt-token')) {
       this.$router.push('/login')
     } else {
@@ -85,7 +86,7 @@ export default {
 
 <template>
   <main>
-    <img src="../assets/images/admin_home.jpg" class="w-full h-[30vh] object-cover">
+    <img :src="AdminHomeHeader" class="w-full h-[30vh] object-cover">
     <Section title="Admin Home">
       <!-- <h2>{{ store.apiURL }}</h2><br>
       <h2>{{ userInfo }}</h2> -->

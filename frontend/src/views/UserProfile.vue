@@ -19,7 +19,8 @@ export default {
         oldPassword: '',
         newPassword: '',
         newPasswordRe: '',
-      }
+      },
+      newAddress: ''
     }
   },
   methods: {
@@ -64,9 +65,12 @@ export default {
           }
         })
       }
+    },
+    addAddress() {
+      alert(this.newAddress)
     }
   },
-  mounted() {
+  created() {
     this.userInfo = {}
     this.address = []
     this.userFetch()
@@ -114,7 +118,12 @@ export default {
         <AddressCard v-for="addr in address" :main="addr.main_addr">
           {{ addr.address }}
         </AddressCard>
+      </div><br>
+      <div>
+        <label>เพิ่มที่อยู่ใหม่</label><br>
+        <textarea v-model="newAddress" rows="5" cols="50" class="border-2 rounded-xl mt-2 px-4"></textarea>
       </div>
+      <button @click="addAddress()" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-lg cursor-pointer">เพิ่มที่อยู่</button>
     </Section>
 
     <Section v-show="!loading" title="ตั้งค่า">

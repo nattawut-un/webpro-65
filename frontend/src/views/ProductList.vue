@@ -12,6 +12,8 @@ export default {
     return {
       store,
       products: [],
+      categories: [],
+      selectedCategories: [],
       searchKeyword: '',
       loading: false
     }
@@ -27,20 +29,37 @@ export default {
         console.log(err);
       }
       this.loading = false
-    }
+    },
+    async getCategories() {
+      this.loading = true
+      await http.get('/api/categories')
+      .then(response => (this.categories = response.data))
+      .catch(err => console.log(err))
+      this.loading = false
+    },
   },
   computed: {
     searchedList() {
-      if (this.searchKeyword == '') {
+      if (!this.searchKeyword && this.selectedCategories.length == 0) {
         return this.products
-      }
-      return this.products.filter((currentValue) => {
-        return currentValue.name.includes(this.searchKeyword)
+      } else if (this.searchKeyword && this.selectedCategories == 0) {
+        return this.products.filter(item => {
+          return item.name.includes(this.searchKeyword)
+        })
+      } else if (!this.searchKeyword && this.selectedCategories.length > 0) {
+        return this.products.filter(item => {
+          return this.selectedCategories.includes(item.category_id)
+        })
+      } else {
+        return this.products.filter(item => {
+          return item.name.includes(this.searchKeyword) && this.selectedCategories.includes(item.category_id)
       })
-    }
+      }
+    },
   },
-  mounted() {
+  created() {
     this.getProducts()
+    this.getCategories()
   }
 }
 </script>
@@ -56,13 +75,19 @@ export default {
         มั้งลิมิต รูบิกอุปการคุณรวมมิตรเซ็นทรัลเฟรชชี่ ปาสเตอร์ แอปเปิลมยุราภิรมย์แช่แข็ง ทาวน์เฮาส์แซ็กโซโฟน แชมเปี้ยนครัวซองต์เช็ก ซูโม่ บร็อคโคลีฮาโลวีนวิวสแตนเลสแชมปิยอง สปอร์ตซิตี้ติงต๊องไฮกุสปิริต สเตริโอล้มเหลวต่อยอดพุดดิ้ง ฮีโร่เทคโนไฮไลท์เที่ยงวัน อีแต๋นพูลฮีโร่แจ๊ส ออเดอร์วืด เมเปิลฮัมติวแคร์ไอติม มัฟฟินจิตเภทรีโมท ถูกต้องแม่ค้าวีซ่าฮากกาฮันนีมูน
       </p>
     </Section>
-    <!-- searching & sorting -->
-    <div class="bg-primary/70 hover:bg-primary backdrop-blur-md transition duration-300 ease-out font-mali text-white sticky top-[75px]">
-      <div class="container mx-auto p-2 flex">
-        <!-- <label class="font-bold mr-2">ค้นหา</label> -->
-        <img src="../svg/Search.svg" class="h-[23px] mr-2">
-        <input type="text" v-model="searchKeyword" class="text-black bg-white rounded-full px-2 mr-2" />
-        ผลการค้นหาทั้งหมด {{ searchedList.length }} รายการ
+    <div class="bg-white font-mali border-primary border-b-4">
+      <div class="container mx-auto py-6 flex">
+        <div class="w-1/4 border-r-2">
+          <input type="text" v-model="searchKeyword" class="text-black bg-gray-200 rounded-xl px-2 mr-2 text-2xl" /><br>
+          <span class="text-xs">ผลการค้นหาทั้งหมด {{ searchedList.length }} รายการ</span>
+        </div>
+        <div class="w-1/4 px-8">
+          <h1 class="font-bold text-xl">หมวดหมู่</h1>
+          <div v-for="item in categories">
+            <input type="checkbox" :id="item.id" :value="item.id" :key="item.id" v-model="selectedCategories">&nbsp;
+            <label :for="item.id">{{ item.name }}</label>
+          </div>
+        </div>
       </div>
     </div>
     <!-- if 0 result -->
@@ -85,7 +110,8 @@ export default {
     </div>
     <!-- items -->
     <div class="bg-white/80 grid place-content-center 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 p-8">
-      <ListItem v-for="item in searchedList" :name="item.name" :price="item.price" :link="item.file_path" :prod_id="item.id" />
+      <!-- <ListItem v-for="item in searchedList" :name="item.name" :price="item.price" :link="item.file_path" :prod_id="item.id" /> -->
+      <ListItem v-for="item in searchedList" :product="item" />
     </div>
   </main>
 </template>

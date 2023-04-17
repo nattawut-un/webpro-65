@@ -1,6 +1,8 @@
 <script setup>
 import Section from '../components/Section.vue';
 import VueCountdown from '@chenfengyuan/vue-countdown'
+
+import HomeImage from '@/assets/images/homepage.jpg'
 </script>
 
 <script>
@@ -15,7 +17,7 @@ export default {
       //
     }
   },
-  mounted() {
+  created() {
     this.getUserData()
   }
 }
@@ -23,7 +25,7 @@ export default {
 
 <template>
   <main>
-    <img src="../assets/images/homepage.jpg" class="w-full h-[50vh] object-cover">
+    <img :src="HomeImage" class="w-full h-[50vh] object-cover">
     <Section title="Deadline: 28 เม.ย. 2565">
       <vue-countdown class="font-pattaya text-6xl" :time="Date.parse(new Date('2023-05-22')) - Date.parse(new Date())" v-slot="{ days, hours, minutes, seconds }">
         {{ days }} วัน ({{ Math.floor(days / 7) }} สัปดาห์ {{ days % 7 }} วัน) {{ hours }} ชั่วโมง {{ minutes }} นาที {{ seconds }} วินาที

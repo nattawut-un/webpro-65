@@ -1,4 +1,4 @@
-import { addOrder, getOrderFromID } from '../models/orderModel.js'
+import { addOrder, getOrderFromID, getOrders, editOrderFinish, deleteOrder } from '../models/orderModel.js'
 import { getAddressFromID } from '../models/userModel.js'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -14,7 +14,44 @@ export const placeOrder = async (req, res, next) => {
 }
 
 export const fetchOrderbyUser = async (req, res, next) => {
-  const orders = await getOrderFromID(req.userID)
-  console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Order fetched'.brightGreen.bold + ' id: ' + req.userID)
-  res.status(200).send(orders)
+  try {
+    const orders = await getOrderFromID(req.userID)
+    console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Order fetched'.brightGreen.bold + ' id: ' + req.userID)
+    res.status(200).send(orders)
+  } catch (err) {
+    console.log(err)
+    res.send(500).send(err)
+  }
+}
+
+export const fetchOrders = async (req, res, next) => {
+  try {
+    const results = await getOrders()
+    res.send(results)
+  } catch (err) {
+    console.log(err)
+    res.send(500).send(err)
+  }
+}
+
+export const finishOrder = async (req, res, next) => {
+  try {
+    const results = await editOrderFinish(req.body.order_id)
+    console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Order finished'.brightGreen.bold + ' order_id: ' + req.body.order_id)
+    res.send(results)
+  } catch (err) {
+    console.log(err)
+    res.send(500).send(err)
+  }
+}
+
+export const removeOrder = async (req, res, next) => {
+  try {
+    const results = await deleteOrder(req.params.order_id)
+    console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Order Deleted'.brightGreen.bold + ' order_id: ' + req.params.order_id)
+    res.send(results)
+  } catch (err) {
+    console.log(err)
+    res.send(500).send(err)
+  }
 }

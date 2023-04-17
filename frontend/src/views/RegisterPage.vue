@@ -92,7 +92,7 @@ export default {
       ].every(e => e)
     }
   },
-  mounted() {
+  created() {
     this.username = ''
     this.email = ''
     this.password = ''

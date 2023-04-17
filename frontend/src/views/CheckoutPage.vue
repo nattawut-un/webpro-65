@@ -45,7 +45,7 @@ export default {
           total: currentValue.quantity * currentValue.price
         }
       }))
-      const result = await http.post('/api/place-order', {
+      const result = await http.post('/api/place_order', {
         user_id: this.userInfo.id,
         address_id: this.selectedAddress.id,
         cart: JSON.stringify(cartClean)
@@ -65,7 +65,7 @@ export default {
       }, 0)
     }
   },
-  mounted() {
+  created() {
     if (!store.username || store.cart.length == 0) {
       this.$router.push('/')
     } else {

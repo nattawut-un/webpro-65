@@ -67,6 +67,7 @@ export const authorizeUser = (req, res, next) => {
     console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' No token'.red.bold)
     return
   }
+
   var cookieToken = req.cookies['jwt-token']
   try {
     var decoded = jwt.verify(cookieToken, secret["jwt-secret"])
@@ -79,6 +80,8 @@ export const authorizeUser = (req, res, next) => {
     })
     return
   }
+
+  // return new token every time
   var token = jwt.sign(
     {
       id: decoded.id,
@@ -94,12 +97,30 @@ export const authorizeUser = (req, res, next) => {
   next()
 }
 
+export const authorizeAdmin = async (req, res, next) => {
+  try {
+    const user = await getUserFromID(req.userID)
+    if (user.is_admin == 1) {
+      next()
+    } else {
+      res.status(401).send({
+        msg: 'Unauthorized: You are not an admin.'
+      })
+    }
+  } catch (err) {
+    console.log(err)
+    res.status(500).send({
+      msg: err
+    })
+  }
+}
+
 export const fetchUser = async (req, res, next) => {
   const id = req.userID
   const user = await getUserFromID(id)
   const address = await getUserAddress(id)
 
-  console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User data fetched'.brightGreen.bold + ' id: ' + req.userID)
+  // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' User data fetched'.brightGreen.bold + ' id: ' + req.userID)
   res.status(200).send({
     data: user,
     address: address,

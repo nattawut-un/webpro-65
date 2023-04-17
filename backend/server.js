@@ -4,6 +4,7 @@ import Router from './routes/routes.js'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import colors from 'colors'
+// import morgan from 'morgan'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
@@ -29,6 +30,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 
+// app.use(morgan('tiny'))
 app.use('/api', Router)
 app.use(express.static('static'))
 

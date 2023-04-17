@@ -29,7 +29,7 @@ export default {
       })
     },
   },
-  mounted() {
+  created() {
     this.username = 'admin'
     this.password = 'password'
   }
