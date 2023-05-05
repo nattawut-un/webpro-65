@@ -26,22 +26,6 @@ export default {
       .catch(err => console.log(err))
       this.loading = false
     },
-    async authorize() {
-      const result = await http.post('/api/get_user')
-      .then(res => {
-        if (res.error) {
-          alert(res.error)
-          this.$router.back()
-        } else if (res.data.data.is_admin != 1) {
-          this.$router.push('/')
-        } else {
-          this.userInfo = res.data.data
-          return true
-        }
-      }).catch(err => {
-        console.log(err)
-      })
-    },
     async addCategory() {
       if (!this.newCategory.name.trim()) {
         alert('โปรดกรอกชื่อ')
@@ -59,14 +43,7 @@ export default {
     }
   },
   created() {
-    if (!this.$cookies.isKey('jwt-token')) {
-      this.$router.push('/login')
-    } else if (this.authorize()) {
-      this.getCategories()
-    } else {
-      alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้')
-      this.$router.back()
-    }
+    this.getCategories()
   }
 }
 </script>

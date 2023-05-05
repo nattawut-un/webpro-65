@@ -66,7 +66,7 @@ export default {
     }
   },
   created() {
-    if (!store.username || store.cart.length == 0) {
+    if (!store.user || store.cart.length == 0) {
       this.$router.push('/')
     } else {
       this.userFetch()
@@ -78,7 +78,7 @@ export default {
 <template>
   <div>
     <Section title="สั่งซื้อ">
-      <p>{{ userInfo }}</p><br>
+      <p>โปรดตรวจสอบข้อมูลต่างๆ ก่อนสั่งซื้อ</p><br>
       <button class="bg-red-200 hover:bg-primary transition ease-in-out duration-200 text-black hover:text-white rounded-full px-4 py-2" @click="this.$router.back()"><img class="h-7" src="../svg/NavBack.svg"></button>
     </Section>
     <div class="bg-white font-mali">
@@ -90,17 +90,32 @@ export default {
         <div class="w-1/2 pl-4">
           <h1 class="font-pattaya text-4xl">ข้อมูลผู้ใช้</h1>
           <br><hr><br>
-          <h2 class="font-bold text-xl">ที่อยู่</h2>
-          <AddressCard v-for="addr in address" :main="addr.main_addr" @click="this.selectedAddress = addr">
-            {{ addr.address }}
-          </AddressCard>
+          <div>
+            <div class="flex pb-2">
+              <h2 class="font-bold text-xl mr-2">ที่อยู่</h2>
+              <router-link to="/user" class="bg-green-400 px-3 py-1 rounded-full text-sm">เพิ่มอันใหม่</router-link>
+            </div>
+            <div class="flex" v-for="addr in address">
+              <input type="radio" v-model="selectedAddress" :key="addr.id" :id="addr.id" :value="addr" class="mx-4">
+              <label :for="addr.id">
+                <AddressCard :main="addr.main_addr">
+                  {{ addr.address }}
+                </AddressCard>
+              </label>
+            </div>
+          </div>
           <br><hr><br>
-          selected = {{ selectedAddress }}
+          <div>
+            <div class="flex pb-2">
+              <h2 class="font-bold text-xl mr-2">วิธีชำระเงิน</h2>
+            </div>
+          </div>
+          <!-- selected = {{ selectedAddress }} -->
         </div>
       </div>
     </div>
     <Section :title="'ราคาทั้งหมด: ' + totalPrice + ' บาท'">
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa ut quos optio deserunt aut ipsum velit omnis laborum nesciunt! Vero impedit fugit, voluptates dolore suscipit consequatur molestias eum ad repellendus.</p><br>
+      <p> <!-- idk --> </p><br>
       <button @click="sendOrder()" class="rounded-full bg-primary text-white text-2xl font-bold px-6 py-3">สั่งซื้อเลย</button><br><br>
       <p><b>this.userInfo.id:</b> {{ this.userInfo.id }}</p>
       <p><b>this.selectedAddress.id:</b> {{ this.selectedAddress.id }}</p>

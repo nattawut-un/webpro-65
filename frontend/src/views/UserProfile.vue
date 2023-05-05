@@ -7,12 +7,16 @@ import ProfileImage from '@/assets/images/profile.jpg'
 <script>
 import http from '@/http'
 import { store } from '@/store'
+import moment from 'moment'
+
+moment.locale('th')
 
 export default {
   data() {
     return {
       store,
       userInfo: {},
+      userInfoEdit: {},
       address: [],
       loading: false,
       editPassword: {
@@ -20,31 +24,29 @@ export default {
         newPassword: '',
         newPasswordRe: '',
       },
-      newAddress: ''
+      newAddress: '',
+      editMode: false
     }
   },
   methods: {
     async userFetch() {
       this.loading = true
 
-      if (this.$cookies.isKey('jwt-token')) {
-        const result = await http.post('/api/get_user')
-        .then(res => {
-          if (res.error) {
-            alert('โปรดลงชื่อเข้าใช้ใหม่')
-            this.$router.push('/login')
-          } else {
-            this.userInfo = JSON.parse(JSON.stringify(res.data.data))
-            this.address = JSON.parse(JSON.stringify(res.data.address))
-          }
-        }).catch((err) => {
-          console.log(err)
-          this.$router.push('/')
-        })
-      } else {
-        alert('โปรดลงชื่อเข้าใช้ใหม่')
-        this.$router.push('/login')
-      }
+      const result = await http.post('/api/get_user')
+      .then(res => {
+        if (res.error) {
+          alert('โปรดลงชื่อเข้าใช้ใหม่')
+          this.$router.push('/login')
+        } else {
+          this.store.user = res.data
+          this.userInfo = JSON.parse(JSON.stringify(res.data.data))
+          this.userInfoEdit = JSON.parse(JSON.stringify(res.data.data))
+          this.address = res.data.address
+        }
+      }).catch((err) => {
+        console.log(err)
+        this.$router.push('/')
+      })
 
       this.loading = false
     },
@@ -66,9 +68,51 @@ export default {
         })
       }
     },
-    addAddress() {
-      alert(this.newAddress)
-    }
+    async changeUserInfo() {
+      // console.log(this.userInfoEdit)
+      await http.put('/api/user/change_info', this.userInfoEdit)
+      .then(res => {
+        alert('เพิ่มที่อยู่เสร็จสิ้น')
+        this.userFetch()
+        this.editMode = false
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    async addAddress() {
+      // alert(this.newAddress)
+      await http.post('/api/user/address/add', {
+        address: this.newAddress
+      }).then(res => {
+        alert('เพิ่มที่อยู่เสร็จสิ้น')
+        this.userFetch()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    async deleteAddress(address) {
+      // console.log(address)
+      await http.delete('/api/user/address/delete', {
+        data: {
+          address_id: address.id
+        }
+      }).then(res => {
+        alert('ลบที่อยู่เสร็จสิ้น')
+        this.userFetch()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    async setMainAddress(address) {
+      await http.put('/api/user/address/set_main', {
+        address_id: address.id
+      }).then(res => {
+        // alert('ลบที่อยู่เสร็จสิ้น')
+        this.userFetch()
+      }).catch(err => {
+        console.log(err)
+      })
+    },
   },
   created() {
     this.userInfo = {}
@@ -104,26 +148,133 @@ export default {
           <img :src="ProfileImage" class="aspect-square object-cover w-48 rounded-full">
         </div>
         <div class="w-4/5">
-          <span v-show="userInfo.is_admin" class="text-lg bg-red-500 text-white px-3 py-1 rounded-full">ADMIN</span>
-          <h1 class="text-5xl font-bold">{{ userInfo.username }}
-          </h1>
+          <div v-if="userInfo.is_admin" class="mb-2">
+            <span class="text-lg bg-red-500 text-white px-3 py-1 rounded-full">Admin</span>
+          </div>
+          <span v-if="editMode">
+            <input class="text-5xl font-bold w-1/4" type="text" v-model="userInfoEdit.first_name">&nbsp;
+            <input class="text-5xl font-bold w-1/4" type="text" v-model="userInfoEdit.last_name">
+          </span>
+          <h1 v-else class="text-5xl font-bold">{{ userInfo.first_name }} {{ userInfo.last_name }}</h1>
           <p class="text-black/50 font-mono">id: {{ userInfo.id }}</p><br>
           <hr class="border-2 border-black/30 rounded-full"><br>
-          <p v-for="(value, key) in userInfo">{{ key }}: {{ value }}</p>
+          <!-- edit mode -->
+          <div v-if="editMode">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <h1 class="font-bold text-xl">ชื่อผู้ใช้</h1>
+                <input type="text" v-model="userInfoEdit.username" class="px-2 rounded-full">
+              </div>
+              <div>
+                <h1 class="font-bold text-xl">อีเมล</h1>
+                <input type="text" v-model="userInfoEdit.email" class="px-2 rounded-full">
+              </div>
+              <div>
+                <h1 class="font-bold text-xl">เบอร์มือถือ</h1>
+                <input type="text" v-model="userInfoEdit.phone" class="px-2 rounded-full">
+              </div>
+              <div>
+                <h1 class="font-bold text-xl">วันที่เริ่มเป็นสมาชิก</h1>
+                <p>{{ moment(userInfo.register_time) }} ({{ moment(userInfo.register_time).fromNow() }})</p>
+              </div>
+            </div>
+          </div>
+          <!-- read only mode -->
+          <div v-else>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <h1 class="font-bold text-xl">ชื่อผู้ใช้</h1>
+                <p>{{ userInfo.username }}</p>
+              </div>
+              <div>
+                <h1 class="font-bold text-xl">อีเมล</h1>
+                <p>{{ userInfo.email }}</p>
+              </div>
+              <div>
+                <h1 class="font-bold text-xl">เบอร์มือถือ</h1>
+                <p>{{ userInfo.phone }}</p>
+              </div>
+              <div>
+                <h1 class="font-bold text-xl">วันที่เริ่มเป็นสมาชิก</h1>
+                <p>{{ moment(userInfo.register_time) }} ({{ moment(userInfo.register_time).fromNow() }})</p>
+              </div>
+            </div>
+          </div>
+          <br>
+          <button @click="editMode = !editMode" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-lg cursor-pointer">
+            <span v-if="editMode">ยกเลิก</span>
+            <span v-else>แก้ไขข้อมูล</span>
+          </button>&nbsp;
+          <button v-if="editMode" @click="changeUserInfo()" class="bg-green-400 font-bold px-6 py-2 rounded-full text-lg cursor-pointer">
+            บันทึก
+          </button>
         </div>
+        <!-- read only mode -->
       </div>
     </Section>
-    <Section v-show="!loading" title="ที่อยู่">
-      <div class="grid grid-cols-2 gap-4">
+    <Section v-show="!loading" title="ที่อยู่" id="address">
+      <!-- <div class="grid grid-cols-2 gap-4">
         <AddressCard v-for="addr in address" :main="addr.main_addr">
           {{ addr.address }}
         </AddressCard>
-      </div><br>
-      <div>
-        <label>เพิ่มที่อยู่ใหม่</label><br>
-        <textarea v-model="newAddress" rows="5" cols="50" class="border-2 rounded-xl mt-2 px-4"></textarea>
+      </div> -->
+      <br>
+      <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left">
+          <thead class="text-sm uppercase bg-primary text-white">
+            <tr>
+              <th scope="col" class="px-6 py-3">
+                ที่อยู่หลัก
+              </th>
+              <th scope="col" class="px-6 py-3">
+                ที่อยู่
+              </th>
+              <th scope="col" class="px-6 py-3 max-w-[200px]">
+                <!-- แก้ไข -->
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              class="border-b" :class="[ item.main_addr ? 'bg-secondary' : 'bg-gray-100' ]"
+              v-for="item in address" :key="item.id">
+              <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
+                <span v-if="item.main_addr">✅</span>
+              </th>
+              <td class="px-6 py-4" :class="[ item.main_addr ? 'font-bold' : '' ]">
+                {{ item.address }}
+              </td>
+              <td class="px-6 py-2">
+                <div class="flex">
+                  <span v-if="!item.main_addr">
+                    <button class="hover:bg-primary text-black hover:text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" :class="[ item.main_addr ? 'bg-light' : 'bg-secondary' ]" @click="setMainAddress(item)">
+                      ตั้งให้เป็นอันหลัก
+                    </button>&nbsp;&nbsp;
+                  </span>
+                  <button class="hover:bg-primary text-black hover:text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" :class="[ item.main_addr ? 'bg-light' : 'bg-secondary' ]">
+                    แก้ไข
+                  </button>&nbsp;&nbsp;
+                  <button class="bg-red-500 hover:bg-red-400 text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" @click="deleteAddress(item)">
+                    ลบ
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr class="bg-gray-100 border-b">
+              <th class="px-6 py-4 font-bold whitespace-nowrap">เพิ่มที่อยู่ใหม่</th>
+              <td class="px-6 py-2">
+                <input type="text" v-model="newAddress" class="px-2 py-1 rounded-full border-2 w-4/5">
+              </td>
+              <td class="px-6 py-2">
+                <button class="bg-secondary hover:bg-primary text-black hover:text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" @click="addAddress()">
+                  ➕ เพิ่ม
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <button @click="addAddress()" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-lg cursor-pointer">เพิ่มที่อยู่</button>
+      <br>
     </Section>
 
     <Section v-show="!loading" title="ตั้งค่า">

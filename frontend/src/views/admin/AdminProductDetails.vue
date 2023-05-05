@@ -105,16 +105,9 @@ export default {
     }
   },
   created() {
-    if (!this.$cookies.isKey('jwt-token')) {
-      this.$router.push('/login')
-    } else if (this.authorize()) {
-      this.productId = this.$route.params.id
-      this.getProductDetail()
-      this.getCategories()
-    } else {
-      alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้')
-      this.$router.back()
-    }
+    this.productId = this.$route.params.id
+    this.getProductDetail()
+    this.getCategories()
   }
 }
 </script>

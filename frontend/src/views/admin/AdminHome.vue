@@ -57,29 +57,25 @@ export default {
       ]
     }
   },
-  methods: {
-    async authorize() {
-      const result = await http.post('/api/get_user')
-      .then(res => {
-        if (res.error) {
-          alert(res.error)
-          this.$router.back()
-        } else if (res.data.data.is_admin != 1) {
-          this.$router.push('/')
-        } else {
-          this.userInfo = res.data.data
-        }
-      }).catch(err => {
-        console.log(err)
-      })
-    }
-  },
+  // methods: {
+  //   async authorize() {
+  //     const result = await http.post('/api/get_user')
+  //     .then(res => {
+  //       if (res.error) {
+  //         alert(res.error)
+  //         this.$router.back()
+  //       } else if (res.data.data.is_admin != 1) {
+  //         this.$router.push('/')
+  //       } else {
+  //         this.userInfo = res.data.data
+  //       }
+  //     }).catch(err => {
+  //       console.log(err)
+  //     })
+  //   }
+  // },
   created() {
-    if (!this.$cookies.isKey('jwt-token')) {
-      this.$router.push('/login')
-    } else {
-      this.authorize()
-    }
+    // this.authorize()
   }
 }
 </script>

@@ -44,6 +44,28 @@ export default {
       alert('เพิ่มสิงค้าลงตะกร้าแล้ว')
       this.$router.back()
     },
+    async addFav() {
+      await http.post('/api/favs/add', {
+        prod_id: this.details.id,
+      }).then(res => {
+        this.details.fav_id = 1
+        // this.$emit('productRefresh')
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    async deleteFav() {
+      await http.delete('/api/favs/remove', {
+        data: {
+          prod_id: this.details.id,
+        }
+      }).then(res => {
+        this.details.fav_id = 0
+        // this.$emit('productRefresh')
+      }).catch(err => {
+        console.log(err)
+      })
+    },
   },
   computed: {
     totalPrice() {
@@ -82,7 +104,21 @@ import SectionFull from '../components/SectionFull.vue'
       </div>
     </div>
     <div v-show="!loading">
-      <h2 class="text-[200%]">{{ details.price }} บาท</h2>
+      <div class="flex">
+        <h2 class="text-[200%]">{{ details.price }} บาท</h2>
+        <button v-if="details.fav_id" class="ml-2 px-4 py-3 rounded-full transition ease-out duration-100 bg-pink-200 hover:bg-pink-300 flex" @click="deleteFav()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill mt-1" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+          </svg>
+          <p class="ml-2">ชื่นชอบ</p>
+        </button>
+        <button v-else class="ml-2 px-4 py-3 rounded-full transition ease-out duration-100 bg-gray-100 hover:bg-gray-200 flex" @click="addFav()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill mt-1" viewBox="0 0 16 16">
+            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+          </svg>
+          <p class="ml-2">ชื่นชอบ</p>
+        </button>
+      </div>
       <br><hr><br>
       <h3 class="text-3xl font-pattaya">คำอธิบาย</h3>
       <p>{{ details.description }}</p>

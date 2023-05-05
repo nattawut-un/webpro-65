@@ -16,6 +16,8 @@
 // import AdminCategoryAdd from '@/views/admin/AdminCategoryAdd.vue'
 // import AdminOrderList from '@/views/admin/AdminOrderList.vue'
 
+import { store } from '@/store'
+
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -31,14 +33,16 @@ const routes = [
     path: '/login',
     component: () => import('@/views/LoginPage.vue'),
     meta: {
-      title: 'ลงชื่อเข้าใช้'
+      title: 'ลงชื่อเข้าใช้',
+      level: 'guest'
     }
   }, {
     name: 'register',
     path: '/register',
-    component: () => import('@/views/Register.vue'),
+    component: () => import('@/views/RegisterPage.vue'),
     meta: {
-      title: 'สทัครสมาชิก'
+      title: 'สมัครสมาชิก',
+      level: 'guest'
     }
   }, {
     name: 'product-list',
@@ -66,56 +70,64 @@ const routes = [
     path: '/checkout',
     component: () => import('@/views/CheckoutPage.vue'),
     meta: {
-      title: 'ยืนยันการสั่งซื้อ'
+      title: 'ยืนยันการสั่งซื้อ',
+      level: 'user'
     }
   }, {
     name: 'user-profile',
     path: '/user',
     component: () => import('@/views/UserProfile.vue'),
     meta: {
-      title: 'ข้อมูลผู้ใช้'
+      title: 'ข้อมูลผู้ใช้',
+      level: 'user'
     }
   }, {
     name: 'order-list',
-    path: '/orders',
+    path: '/user/orders',
     component: () => import('@/views/OrderList.vue'),
     meta: {
-      title: 'ประวัติการสั่งซื้อ'
+      title: 'ประวัติการสั่งซื้อ',
+      level: 'user'
     }
   }, {
     name: 'admin-home',
     path: '/admin',
     component: () => import('@/views/admin/AdminHome.vue'),
     meta: {
-      title: 'หน้าหลักแอดมิน'
+      title: 'หน้าหลักแอดมิน',
+      level: 'admin'
     }
   }, {
     name: 'admin-products',
     path: '/admin/products',
     component: () => import('@/views/admin/AdminProductList.vue'),
     meta: {
-      title: 'แก้ไขข้อมูลสินค้า'
+      title: 'แก้ไขข้อมูลสินค้า',
+      level: 'admin'
     }
   }, {
     name: 'admin-product-details',
     path: '/admin/products/:id',
     component: () => import('@/views/admin/AdminProductDetails.vue'),
     meta: {
-      title: 'แก้ไขข้อมูลสินค้า'
+      title: 'แก้ไขข้อมูลสินค้า',
+      level: 'admin'
     }
   }, {
     name: 'admin-product-add',
     path: '/admin/products/add',
     component: () => import('@/views/admin/AdminProductAdd.vue'),
     meta: {
-      title: 'แก้ไขข้อมูลสินค้า'
+      title: 'แก้ไขข้อมูลสินค้า',
+      level: 'admin'
     }
   }, {
     name: 'admin-category',
     path: '/admin/categories',
     component: () => import('@/views/admin/AdminCategoryList.vue'),
     meta: {
-      title: 'แก้ไขข้อมูลสินค้า'
+      title: 'แก้ไขข้อมูลสินค้า',
+      level: 'admin'
     }
   }, {
   }, {
@@ -123,7 +135,8 @@ const routes = [
     path: '/admin/categories/add',
     component: () => import('@/views/admin/AdminCategoryAdd.vue'),
     meta: {
-      title: 'แก้ไขข้อมูลสินค้า'
+      title: 'แก้ไขข้อมูลสินค้า',
+      level: 'admin'
     }
   }, {
   }, {
@@ -131,7 +144,17 @@ const routes = [
     path: '/admin/orders',
     component: () => import('@/views/admin/AdminOrderList.vue'),
     meta: {
-      title: 'รายการคำสั่งซื้อ'
+      title: 'รายการคำสั่งซื้อ',
+      level: 'admin'
+    }
+  }, {
+  }, {
+    name: 'admin-user-list',
+    path: '/admin/users',
+    component: () => import('@/views/admin/AdminUserList.vue'),
+    meta: {
+      title: 'ผู้ใช้ทั้งหมด',
+      level: 'admin'
     }
   }, {
     name: 'not-found',
@@ -152,10 +175,48 @@ const router = createRouter({
   }
 })
 
+// handle 404
 router.resolve({
   name: 'not-found',
   params: { pathMatch: ['not', 'found'] },
 }).href
+
+import http from '@/http'
+
+// navigation guard
+router.beforeEach(async (to, from, next) => {
+  // const isLoggedIn = this.$cookies.isKey('jwt-token')
+  // console.log(JSON.stringify(user.data))
+  const token = localStorage.getItem('token')
+  var user = store.user
+  if (token && Object.keys(store.user).length === 0) {
+    await http.post('/api/get_user')
+    .then(res => { 
+      user = res
+    })
+  }
+
+
+  if (to.meta.level === 'guest' && token) {
+    // pages don't need login but have user
+    alert('You are already logged in.')
+    return false
+  }
+
+  if ((to.meta.level === 'user' || to.meta.level === 'admin') && !token) {
+    // pages need login but no login
+    alert('Please login first!')
+    return next({ name: 'login' })
+  }
+
+  if (to.meta.level === 'admin' && token && user.data.is_admin === 0) {
+    // pages need admin but not admin
+    alert('Unauthorized.')
+    return next({ name: 'home' })
+  }
+
+  next()
+})
 
 // router.afterEach((to, from) => {
 //   const toDepth = to.path.split('/').length

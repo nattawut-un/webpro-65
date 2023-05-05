@@ -21,7 +21,9 @@ export default {
       await http.post('/api/login', {
         username: this.username,
         password: this.password
-      }).then(response => {
+      }).then(res => {
+        localStorage.setItem('token', res.data.token)
+        this.$emit('auth-change')
         this.$router.push('/')
       }).catch(err => {
         console.log(err)

@@ -1,8 +1,18 @@
 import { getProducts, getProductById, addProduct, editProduct, getCategories, deleteProduct, insertCategory } from '../models/productModel.js'
+import { getUserFromID } from '../models/userModel.js'
+import jwt from 'jsonwebtoken'
+import secret from '../config/auth.js'
 
 export const showProducts = async (req, res, next) => {
+  var user_id = null
   try {
-    const results = await getProducts()
+    if (req.headers.authorization) {
+      let [part1, part2] = req.headers.authorization.split(' ')
+      var decoded = jwt.verify(part2, secret["jwt-secret"])
+      var user = await getUserFromID(decoded.id)
+      var user_id = user.id
+    }
+    const results = await getProducts(user_id || null)
     res.send(results)
   } catch (err) {
     console.log(err)
@@ -12,7 +22,13 @@ export const showProducts = async (req, res, next) => {
 
 export const showProductById = async (req, res, next) => {
   try {
-    const results = await getProductById(req.params.id)
+    if (req.headers.authorization) {
+      let [part1, part2] = req.headers.authorization.split(' ')
+      var decoded = jwt.verify(part2, secret["jwt-secret"])
+      var user = await getUserFromID(decoded.id)
+      var user_id = user.id
+    }
+    const results = await getProductById(req.params.id, user_id || null)
     res.send(results)
   } catch (err) {
     console.log(err)
@@ -35,7 +51,7 @@ export const createProduct = async (req, res, next) => {
 
   try {
     const results = await addProduct(req.body, req.file)
-    console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Product added'.brightGreen.bold + ' name: ' + req.body.name)
+    // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Product added'.brightGreen.bold + ' name: ' + req.body.name)
     console.log(` product `.bgBlue, results.product)
     console.log(` image `.bgBlue, results.image)
     res.send({
@@ -59,11 +75,11 @@ export const updateProduct = async (req, res, next) => {
     req.body.category_id,
     req.body.id,
   ]
-  console.log(' data '.bgGray, data)
+  // console.log(' data '.bgGray, data)
 
   try {
     const results = await editProduct(data)
-    console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Product updated'.brightGreen.bold + ' name: ' + req.body.name)
+    // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Product updated'.brightGreen.bold + ' name: ' + req.body.name)
     res.send(results)
   } catch (err) {
     console.log(err)
@@ -84,7 +100,7 @@ export const fetchCategories = async (req, res, next) => {
 export const removeProduct = async (req, res, next) => {
   try {
     const results = await deleteProduct(req.params.id)
-    console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Product deleted'.brightGreen.bold + ' id: ' + req.params.id)
+    // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Product deleted'.brightGreen.bold + ' id: ' + req.params.id)
     res.send({
       msg: 'Product removed.',
       id: req.body.id

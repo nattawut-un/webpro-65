@@ -1,18 +1,30 @@
 import db from '../config/database.js'
 import path from 'path'
 
-export const getProducts = async () => {
+export const getProducts = async (user_id = null) => {
   try {
-    const [rows, fields] = await db.query('SELECT p.*, i.file_path, c.name `category` FROM products p LEFT OUTER JOIN images i ON (p.id = i.product_id) JOIN categories c ON (p.category_id = c.id) WHERE i.main = 1 ORDER BY p.id')
+    var sql = ''
+    if (user_id) {
+      sql += "SELECT p.*, i.file_path, c.name `category`, f.id `fav_id` FROM products p LEFT OUTER JOIN images i ON (p.id = i.product_id AND i.main = 1) JOIN categories c ON (p.category_id = c.id) LEFT OUTER JOIN user_favs f ON (p.id = f.prod_id AND f.user_id = '" + user_id + "') ORDER BY p.id"
+    } else {
+      sql += 'SELECT p.*, i.file_path, c.name `category` FROM products p LEFT OUTER JOIN images i ON (p.id = i.product_id) JOIN categories c ON (p.category_id = c.id) WHERE i.main = 1 ORDER BY p.id'
+    }
+    const [rows, fields] = await db.query(sql)
     return rows
   } catch (err) {
     throw new Error(err)
   }
 }
 
-export const getProductById = async (id) => {
+export const getProductById = async (prod_id, user_id = null) => {
   try {
-    const [rows, fields] = await db.query("SELECT p.*, i.file_path FROM products p LEFT OUTER JOIN images i ON (p.id = i.product_id) WHERE p.id = ?", [id])
+    var sql = ''
+    if (user_id) {
+      sql += "SELECT p.*, i.file_path, f.id `fav_id` FROM products p LEFT OUTER JOIN images i ON (p.id = i.product_id) LEFT OUTER JOIN user_favs f ON (p.id = f.prod_id AND f.user_id = '" + user_id + "') WHERE p.id = ?"
+    } else {
+      sql += "SELECT p.*, i.file_path FROM products p LEFT OUTER JOIN images i ON (p.id = i.product_id) WHERE p.id = ?"
+    }
+    const [rows, fields] = await db.query(sql, [prod_id])
     return rows[0]
   } catch (err) {
     throw new Error(err)

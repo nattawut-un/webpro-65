@@ -15,43 +15,43 @@ export const placeOrder = async (req, res, next) => {
 
 export const fetchOrderbyUser = async (req, res, next) => {
   try {
-    const orders = await getOrderFromID(req.userID)
-    console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Order fetched'.brightGreen.bold + ' id: ' + req.userID)
-    res.status(200).send(orders)
+    const orders = await getOrderFromID(req.user.id)
+    // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Order fetched'.brightGreen.bold + ' id: ' + req.user.id)
+    return res.send(orders)
   } catch (err) {
     console.log(err)
-    res.send(500).send(err)
+    return res.status(500).send(err)
   }
 }
 
 export const fetchOrders = async (req, res, next) => {
   try {
     const results = await getOrders()
-    res.send(results)
+    return res.send(results)
   } catch (err) {
     console.log(err)
-    res.send(500).send(err)
+    return res.status(500).send(err)
   }
 }
 
 export const finishOrder = async (req, res, next) => {
   try {
     const results = await editOrderFinish(req.body.order_id)
-    console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Order finished'.brightGreen.bold + ' order_id: ' + req.body.order_id)
-    res.send(results)
+    // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Order finished'.brightGreen.bold + ' order_id: ' + req.body.order_id)
+    return res.send(results)
   } catch (err) {
     console.log(err)
-    res.send(500).send(err)
+    return res.status(500).send(err)
   }
 }
 
 export const removeOrder = async (req, res, next) => {
   try {
     const results = await deleteOrder(req.params.order_id)
-    console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Order Deleted'.brightGreen.bold + ' order_id: ' + req.params.order_id)
-    res.send(results)
+    // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Order Deleted'.brightGreen.bold + ' order_id: ' + req.params.order_id)
+    return res.send(results)
   } catch (err) {
     console.log(err)
-    res.send(500).send(err)
+    return res.status(500).send(err)
   }
 }

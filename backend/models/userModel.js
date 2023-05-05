@@ -83,7 +83,7 @@ export const addUser = async (user_id, username, email, password) => {
   }
 }
 
-export const updateUser = async (user_id, data, mode) => {
+export const updateUser = async (user_id, data, mode = null) => {
   const conn = await db.getConnection()
   await conn.beginTransaction()
 
@@ -94,13 +94,95 @@ export const updateUser = async (user_id, data, mode) => {
     sql = 'UPDATE users SET password = ? where id = ?'
     params = [data.password, user_id]
   } else {
-    throw new Error('Wrong mode.')
+    sql = 'UPDATE users SET first_name=?, last_name=?, username=?, phone=?, email=? where id=?'
+    params = [data.first_name, data.last_name, data.username, data.phone, data.email, user_id]
   }
 
   try {
     const [rows, fields] = await db.query(sql, params)
     conn.commit()
     return rows
+  } catch (err) {
+    await conn.rollback()
+    throw new Error(err)
+  } finally {
+    conn.release()
+  }
+}
+
+export const insertAddress = async (user_id, address) => {
+  const conn = await db.getConnection()
+  await conn.beginTransaction()
+
+  try {
+    const [rows, fields] = await db.query('INSERT INTO address (user_id, address) VALUES (?, ?)', [user_id, address])
+    conn.commit()
+    return rows
+  } catch (err) {
+    await conn.rollback()
+    throw new Error(err)
+  } finally {
+    conn.release()
+  }
+}
+
+export const deleteAddress = async (address_id) => {
+  const conn = await db.getConnection()
+  await conn.beginTransaction()
+
+  try {
+    const [rows, fields] = await db.query('DELETE FROM address WHERE id=?', [address_id])
+    conn.commit()
+    return rows
+  } catch (err) {
+    await conn.rollback()
+    throw new Error(err)
+  } finally {
+    conn.release()
+  }
+}
+
+export const insertUserFavs = async (user_id, prod_id) => {
+  const conn = await db.getConnection()
+  await conn.beginTransaction()
+
+  try {
+    const [rows, fields] = await db.query('INSERT INTO user_favs (user_id, prod_id) VALUES (?, ?)', [user_id, prod_id])
+    conn.commit()
+    return rows
+  } catch (err) {
+    await conn.rollback()
+    throw new Error(err)
+  } finally {
+    conn.release()
+  }
+}
+
+export const deleteFromFavs = async (user_id, prod_id) => {
+  const conn = await db.getConnection()
+  await conn.beginTransaction()
+
+  try {
+    const [rows, fields] = await db.query('DELETE FROM user_favs WHERE user_id=? AND prod_id=?', [user_id, prod_id])
+    conn.commit()
+    return rows
+  } catch (err) {
+    await conn.rollback()
+    throw new Error(err)
+  } finally {
+    conn.release()
+  }
+}
+
+export const updateAddressMain = async (user_id, address_id) => {
+  const conn = await db.getConnection()
+  await conn.beginTransaction()
+
+  try {
+    const [r1, f1] = await db.query('UPDATE address SET main_addr=0 WHERE user_id=? AND id!=?', [user_id, address_id])
+    const [r2, f2] = await db.query('UPDATE address SET main_addr=1 WHERE user_id=? AND id=?', [user_id, address_id])
+    conn.commit()
+    return r2
   } catch (err) {
     await conn.rollback()
     throw new Error(err)

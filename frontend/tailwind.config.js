@@ -5,7 +5,8 @@ module.exports = {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   plugins: [
-    require('tw-elements/dist/plugin')
+    require('tw-elements/dist/plugin'),
+    require('flowbite/plugin')
   ],
   theme: {
     extend: {

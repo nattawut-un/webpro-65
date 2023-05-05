@@ -15,7 +15,8 @@ export default {
       categories: [],
       selectedCategories: [],
       searchKeyword: '',
-      loading: false
+      loading: false,
+      showFavorites: false,
     }
   },
   methods: {
@@ -56,6 +57,14 @@ export default {
       })
       }
     },
+    favoriteList() {
+      if (this.showFavorites) {
+        return this.searchedList.filter(item => {
+          return item.fav_id
+        })
+      }
+      return this.searchedList
+    }
   },
   created() {
     this.getProducts()
@@ -79,7 +88,10 @@ export default {
       <div class="container mx-auto py-6 flex">
         <div class="w-1/4 border-r-2">
           <input type="text" v-model="searchKeyword" class="text-black bg-gray-200 rounded-xl px-2 mr-2 text-2xl" /><br>
-          <span class="text-xs">ผลการค้นหาทั้งหมด {{ searchedList.length }} รายการ</span>
+          <span class="text-xs">ผลการค้นหาทั้งหมด {{ favoriteList.length }} รายการ</span>
+          <br>
+          <input type="checkbox" id="favs" v-model="showFavorites">&nbsp;
+          <label for="favs">แสดงรายการที่ชื่นชอบ</label>
         </div>
         <div class="w-1/4 px-8">
           <h1 class="font-bold text-xl">หมวดหมู่</h1>
@@ -91,7 +103,7 @@ export default {
       </div>
     </div>
     <!-- if 0 result -->
-    <div v-show="searchedList.length == 0 && !loading" class="bg-white/80">
+    <div v-show="favoriteList.length == 0 && !loading" class="bg-white/80">
       <div class="container mx-auto pt-16">
         <h1 class="text-[600%] font-pattaya">ไม่พบสิ่งที่ท่านค้นหา</h1>
         <p class="text-[200%] font-mali">โปรดกรอกคำค้นหาใหม่</p>
@@ -109,9 +121,9 @@ export default {
       </div>
     </div>
     <!-- items -->
-    <div class="bg-white/80 grid place-content-center 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 p-8">
+    <div class="bg-white/80 grid place-content-center 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 p-8" @product-refresh="getProducts()">
       <!-- <ListItem v-for="item in searchedList" :name="item.name" :price="item.price" :link="item.file_path" :prod_id="item.id" /> -->
-      <ListItem v-for="item in searchedList" :product="item" />
+      <ListItem v-for="item in favoriteList" :product="item" />
     </div>
   </main>
 </template>

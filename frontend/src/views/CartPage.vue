@@ -76,8 +76,8 @@ export default {
       >
         ลบทั้งหมด
       </button>
-      <button v-show="!store.username || store.cart.length == 0" disabled class="rounded-full px-4 py-2 bg-gray-200 text-black opacity-50">โปรด login และเพิ่มสินค้าลงตะกร้าเพื่อสั่งซื้อ</button>
-      <router-link v-show="store.username && store.cart.length" to="/checkout" class="rounded-full px-4 py-2 transition ease-out duration-100 bg-red-500 text-white">
+      <button v-show="!store.user || store.cart.length == 0" disabled class="rounded-full px-4 py-2 bg-gray-200 text-black opacity-50">โปรด login และเพิ่มสินค้าลงตะกร้าเพื่อสั่งซื้อ</button>
+      <router-link v-show="store.user && store.cart.length" to="/checkout" class="rounded-full px-4 py-2 transition ease-out duration-100 bg-red-500 text-white">
         สั่งซื้อ
       </router-link>
     </div>

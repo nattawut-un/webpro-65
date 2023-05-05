@@ -42,7 +42,7 @@ export default {
     }
   },
   created() {
-    if (!store.username) {
+    if (!store.user) {
       this.$router.push('/')
     } else {
       this.fetchOrder()

@@ -9,7 +9,7 @@
   <body>
     <div id="app" class="bg-main bg-fixed min-h-[100%]">
       <NavBar></NavBar>
-      <router-view v-slot="{ Component }">
+      <router-view v-slot="{ Component }" @auth-change="onAuthChange">
         <transition name="page-opacity" mode="out-in">
           <component :is="Component" />
         </transition>

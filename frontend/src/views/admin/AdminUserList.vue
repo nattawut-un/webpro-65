@@ -17,8 +17,6 @@ export default {
       orders: [],
       doing: [],
       finished: [],
-      refreshTimer: null,
-      toRefresh: 30
     }
   },
   methods: {
@@ -95,22 +93,16 @@ export default {
   },
   created() {
     this.getOrders()
-    this.refreshTimer = setInterval(() => {
-      this.toRefresh -= 1
-    }, 1000)
   },
-  uncreated() {
-    clearInterval(this.refreshTimer)
-  }
 }
 </script>
 
 <template>
   <main>
-    <Section title="รายการคำสั่งซื้อทั้งหมด">
-      <p>รายการคำสั่งซื้อทั้งหมด</p>
+    <Section title="รายการผู้ใช้ทั้งหมด">
+      <p>รายการผู้ใช้ทั้งหมด</p>
       <br>
-      <button class="bg-secondary hover:bg-primary px-4 py-2 rounded-full text-black hover:text-white font-bold transition ease-out duration-200" @click="getOrders()">รีเฟรช ({{ toRefresh }})</button>
+      <button class="bg-secondary hover:bg-primary px-4 py-2 rounded-full text-black hover:text-white font-bold transition ease-out duration-200" @click="getOrders()">รีเฟรช</button>
       <br><br>
       <router-link to="/admin" class="bg-secondary hover:bg-primary transition ease-in-out duration-200 text-black hover:text-white rounded-full px-4 py-2">กลับไปหน้าหลัก</router-link>
     </Section>

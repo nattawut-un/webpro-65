@@ -1,12 +1,11 @@
 <script lang="ts">
 import { store } from '../store.js'
+import http from '../http'
 
 export default {
   data() {
     return {
       store,
-      username: '',
-      loggedIn: false,
       navList: [
         { title: 'หน้าหลัก', url: '/', icon: null },
         { title: 'รายการ', url: '/products', icon: null },
@@ -21,7 +20,7 @@ export default {
         { title: '📲ลงชื่อเข้าใช้', url: '/login' },
       ],
       userMenu: [
-        { title: '📃ประวัติ', url: '/orders' },
+        { title: '📃ประวัติ', url: '/user/orders' },
         { title: '🪪ข้อมูล', url: '/user' },
       ],
       categoryList: [
@@ -29,14 +28,24 @@ export default {
         { title: 'ก๋วยเตี๋ยว', url: '/products?category=noodle' },
         { title: 'เครื่องดื่ม', url: '/products?category=drinks' },
       ],
+      adminMenu: [
+        { title: 'สินค้า', url: '/admin/products' },
+        { title: 'ออเดอร์', url: '/admin/orders' },
+        { title: 'ผู้ใช้', url: '/admin/users' },
+        { title: 'ตั้งค่า', url: '/admin/settings' },
+      ],
     }
   },
   methods: {
     logout() {
       if (confirm('คุณต้องการลงชื่อออกหรือไม่\nOK เพื่อ ตกลง\nCancel เพื่อ ยกเลิก')) {
-        this.$cookies.remove('username')
-        this.$cookies.remove('jwt-token')
-        window.location.href = '/';
+        // this.$cookies.remove('username')
+        // this.$emit('auth-change')
+        // this.$cookies.remove('jwt-token')
+        this.store.user = {}
+        localStorage.removeItem('token')
+        this.$router.push('/')
+        // window.location.href = '/';
       }
     },
     getCart() {
@@ -46,11 +55,11 @@ export default {
   created() {
     this.getCart()
   },
-  watch: {
-    '$route' (to, from) {
-      this.getCart()
-    }
-  }
+  // watch: {
+  //   '$route' (to, from) {
+  //     this.getCart()
+  //   }
+  // }
 }
 </script>
 
@@ -65,20 +74,40 @@ export default {
       </div>
       <div class="flex my-2 w-1/5 justify-end">
         <router-link class="text-white rounded-full px-3 flex cursor-pointer" to="/cart">
-          <h1 class="font-bold text-lg">ตะกร้า<span v-show="store.cart.length && store.username"> ({{ store.cart.length }})</span></h1>&nbsp;<img class="h-7" src="../svg/Cart.svg">
+          <h1 class="font-bold text-lg">ตะกร้า<span v-show="store.cart.length"> ({{ store.cart.length }})</span></h1>&nbsp;<img class="h-7" src="../svg/Cart.svg">
         </router-link>
       </div>
     </div>
-    <div class="bg-red-200/80 hover:bg-secondary transition duration-300 ease-out py-1 font-mali">
-      <div class="container flex justify-end mx-auto px-4 font-pattaya">
-        <router-link v-if="store.username" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in userMenu" :to="item.url">
-          {{ item.title }}
-        </router-link>
-        <router-link v-else class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in guestMenu" :to="item.url">
-          {{ item.title }}
-        </router-link>
-        <button v-if="store.username" @click="logout()" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4">🚪ลงชื่อออก</button>
-        <h1 v-show="store.username" class="bg-primary px-2 rounded-full font-bold">👤{{ store.username }}</h1>
+    <div class="bg-red-200/80 hover:bg-secondary transition duration-300 ease-out py-1 font-mali flex">
+      <div class="container mx-auto flex">
+        <div class="flex px-4 font-pattaya w-1/3">
+          <div v-if="$route.path.includes('/admin')">
+            <router-link to="/admin">เมนูแอดมิน&nbsp;&nbsp;&nbsp;&nbsp;::&nbsp;&nbsp;&nbsp;&nbsp;</router-link>
+            <router-link v-for="item in adminMenu" :to="item.url" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4">
+              {{ item.title }}
+            </router-link>
+          </div>
+        </div>
+        <div class="flex px-4 font-pattaya w-2/3 justify-end">
+          <router-link v-if="store.user.data && store.user.data.is_admin" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" to="/admin">
+            ⚒️แอดมิน
+          </router-link>
+          <router-link v-if="store.user.data" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in userMenu" :to="item.url">
+            {{ item.title }}
+          </router-link>
+          <router-link v-else class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in guestMenu" :to="item.url">
+            {{ item.title }}
+          </router-link>
+          <button v-if="store.user.data" @click="logout()" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4">🚪ลงชื่อออก</button>
+          <!-- {{ store.user }}  -->
+          <!-- <h1 v-if="store.user.data.is_admin" class="bg-primary/40 px-2 rounded-full">🖥️{{ store.user.data.username }}</h1>
+          <h1 v-else class="bg-primary/40 px-2 rounded-full">👤{{ store.user.data.username }}</h1> -->
+          <h1 class="bg-primary/40 px-2 rounded-full" v-if="store.user.data">
+            <span v-if="store.user.data.is_admin">🖥️</span>
+            <span v-else>👤</span>
+            {{ store.user.data.username }}
+          </h1>
+        </div>
       </div>
     </div>
   </nav>
