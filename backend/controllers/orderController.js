@@ -32,7 +32,6 @@ export const placeOrder = async (req, res, next) => {
 export const fetchOrderbyUser = async (req, res, next) => {
   try {
     const orders = await getOrderFromID(req.user.id)
-    // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Order fetched'.brightGreen.bold + ' id: ' + req.user.id)
     return res.send(orders)
   } catch (err) {
     console.log(err)

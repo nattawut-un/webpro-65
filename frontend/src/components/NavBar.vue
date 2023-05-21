@@ -31,7 +31,6 @@ export default {
         { title: 'สินค้า', url: '/admin/products' },
         { title: 'ออเดอร์', url: '/admin/orders' },
         { title: 'ผู้ใช้', url: '/admin/users' },
-        { title: 'ตั้งค่า', url: '/admin/settings' },
       ],
     }
   },
@@ -91,9 +90,6 @@ export default {
             {{ item.title }}
           </router-link>
           <button v-if="store.user.data" @click="logout()" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4">🚪ลงชื่อออก</button>
-          <!-- {{ store.user }}  -->
-          <!-- <h1 v-if="store.user.data.is_admin" class="bg-primary/40 px-2 rounded-full">🖥️{{ store.user.data.username }}</h1>
-          <h1 v-else class="bg-primary/40 px-2 rounded-full">👤{{ store.user.data.username }}</h1> -->
           <h1 class="bg-primary/40 px-2 rounded-full" v-if="store.user.data">
             <span v-if="store.user.data.is_admin">🖥️</span>
             <span v-else>👤</span>

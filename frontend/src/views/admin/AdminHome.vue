@@ -18,33 +18,21 @@ export default {
         {
           icon: '🍛',
           title: 'รายการสินค้า',
-          description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro deserunt qui earum, nihil harum quo, explicabo rerum mollitia labore rem libero deleniti nesciunt vitae aliquid odit tenetur quibusdam illo expedita.',
+          description: 'เพิ่ม แก้ไข ลบรายการสินค้า',
           to: '/admin/products'
         },
         {
           icon: '📃',
           title: 'รายการสั่งซื้อ',
-          description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro deserunt qui earum, nihil harum quo, explicabo rerum mollitia labore rem libero deleniti nesciunt vitae aliquid odit tenetur quibusdam illo expedita.',
+          description: 'ดำเนินการคพสั่งซื้อให้เสร็จ หรือลบคำสั่งซื้อ',
           to: '/admin/orders'
         },
         {
           icon: '👥',
           title: 'จัดการผู้ใช้',
-          description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro deserunt qui earum, nihil harum quo, explicabo rerum mollitia labore rem libero deleniti nesciunt vitae aliquid odit tenetur quibusdam illo expedita.',
+          description: 'ให้สิทธิ์ผู้ใช้ หรือลบผู้ใช้',
           to: '/admin/users'
         },
-        // {
-        //   icon: '💵',
-        //   title: 'ระบบบัญชี',
-        //   description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro deserunt qui earum, nihil harum quo, explicabo rerum mollitia labore rem libero deleniti nesciunt vitae aliquid odit tenetur quibusdam illo expedita.',
-        //   to: '/admin/account'
-        // },
-        // {
-        //   icon: '⚙️',
-        //   title: 'ตั้งค่าระบบ',
-        //   description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro deserunt qui earum, nihil harum quo, explicabo rerum mollitia labore rem libero deleniti nesciunt vitae aliquid odit tenetur quibusdam illo expedita.',
-        //   to: '/admin/settings'
-        // },
       ],
       colors: [
         '#f87171',
@@ -57,26 +45,6 @@ export default {
       ]
     }
   },
-  // methods: {
-  //   async authorize() {
-  //     const result = await http.get('/api/get_user')
-  //     .then(res => {
-  //       if (res.error) {
-  //         alert(res.error)
-  //         this.$router.back()
-  //       } else if (res.data.data.is_admin != 1) {
-  //         this.$router.push('/')
-  //       } else {
-  //         this.userInfo = res.data.data
-  //       }
-  //     }).catch(err => {
-  //       console.log(err)
-  //     })
-  //   }
-  // },
-  mounted() {
-    // this.authorize()
-  }
 }
 </script>
 
@@ -84,8 +52,7 @@ export default {
   <main>
     <img :src="AdminHomeHeader" class="w-full h-[30vh] object-cover">
     <Section title="Admin Home">
-      <!-- <h2>{{ store.apiURL }}</h2><br>
-      <h2>{{ userInfo }}</h2> -->
+      <h2>Server URL: {{ store.apiURL }}</h2>
       <br><hr class="border-primary border-2 rounded-full"><br>
       <div class="grid grid-cols-2">
         <router-link v-for="(item, index) in menus" :to="item.to" :style="{ backgroundColor: colors[index % this.colors.length] }" class="text-white p-6 mx-4 my-2 rounded-lg shadow-lg hover:shadow-xl flex hover:scale-105 transition duration-150 min-h-[230px]">

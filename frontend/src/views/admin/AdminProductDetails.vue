@@ -100,7 +100,7 @@ export default {
           category_id: this.details.category_id
         })
         .then(response => {
-          console.log('Data updated.')
+          this.v$.$reset()
           alert('แก้ไขข้อมูลสำเร็จ')
           this.$router.go(-1)
         }).catch(err => console.log(err))
@@ -117,6 +117,7 @@ export default {
         if (confirm('คุณต้องการลบข้อมูลสินค้า "' + this.details.name + '" หรือไม่\nการกระทำนี้ไม่สามารถย้อนกลับได้')) {
           let res = await http.delete('/api/products/' + this.details.id + '/delete')
           .then(response => {
+            this.v$.$reset()
             alert('ลบข้อมูลสำเร็จแล้ว')
             this.$router.go(-1)
           })
@@ -138,7 +139,7 @@ export default {
     this.getCategories()
   },
   beforeUnmount() {
-    if (this.v$.$anyDirty && !this.loading) {
+    if (this.v$.$anyDirty) {
       if (!(confirm('คุณต้องการออกจากหน้านี้หรือไม่\nคุณมีการแก้ไขที่ยังไม่ได้ถูกบันทึก'))) {
         return false
       }
@@ -180,7 +181,7 @@ import SectionFull from '@/components/SectionFull.vue'
         <label for="category">หมวดหมู่</label>
         <select name="category" id="category" v-model="v$.details.category_id.$model" class="bg-gray-100 rounded-full ml-2 px-2 py-1"
         :class="[ v$.details.category_id.$dirty ? 'border-red-400 hover:border-red-600' : 'border-gray-200 hover:border-gray-500' ]">
-          <option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</option>
+          <option v-for="item in categories" :key="item.id" :value="item.id">{{ item.emoji }} {{ item.name }}</option>
         </select>
       </div><br>
       <div>

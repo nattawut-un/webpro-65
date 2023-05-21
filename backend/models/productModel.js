@@ -13,7 +13,7 @@ export const getProducts = async (user_id = null) => {
       LEFT OUTER JOIN categories c ON (p.category_id = c.id)
       LEFT OUTER JOIN user_favs f ON (p.id = f.prod_id AND f.user_id = '${user_id}')
       JOIN (
-        SELECT p.id prod_id, count(od.od_id) purchase_amount
+        SELECT p.id prod_id, IFNULL(sum(od.prod_amount), 0) purchase_amount
         FROM products p
         LEFT OUTER JOIN order_detail od ON (p.id = od.prod_id)
         GROUP BY p.id
@@ -33,7 +33,7 @@ export const getProducts = async (user_id = null) => {
       LEFT OUTER JOIN images i ON (p.id = i.product_id)
       LEFT OUTER JOIN categories c ON (p.category_id = c.id)
       JOIN (
-        SELECT p.id prod_id, count(od.od_id) purchase_amount
+        SELECT p.id prod_id, IFNULL(sum(od.prod_amount), 0) purchase_amount
         FROM products p
         LEFT OUTER JOIN order_detail od ON (p.id = od.prod_id)
         GROUP BY p.id

@@ -4,9 +4,9 @@
       <img src="../assets/images/profile.jpg" class="rounded-full">
     </div>
     <div class="w-3/5 px-4">
-      <h1 class="font-bold text-2xl">{{ title }}</h1>
-      <p>Amount: {{ amount }}</p>
-      <p>Price per one: {{ price }}</p>
+      <h1 class="font-bold text-2xl mb-2">{{ title }}</h1>
+      <p>จำนวน: {{ amount }}</p>
+      <p>ราคาต่อหน่วย: {{ price }}.-</p>
     </div>
     <div class="w-1/5 font-bold text-4xl font-chonburi">
       {{ totalPrice }}.-

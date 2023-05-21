@@ -67,7 +67,7 @@ export default {
 
 <template>
   <main>
-    <Section title="Admin Category List">
+    <Section title="รายการหมวดหมู่ทั้งหมด">
       <div class="flex">
         <div class="w-1/2">
           แก้ไขข้อมูลของสินค้านะจ๊ะ
@@ -116,7 +116,6 @@ export default {
       <div class="font-mali bg-gray-200 shadow-lg m-8 px-8 py-6 rounded-lg flex" v-for="item in categories">
         <div class="w-1/6">
           <p class="text-2xl">{{ item.id }} {{ item.emoji }}</p>
-          <!-- <img :src="store.apiURL + item.file_path" class="aspect-square object-cover rounded-full h-24"> -->
         </div>
         <div class="w-3/6">
           <h1 class="font-bold text-2xl">{{ item.name }}</h1>
@@ -126,8 +125,7 @@ export default {
           <p class="font-bold text-xl">{{ item.prod_amount }}</p>
         </div>
         <div class="w-1/6">
-          <button class="bg-green-300 px-2 py-1 rounded-full mr-2">แก้ไข</button>
-          <button class="bg-red-500 text-white px-2 py-1 rounded-full mr-2" @click="deleteCategory(item)">ลบ</button>
+          <button class="bg-red-500 text-white px-4 py-2 rounded-full mr-2" @click="deleteCategory(item)">ลบ</button>
         </div>
       </div>
     </div>

@@ -86,7 +86,7 @@ export default {
           }.bind(this)
         })
         .then(response => {
-          console.log('Data added.')
+          this.v$.$reset()
           alert('เพิ่มข้อมูลสำเร็จ')
           this.$router.push('/admin/products')
         }).catch(err => {
@@ -103,7 +103,7 @@ export default {
     this.getCategories()
   },
   beforeUnmount() {
-    if (this.v$.$anyDirty && !this.loading) {
+    if (this.v$.$anyDirty) {
       if (!(confirm('คุณต้องการออกจากหน้านี้หรือไม่\nคุณมีการแก้ไขที่ยังไม่ได้ถูกบันทึก'))) {
         return false
       }
@@ -144,7 +144,7 @@ import SectionFull from '@/components/SectionFull.vue'
       <div>
         <label for="category">หมวดหมู่</label>
         <select name="category" id="category" v-model="v$.details.category_id.$model" class="bg-gray-100 rounded-full ml-2 px-2 py-1">
-          <option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</option>
+          <option v-for="item in categories" :key="item.id" :value="item.id">{{ item.emoji }} {{ item.name }}</option>
         </select>
       </div><br>
       <div>

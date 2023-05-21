@@ -70,7 +70,7 @@ export default {
         },
         confirmPassword: {
           required: helpers.withMessage('จำเป็นต้องกรอกรหัสผ่านอีกครั้ง', required),
-          sameAs: helpers.withMessage('รหัสผ่านไม่ตรงกัน', sameAs(this.password))
+          sameAs: helpers.withMessage('รหัสผ่านไม่ตรงกัน', sameAs(this.editPassword.newPassword))
         },
       },
       newAddress: {
@@ -325,9 +325,6 @@ export default {
                       ตั้งให้เป็นอันหลัก
                     </button>&nbsp;&nbsp;
                   </span>
-                  <button class="hover:bg-primary text-black hover:text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" :class="[ item.main_addr ? 'bg-light' : 'bg-secondary' ]">
-                    แก้ไข
-                  </button>&nbsp;&nbsp;
                   <button class="bg-red-500 hover:bg-red-400 text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" @click="deleteAddress(item)">
                     ลบ
                   </button>

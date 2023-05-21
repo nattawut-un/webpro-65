@@ -1,12 +1,11 @@
 <script setup>
-import { store } from '../store.js'
 import Section from '@/components/Section.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import AddressCard from '@/components/AddressCard.vue'
 </script>
 
 <script>
-
+import { store } from '../store.js'
 import http from '@/http';
 export default {
   data() {
@@ -50,6 +49,7 @@ export default {
       }).then(res => {
         alert('การสั่งซื้อสำเร็จ')
         localStorage.removeItem('cart')
+        this.store.cart = []
         this.$router.push('/')
       }).catch(err => {
         alert(err)
@@ -103,12 +103,6 @@ export default {
             </div>
           </div>
           <br><hr><br>
-          <!-- <div>
-            <div class="flex pb-2">
-              <h2 class="font-bold text-xl mr-2">วิธีชำระเงิน</h2>
-            </div>
-          </div> -->
-          <!-- selected = {{ selectedAddress }} -->
         </div>
       </div>
     </div>

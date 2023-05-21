@@ -49,7 +49,7 @@ export default {
           order_id: order.order_id
         })
           .then(response => {
-            alert('order เสร็จสมบูรณ์\norder-id=' + order.order_id)
+            alert('order เสร็จสมบูรณ์')
             this.getOrders()
           })
           .catch(err => console.log(err))
@@ -61,27 +61,12 @@ export default {
         this.loading = true
         await http.delete(`/api/orders/delete/${order.order_id}`)
           .then(response => {
-            alert('order ถูกลบ\norder-id=' + order.order_id)
+            alert('order ถูกลบ')
             this.getOrders()
           })
           .catch(err => console.log(err))
         this.loading = false
       }
-    },
-    async authorize() {
-      const result = await http.get('/api/get_user')
-        .then(res => {
-          if (res.error) {
-            alert(res.error)
-            this.$router.back()
-          } else if (res.data.data.is_admin != 1) { this.$router.push('/') }
-          else {
-            // this.userInfo = res.data.data
-            return true
-          }
-        }).catch(err => {
-          console.log(err)
-        })
     },
     totalPrice(list) {
       return list.reduce((total, item) => { return total + (item.price * item.amount) }, 0)
@@ -136,83 +121,85 @@ export default {
 
       <!-- finished -->
       <h1 class="text-2xl font-pattaya">กำลังดำเนินการ ({{ doing.length }})</h1>
-      <div class="bg-gray-200 my-2 p-4 rounded-lg border-4 border-gray-300 font-mali" v-for="(value, key) in doing" :key="key">
-        <div class="flex">
-          <div class="w-1/2">
-            <!-- <div class="bg-gray-100/50">
-              <p v-for="(value, key) in order">{{ key }}: {{ value }}</p>
-            </div> -->
-            <h3 class="text-gray-400 font-[monospace] font-bold text-sm mb-3">#{{ value.order_id }}</h3>
-            <p><b>ชื่อผู้สั่ง:</b><br>{{ value.username }}</p>
-            <p><b>เวลาที่สั่งซื้อ:</b><br>{{ moment(value.order_time).format('llll') }} ({{ moment(value.order_time).fromNow() }})</p>
-            <p><b>ที่อยู่:</b><br>{{ value.address }}</p>
-          </div>
-          <div class="w-1/2 px-4">
-            <!-- <table class="table-auto w-full bg-white">
-              <thead class="bg-red-100">
-                <tr class="border-b-2 border-primary text-left">
-                  <th class="px-2">ชื่อ</th>
-                  <th class="px-2">จำนวน</th>
-                  <th class="px-2">ราคา</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="border-t-2 border-gray-300" v-for="item in order.cart">
-                  <td class="px-2">{{ item.name }}</td>
-                  <td class="px-2">{{ item.quantity }}</td>
-                  <td class="px-2">{{ item.total }}</td>
-                </tr>
-              </tbody>
-            </table> -->
-            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-              <table class="w-full text-sm text-left">
-                <thead class="text-sm uppercase bg-gray-300 text-black">
-                  <tr>
-                    <th scope="col" class="px-6 py-3">
-                      ชื่อ
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                      จำนวน
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                      ราคา
-                    </th>
+      <div class="container mx-auto">
+        <div class="bg-gray-200 my-2 p-4 rounded-lg border-4 border-gray-300 font-mali" v-for="(value, key) in doing" :key="key">
+          <div class="flex">
+            <div class="w-1/2">
+              <!-- <div class="bg-gray-100/50">
+                <p v-for="(value, key) in order">{{ key }}: {{ value }}</p>
+              </div> -->
+              <h3 class="text-gray-400 font-[monospace] font-bold text-sm mb-3">#{{ value.order_id }}</h3>
+              <p><b>ชื่อผู้สั่ง:</b><br>{{ value.username }}</p>
+              <p><b>เวลาที่สั่งซื้อ:</b><br>{{ moment(value.order_time).format('llll') }} ({{ moment(value.order_time).fromNow() }})</p>
+              <p><b>ที่อยู่:</b><br>{{ value.address }}</p>
+            </div>
+            <div class="w-1/2 px-4">
+              <!-- <table class="table-auto w-full bg-white">
+                <thead class="bg-red-100">
+                  <tr class="border-b-2 border-primary text-left">
+                    <th class="px-2">ชื่อ</th>
+                    <th class="px-2">จำนวน</th>
+                    <th class="px-2">ราคา</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    class="bg-gray-100 border-b"
-                    v-for="item in value.order_list" :key="item.id">
-                    <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
-                      {{ item.name }}
-                    </th>
-                    <td class="px-6 py-4">
-                      {{ item.amount }}
-                    </td>
-                    <td class="px-6 py-4">
-                      {{ item.price * item.amount }}.-
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
-                      รวม
-                    </th>
-                    <td class="px-6 py-4 font-bold">
-                      {{ totalAmount(value.order_list) }}
-                    </td>
-                    <td class="px-6 py-4 font-bold">
-                      {{ totalPrice(value.order_list) }}.-
-                    </td>
+                  <tr class="border-t-2 border-gray-300" v-for="item in order.cart">
+                    <td class="px-2">{{ item.name }}</td>
+                    <td class="px-2">{{ item.quantity }}</td>
+                    <td class="px-2">{{ item.total }}</td>
                   </tr>
                 </tbody>
-              </table>
+              </table> -->
+              <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left">
+                  <thead class="text-sm uppercase bg-gray-300 text-black">
+                    <tr>
+                      <th scope="col" class="px-6 py-3">
+                        ชื่อ
+                      </th>
+                      <th scope="col" class="px-6 py-3">
+                        จำนวน
+                      </th>
+                      <th scope="col" class="px-6 py-3">
+                        ราคา
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      class="bg-gray-100 border-b"
+                      v-for="item in value.order_list" :key="item.id">
+                      <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
+                        {{ item.name }}
+                      </th>
+                      <td class="px-6 py-4">
+                        {{ item.amount }}
+                      </td>
+                      <td class="px-6 py-4">
+                        {{ item.price * item.amount }}.-
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
+                        รวม
+                      </th>
+                      <td class="px-6 py-4 font-bold">
+                        {{ totalAmount(value.order_list) }}
+                      </td>
+                      <td class="px-6 py-4 font-bold">
+                        {{ totalPrice(value.order_list) }}.-
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
-        <br>
-        <div class="flex">
-          <button class="bg-green-400 px-4 py-2 font-bold rounded-full mr-2" @click="finishOrder(value)">✅ เสร็จสิ้น</button>
-          <button class="bg-red-500 px-4 py-2 text-white font-bold rounded-full mr-2" @click="deleteOrder(value)">🚫 ยกเลิก</button>
+          <br>
+          <div class="flex">
+            <button class="bg-green-400 px-4 py-2 font-bold rounded-full mr-2" @click="finishOrder(value)">✅ เสร็จสิ้น</button>
+            <button class="bg-red-500 px-4 py-2 text-white font-bold rounded-full mr-2" @click="deleteOrder(value)">🚫 ยกเลิก</button>
+          </div>
         </div>
       </div>
     </div>
@@ -304,8 +291,8 @@ export default {
                 </span>
               </td>
               <td class="px-6 py-4 text-right">
-                <router-link :to="'/admin/orders/' + value.order_id"
-                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline">📃ข้อมูล</router-link>
+                <button @click="deleteOrder(value)"
+                  class="font-medium text-red-500 hover:underline">❌ ลบ</button>
               </td>
             </tr>
           </tbody>

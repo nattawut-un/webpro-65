@@ -46,12 +46,12 @@ export default {
     </div>
     <div class="flex">
       <div class="w-1/3 bg-primary p-8">
-        <h1 class="font-chonburi font-bold text-white text-[60px]">
-          WELCOME<br>TO<br>{{ store.shopName }}<br>SHOP
+        <h1 class="font-chonburi font-bold text-secondary text-[60px]">
+          WELCOME<br>TO<br><span class="text-white">{{ store.shopName }}</span><br>SHOP
         </h1>
       </div>
       <Section title="เริ่มสั่งซื้อได้เลย" class="w-2/3">
-        <p class="indent-12 text-2xl">
+        <p class="indent-12 text-2xl pt-4">
           ยินดีต้อนรับสู่ร้านอาหาร {{ store.shopName }} ของเรา ท่านสามารถเลือกสั่งอาหารได้เลยในเว็บไซต์นี้ ท่านสามารถเลือกบันทึกอาหารที่ชื่นชอบ หรือตรวจสอบรายการอาหารที่กำลังทำอยู่ได้
         </p>
       </Section>

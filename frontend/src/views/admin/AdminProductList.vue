@@ -55,7 +55,7 @@ export default {
 
 <template>
   <main>
-    <Section title="Admin Product List">
+    <Section title="รายการสินค้าทั้งหมด">
       <div class="flex">
         <div class="w-1/2">
           แก้ไขข้อมูลของสินค้านะจ๊ะ

@@ -160,9 +160,11 @@ router.beforeEach(async (to, from, next) => {
   const token = localStorage.getItem('token')
   var user = store.user
   if (token && Object.keys(store.user).length === 0) {
+    console.log('Fetch user data...')
     await http.get('/api/get_user')
-    .then(res => { 
-      user = res
+    .then(res => {
+      user = res.data
+      console.log(user)
     })
   }
 
@@ -170,7 +172,7 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.level === 'guest' && token) {
     // pages don't need login but have user
     alert('You are already logged in.')
-    return false
+    return next({ name: 'home' })
   }
 
   if ((to.meta.level === 'user' || to.meta.level === 'admin') && !token) {

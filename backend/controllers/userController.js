@@ -96,7 +96,7 @@ export const authorizeUser = async (req, res, next) => {
     })
   }
 
-  setLogin(decoded.id)
+  await setLogin(decoded.id)
   req.user = thisUser
   next()
 }
@@ -217,7 +217,6 @@ export const changePassword = async (req, res, next) => {
   .then(hash => {
     console.log(hash)
     updateUser(id, { password: hash }, 'password')
-    // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Password changed'.brightGreen.bold + ' user: ' + user.username)
     return res.send({
       msg: 'Password changed.',
       id: id

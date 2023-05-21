@@ -47,8 +47,8 @@ export default {
     },
   },
   mounted() {
-    this.username = 'admin'
-    this.password = 'password'
+    this.username = ''
+    this.password = ''
   },
 }
 </script>
