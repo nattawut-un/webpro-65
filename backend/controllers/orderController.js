@@ -2,15 +2,31 @@ import { addOrder, getOrderFromID, getOrders, editOrderFinish, deleteOrder } fro
 import { getAddressFromID } from '../models/userModel.js'
 import { v4 as uuidv4 } from 'uuid'
 
+// export const placeOrder = async (req, res, next) => {
+//   const { user_id, address_id, cart } = req.body
+//   const order_id = uuidv4()
+//   const address = await getAddressFromID(address_id)
+
+//   await addOrder(order_id, user_id, address, cart)
+//   return res.status(200).send({
+//     msg: 'Order successful.'
+//   })
+// }
+
 export const placeOrder = async (req, res, next) => {
   const { user_id, address_id, cart } = req.body
   const order_id = uuidv4()
   const address = await getAddressFromID(address_id)
 
-  addOrder(order_id, user_id, address, cart)
-  res.status(200).send({
-    msg: 'Order successful.'
-  })
+  try {
+    await addOrder(order_id, user_id, address, JSON.parse(cart))
+    return res.status(200).send({
+      msg: 'Order successful.'
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send(err)
+  }
 }
 
 export const fetchOrderbyUser = async (req, res, next) => {
@@ -23,6 +39,16 @@ export const fetchOrderbyUser = async (req, res, next) => {
     return res.status(500).send(err)
   }
 }
+
+// export const fetchOrders = async (req, res, next) => {
+//   try {
+//     const results = await getOrders()
+//     return res.send(results)
+//   } catch (err) {
+//     console.log(err)
+//     return res.status(500).send(err)
+//   }
+// }
 
 export const fetchOrders = async (req, res, next) => {
   try {

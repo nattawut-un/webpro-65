@@ -1,6 +1,7 @@
 <script setup>
 import Section from '../components/Section.vue'
 import ListItem from '../components/ListItem.vue'
+import ProductImage from '@/assets/images/food_list.jpg'
 </script>
 
 <script>
@@ -66,7 +67,10 @@ export default {
       return this.searchedList
     }
   },
-  created() {
+  mounted() {
+    if (this.$route.query.cate_id) {
+      this.selectedCategories = [parseInt(this.$route.query.cate_id)]
+    }
     this.getProducts()
     this.getCategories()
   }
@@ -75,13 +79,10 @@ export default {
 
 <template>
   <main>
-    <img src="../assets/images/food_list.jpg" class="w-full h-[30vh] object-cover">
+    <img :src="ProductImage" class="w-full h-[30vh] object-cover">
     <Section title="รายการอาหารทั้งหมด">
       <p class="indent-12">
-        เอ็กซ์โปแคชเชียร์ สเตริโอแก๊สโซฮอล์ออกแบบ แจมด็อกเตอร์เฮอร์ริเคนไงแฮปปี้ ปฏิสัมพันธ์พะเรอช็อปจูเนียร์ เอ๋อเอ็กซ์โป บรรพชน กลาสเจ๊าะแจ๊ะ ธรรมายากูซ่าบร็อคโคลีพาสปอร์ต ไมค์เจ๊าะแจ๊ะเซ็นเตอร์ฮวงจุ้ยทอล์ค ยาวีมอยส์เจอไรเซอร์ละอ่อนบัสธัมโม พริตตี้พุทธภูมิ ก่อนหน้าแมคเคอเรลมายองเนสไพลินโครนา แฟรี่ราชบัณฑิตยสถานศิรินทร์ศากยบุตร ตัวเองติวเตอร์ โปรโมเตอร์ เคอร์ฟิว
-      </p>
-      <p class="indent-12">
-        มั้งลิมิต รูบิกอุปการคุณรวมมิตรเซ็นทรัลเฟรชชี่ ปาสเตอร์ แอปเปิลมยุราภิรมย์แช่แข็ง ทาวน์เฮาส์แซ็กโซโฟน แชมเปี้ยนครัวซองต์เช็ก ซูโม่ บร็อคโคลีฮาโลวีนวิวสแตนเลสแชมปิยอง สปอร์ตซิตี้ติงต๊องไฮกุสปิริต สเตริโอล้มเหลวต่อยอดพุดดิ้ง ฮีโร่เทคโนไฮไลท์เที่ยงวัน อีแต๋นพูลฮีโร่แจ๊ส ออเดอร์วืด เมเปิลฮัมติวแคร์ไอติม มัฟฟินจิตเภทรีโมท ถูกต้องแม่ค้าวีซ่าฮากกาฮันนีมูน
+        <!-- เอ็กซ์โปแคชเชียร์ สเตริโอแก๊สโซฮอล์ออกแบบ แจมด็อกเตอร์เฮอร์ริเคนไงแฮปปี้ ปฏิสัมพันธ์พะเรอช็อปจูเนียร์ เอ๋อเอ็กซ์โป บรรพชน กลาสเจ๊าะแจ๊ะ ธรรมายากูซ่าบร็อคโคลีพาสปอร์ต ไมค์เจ๊าะแจ๊ะเซ็นเตอร์ฮวงจุ้ยทอล์ค ยาวีมอยส์เจอไรเซอร์ละอ่อนบัสธัมโม พริตตี้พุทธภูมิ ก่อนหน้าแมคเคอเรลมายองเนสไพลินโครนา แฟรี่ราชบัณฑิตยสถานศิรินทร์ศากยบุตร ตัวเองติวเตอร์ โปรโมเตอร์ เคอร์ฟิว -->
       </p>
     </Section>
     <div class="bg-white font-mali border-primary border-b-4">
@@ -97,7 +98,7 @@ export default {
           <h1 class="font-bold text-xl">หมวดหมู่</h1>
           <div v-for="item in categories">
             <input type="checkbox" :id="item.id" :value="item.id" :key="item.id" v-model="selectedCategories">&nbsp;
-            <label :for="item.id">{{ item.name }}</label>
+            <label :for="item.id">{{ item.emoji }} {{ item.name }}</label>
           </div>
         </div>
       </div>

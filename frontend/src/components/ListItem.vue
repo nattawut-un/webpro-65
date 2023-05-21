@@ -9,7 +9,7 @@
         </div>
       </div>
     </router-link>
-    <div class="px-4 pb-4 grid grid-cols-2 gap-2">
+    <div class="px-4 pb-4 grid grid-cols-2 gap-2" v-if="store.user.data">
       <button class="rounded-full text-black py-2 bg-pink-400 hover:bg-pink-300" v-if="product.fav_id" @click="deleteFav(product)">
         <div class="flex justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill mt-1 mr-2" viewBox="0 0 16 16">
@@ -26,7 +26,6 @@
           ชื่นชอบ
         </div>
       </button>
-      <button class="bg-white hover:bg-gray-300 rounded-full text-black py-2">เพิ่มลงตะกร้า</button>
     </div>
   </div>
 </template>
@@ -52,7 +51,6 @@ export default {
         prod_id: product.id,
       }).then(res => {
         product.fav_id = 1
-        // this.$emit('productRefresh')
       }).catch(err => {
         console.log(err)
       })

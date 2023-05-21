@@ -7,28 +7,8 @@
     <title>Web Programming 2565</title>
   </head>
   <body>
-    <div id="app" class="bg-main bg-fixed min-h-[100%]">
-      <NavBar></NavBar>
-      <router-view v-slot="{ Component }" @auth-change="onAuthChange">
-        <transition name="page-opacity" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view>
-      <Foot></Foot>
+    <div id="app">
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
-
-<style>
-.page-opacity-enter-active,
-.page-opacity-leave-active {
-  transition: .15s ease all;
-}
-
-.page-opacity-enter-from,
-.page-opacity-leave-to {
-  opacity: 0;
-  transform: translateY(-50px) scale(0.95);
-}
-</style>

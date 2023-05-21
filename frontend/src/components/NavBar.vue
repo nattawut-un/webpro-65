@@ -7,13 +7,12 @@ export default {
     return {
       store,
       navList: [
-        { title: 'หน้าหลัก', url: '/', icon: null },
-        { title: 'รายการ', url: '/products', icon: null },
+        { title: 'รายการอาหารทั้งหมด', url: '/products' },
       ],
       accList: [
-        { title: 'ประวัติการสั่งซื้อ', url: '/', icon: null },
-        { title: 'แก้ไขข้อมูล', url: '/', icon: null },
-        { title: 'ลงชื่อออก', url: '/', icon: null },
+        { title: 'ประวัติการสั่งซื้อ', url: '/' },
+        { title: 'แก้ไขข้อมูล', url: '/' },
+        { title: 'ลงชื่อออก', url: '/' },
       ],
       guestMenu: [
         { title: '📥สมัครสมาชิก', url: '/register' },
@@ -39,35 +38,28 @@ export default {
   methods: {
     logout() {
       if (confirm('คุณต้องการลงชื่อออกหรือไม่\nOK เพื่อ ตกลง\nCancel เพื่อ ยกเลิก')) {
-        // this.$cookies.remove('username')
-        // this.$emit('auth-change')
-        // this.$cookies.remove('jwt-token')
         this.store.user = {}
         localStorage.removeItem('token')
         this.$router.push('/')
-        // window.location.href = '/';
       }
     },
     getCart() {
       this.store.cart = JSON.parse(localStorage.getItem('cart') || '[]')
     }
   },
-  created() {
+  mounted() {
     this.getCart()
   },
-  // watch: {
-  //   '$route' (to, from) {
-  //     this.getCart()
-  //   }
-  // }
 }
 </script>
 
 <template>
-  <nav id="navbar" class="bg-primary/80 hover:bg-primary backdrop-blur-lg sticky top-0 w-full transition duration-300 ease-out font-chonburi z-50">
+  <nav id="navbar" class="bg-primary/80 hover:bg-primary backdrop-blur-lg sticky top-0 w-full transition duration-300 ease-out font-chonburi z-[99999999999]">
     <div class="container mx-auto flex px-4">
       <div class="flex my-2 w-4/5">
-        <h1 class="text-white font-bold text-xl mr-8">{{ store.shopName }}</h1>
+        <router-link to="/">
+            <h1 class="text-white font-bold text-xl mr-8">{{ store.shopName }}</h1>
+        </router-link>
         <router-link class="text-secondary hover:text-white transition duration-300 ease-out text-xl mr-6" v-for="item in navList" :to="item.url">
           <h1> {{ item.title }} </h1>
         </router-link>
@@ -81,7 +73,7 @@ export default {
     <div class="bg-red-200/80 hover:bg-secondary transition duration-300 ease-out py-1 font-mali flex">
       <div class="container mx-auto flex">
         <div class="flex px-4 font-pattaya w-1/3">
-          <div v-if="$route.path.includes('/admin')">
+          <div v-if="this.$route.path.includes('/admin')">
             <router-link to="/admin">เมนูแอดมิน&nbsp;&nbsp;&nbsp;&nbsp;::&nbsp;&nbsp;&nbsp;&nbsp;</router-link>
             <router-link v-for="item in adminMenu" :to="item.url" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4">
               {{ item.title }}

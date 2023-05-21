@@ -6,144 +6,175 @@ import RegisterImage from '@/assets/images/register.jpg'
 <script>
 import http from '@/http'
 import { store } from '@/store'
-import validator from 'validator'
+import useVuelidate from '@vuelidate/core'
+import {
+  required, minLength, maxLength, email, helpers, alphaNum, sameAs
+} from '@vuelidate/validators'
 
 export default {
   data() {
     return {
+      v$: useVuelidate(),
       store,
       username: '',
-      email: '',
+      first_name: '',
+      last_name: '',
+      mail: '',
+      phone: '',
       password: '',
-      passwordRe: '',
+      confirmPassword: '',
+      address: '',
       serverErr: ''
+    }
+  },
+  validations() {
+    return {
+      username: {
+        required: helpers.withMessage('จำเป็นต้องกรอกชื่อผู้ใช้', required),
+        minLength: helpers.withMessage('ต้องกรอกอย่างน้อย 5 ตัวอักษร', minLength(5)),
+        maxLength: helpers.withMessage('ต้องกรอกไม่เกิน 30 ตัวอักษร', maxLength(30)),
+        alphaNum: helpers.withMessage('ต้องมีแค่ตัวอักษรกับตัวเลข', alphaNum)
+      },
+      first_name: {
+        required: helpers.withMessage('จำเป็นต้องกรอกชื่อจริง', required),
+        minLength: helpers.withMessage('ต้องกรอกชื่อจริงอย่างน้อย 3 ตัวอักษร', minLength(3))
+      },
+      last_name: {
+        required: helpers.withMessage('จำเป็นต้องกรอกนามสกุล', required),
+        minLength: helpers.withMessage('ต้องกรอกนามสกุลอย่างน้อย 3 ตัวอักษร', minLength(3))
+      },
+      password: {
+        required: helpers.withMessage('จำเป็นต้องกรอกรหัสผ่าน', required),
+        minLength: helpers.withMessage('ต้องกรอกอย่างน้อย 8 ตัวอักษร', minLength(8)),
+        oneUpper: helpers.withMessage('ต้องมีอย่างน้อย 1 ตัวพิมพ์ใหญ่', helpers.regex(/[A-Z]/)),
+        oneLower: helpers.withMessage('ต้องมีอย่างน้อย 1 ตัวพิมพ์เล็ก', helpers.regex(/[a-z]/)),
+        oneNumber: helpers.withMessage('ต้องมีอย่างน้อย 1 ตัวเลข', helpers.regex(/[0-9]/)),
+      },
+      confirmPassword: {
+        required: helpers.withMessage('จำเป็นต้องกรอกรหัสผ่านอีกครั้ง', required),
+        sameAs: helpers.withMessage('รหัสผ่านไม่ตรงกัน', sameAs(this.password))
+      },
+      mail: {
+        required: helpers.withMessage('จำเป็นต้องกรอกอีเมล', required),
+        email: helpers.withMessage('อีเมลที่กรอกไม่ถูกต้อง', email),
+      },
+      phone: {
+        required: helpers.withMessage('จำเป็นต้องกรอกเบอร์โทรศัพท์', required),
+        isPhone: helpers.withMessage('ข้อมูลที่กรอกไม่ใช่เบอร์โทรศัพท์', helpers.regex(/^0[0-9]{9}$/))
+      },
+      address: {
+        required: helpers.withMessage('จำเป็นต้องกรอกที่อยู่', required),
+        minLength: helpers.withMessage('ต้องกรอกอย่างน้อย 20 ตัวอักษร', minLength(20)),
+      }
     }
   },
   methods: {
     async register() {
-      // alert(this.username + '\n' + this.password)
+      this.v$.$touch()
+
+      if (this.v$.$invalid) {
+        return console.log('invalid is true')
+      }
+
       await http.post('/api/register', {
         username: this.username,
         password: this.password,
-        email: this.email,
+        first_name: this.first_name,
+        last_name: this.last_name,
+        phone: this.phone,
+        email: this.mail,
+        address: this.address
       }).then(response => {
-        this.$router.push('/')
+        alert('การสมัครเสร็จสิ้น โปรดลงชื่อเข้าใช้')
+        this.$router.push('/login')
       }).catch(err => {
         console.log(err)
         this.serverErr = err.response.data
       })
     },
   },
-  computed: {
-    isUsernameRight() {
-      return this.username.length >= 5
-    },
-    isEmailRight() {
-      return validator.isEmail(this.email)
-    },
-    isPwReRight() {
-      return this.password == this.passwordRe
-    },
-    isPwSafe() {
-      let lv = 0
-
-      // check if has upper
-      if (this.password.match(/[A-Z]/)) { lv += 1 }
-      // check if has lower
-      if (this.password.match(/[a-z]/)) { lv += 1 }
-      // check if has number
-      if (this.password.match(/[0-9]/)) { lv += 1 }
-      // check if longer than 5/12/20
-      if (this.password.length >= 20) { lv += 3 }
-      else if (this.password.length >= 12) { lv += 2 }
-      else if (this.password.length >= 6) { lv += 1 }
-
-      let msg
-      switch (lv) {
-        case 0: msg = 'ไม่มี'; break;
-        case 1: msg = 'ไม่ปลอดภัย'; break;
-        case 2: msg = 'ไม่ปลอดภัย'; break;
-        case 3: msg = 'ปลอดภัยน้อย'; break;
-        case 4: msg = 'ปลอดภัยปานกลาง'; break;
-        case 5: msg = 'ปลอดภัยดี'; break;
-        case 6: msg = 'ปลอดภัยดีมาก'; break;
-        default: msg = 'ไม่มี'; break;
-      }
-
-      return {
-        level: lv,
-        message: msg,
-      }
-    },
-    isPwValid() {
-      return [
-        this.password.match(/[A-Z]/), // one upper
-        this.password.match(/[a-z]/), // one lower
-        this.password.match(/[0-9]/), // one number
-        this.password.length >= 6,
-      ].every(e => e) // check if all true
-    },
-    validated() {
-      return [
-        this.isUsernameRight,
-        this.isEmailRight,
-        this.isPwValid,
-        this.isPwReRight,
-      ].every(e => e)
-    }
-  },
-  created() {
-    this.username = ''
-    this.email = ''
-    this.password = ''
-    this.passwordRe = ''
-    this.serverErr = ''
-  }
 }
 </script>
 
 <template>
   <SectionFull title="สมัครสมาชิก" :image="RegisterImage">
-    <form>
-      <div class="my-4">
-        <label>ชื่อผู้ใช้:</label><br>
-        <input type="text" v-model="username" placeholder="Username" class="border-2 rounded-full mt-2 px-4 text-xl">
-        <span v-show="!isUsernameRight" class="ml-3 text-red-600">ชื่อผู้ใช้ต้องมีความยาวไม่ต่ำกว่า 5 ตัวอักษร</span>
-      </div>
-      <div class="my-4">
-        <label>อีเมล:</label><br>
-        <input type="text" v-model="email" placeholder="Email" class="border-2 rounded-full mt-2 px-4 text-xl">
-        <span v-show="!isEmailRight" class="ml-3 text-red-600">อีเมลไม่ถูกต้อง</span>
-      </div>
-      <div class="my-4">
-        <label>รหัสผ่าน:</label><br>
-        <input type="password" v-model="password" placeholder="Password" class="border-2 rounded-full mt-2 px-4 text-xl">
-        <span class="ml-3" :class="[ isPwValid ? 'text-gray-500' : 'text-red-600' ]">ความปลอดภัย: {{ isPwSafe.message }}</span>
-        <div class="h-1 w-[275px] mt-1 bg-neutral-200">
-          <div
-            class="h-1 bg-primary"
-            :class="{
-              'w-0'     : isPwSafe.level == 0,
-              'w-[16%]' : isPwSafe.level == 1,
-              'w-[33%]' : isPwSafe.level == 2,
-              'w-[50%]' : isPwSafe.level == 3,
-              'w-[66%]' : isPwSafe.level == 4,
-              'w-[83%]' : isPwSafe.level == 5,
-              'w-full'  : isPwSafe.level == 6,
-            }"
-          ></div>
+    <div class="my-4">
+      <div class="w-1/2">
+        <label>ชื่อจริง</label><br>
+        <div class="flex">
+          <input type="text" v-model="v$.first_name.$model" @blur="v$.first_name.$touch" placeholder="ชื่อจริง" class="border-2 rounded-xl my-2 px-4 text-lg">&nbsp;
+          <input type="text" v-model="v$.last_name.$model" @blur="v$.last_name.$touch" placeholder="นามสกุล" class="border-2 rounded-xl my-2 px-4 text-lg">
         </div>
       </div>
-      <div class="my-4">
-        <label>รหัสผ่านอีกครั้ง:</label><br>
-        <input type="password" v-model="passwordRe" placeholder="Password" class="border-2 rounded-full mt-2 px-4 text-xl">
-        <span v-show="!isPwReRight" class="ml-3 text-red-600">รหัสผ่านไม่ตรงกับที่กรอกด้านบน</span>
+      <div class="w-1/2">
+        <p class="ml-3 text-red-600 text-sm" v-for="(error, index) in v$.first_name.$errors">{{ error.$message }}</p>
+        <p class="ml-3 text-red-600 text-sm" v-for="(error, index) in v$.last_name.$errors">{{ error.$message }}</p>
       </div>
-    </form><br><hr><br><br>
+    </div>
+
+    <div class="my-4 flex">
+      <div class="w-1/2">
+        <label>ชื่อผู้ใช้</label><br>
+        <input type="text" v-model="v$.username.$model" @blur="v$.username.$touch" placeholder="ชื่อผู้ใช้" class="border-2 rounded-xl my-2 px-4 text-lg">
+      </div>
+      <div class="w-1/2">
+        <p class="ml-3 text-red-600 text-sm" v-for="(error, index) in v$.username.$errors">{{ error.$message }}</p>
+      </div>
+    </div>
+
+    <div class="my-4 flex">
+      <div class="w-1/2">
+        <label>รหัสผ่าน</label><br>
+        <input type="password" v-model="v$.password.$model" @blur="v$.password.$touch" placeholder="รหัสผ่าน" class="border-2 rounded-xl my-2 px-4 text-lg">
+      </div>
+      <div class="w-1/2">
+        <p class="ml-3 text-red-600 text-sm" v-for="(error, index) in v$.password.$errors">{{ error.$message }}</p>
+      </div>
+    </div>
+
+    <div class="my-4 flex">
+      <div class="w-1/2">
+        <label>ยืนยันรหัสผ่าน</label><br>
+        <input type="password" v-model="v$.confirmPassword.$model" @blur="v$.confirmPassword.$touch" placeholder="ยืนยันรหัสผ่าน" class="border-2 rounded-xl my-2 px-4 text-lg">
+      </div>
+      <div class="w-1/2">
+        <p class="ml-3 text-red-600 text-sm" v-for="(error, index) in v$.confirmPassword.$errors">{{ error.$message }}</p>
+      </div>
+    </div>
+
+    <div class="my-4 flex">
+      <div class="w-1/2">
+        <label>อีเมล</label><br>
+        <input type="text" v-model="v$.mail.$model" @blur="v$.mail.$touch" placeholder="อีเมล" class="border-2 rounded-xl my-2 px-4 text-lg">
+      </div>
+      <div class="w-1/2">
+        <p class="ml-3 text-red-600 text-sm" v-for="(error, index) in v$.mail.$errors">{{ error.$message }}</p>
+      </div>
+    </div>
+
+    <div class="my-4 flex">
+      <div class="w-1/2">
+        <label>เบอร์มือถือ</label><br>
+        <input type="text" v-model="v$.phone.$model" @blur="v$.phone.$touch" placeholder="เบอร์มือถือ" class="border-2 rounded-xl my-2 px-4 text-lg">
+      </div>
+      <div class="w-1/2">
+        <p class="ml-3 text-red-600 text-sm" v-for="(error, index) in v$.phone.$errors">{{ error.$message }}</p>
+      </div>
+    </div>
+
+    <div class="my-4 flex">
+      <div class="w-1/2">
+        <label>ที่อยู่</label><br>
+        <textarea cols="22" v-model="v$.address.$model" @blur="v$.address.$touch" placeholder="ที่อยู่" class="border-2 rounded-xl my-2 px-4 text-lg"></textarea>
+      </div>
+      <div class="w-1/2">
+        <p class="ml-3 text-red-600 text-sm" v-for="(error, index) in v$.address.$errors">{{ error.$message }}</p>
+      </div>
+    </div>
+    <br><hr><br><br>
     <button
-      @click="validated ? register() : null"
-      class="text-white font-bold px-6 py-2 rounded-full text-2xl"
-      :class="[ validated ? 'bg-primary' : 'bg-secondary' ]"
+      @click="register()"
+      class="text-white font-bold px-6 py-2 rounded-full text-2xl bg-primary"
     >สมัครสมาชิก</button>
     <p class="mt-6 text-red-500 font-bold">{{ serverErr }}</p>
   </SectionFull>

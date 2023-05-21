@@ -1,7 +1,8 @@
 import {
   setLogin, getUserFromName, getUserFromID, getUserAddress,
   addUser, checkUser, updateUser, insertAddress, deleteAddress,
-  insertUserFavs, deleteFromFavs, updateAddressMain
+  insertUserFavs, deleteFromFavs, updateAddressMain, getAllUsers,
+  setAdmin, deleteAdmin, deleteUser
 } from "../models/userModel.js"
 import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
@@ -11,21 +12,25 @@ import colors from 'colors'
 import Joi from 'joi'
 
 
-const loginValidator = Joi.object({
+const loginSchema = Joi.object({
   username: Joi.string().required(),
   password: Joi.string().required()
 })
 
-const registerValidator = Joi.object({
-  username: Joi.string().min(5).required(),
+const registerSchema = Joi.object({
+  username: Joi.string().min(5).max(30).required(),
   password: Joi.string().min(6).alphanum().required(),
+  first_name: Joi.string().min(3).max(100).required(),
+  last_name: Joi.string().min(3).max(100).required(),
+  phone: Joi.string().length(10).required().pattern(/^0[0-9]{9}$/),
   email: Joi.string().email(),
+  address: Joi.string().min(10)
 })
 
 export const loginUser = async (req, res, next) => {
   // validation
   try {
-    await loginValidator.validateAsync(req.body)
+    await loginSchema.validateAsync(req.body)
   } catch {
     return res.status(401).send({
       msg: 'Please input username and password.'
@@ -97,12 +102,22 @@ export const authorizeUser = async (req, res, next) => {
 }
 
 export const authorizeAdmin = async (req, res, next) => {
-  if (req.user.is_admin === 1) {
+  if (req.user.is_admin >= 0) {
     return next()
   }
 
   return res.status(401).send({
     msg: 'Unauthorized: You are not an admin.'
+  })
+}
+
+export const authorizeOwner = async (req, res, next) => {
+  if (req.user.is_admin === 2) {
+    return next()
+  }
+
+  return res.status(401).send({
+    msg: 'Unauthorized: You are not an owner.'
   })
 }
 
@@ -117,29 +132,60 @@ export const fetchUser = async (req, res, next) => {
   })
 }
 
+export const fetchUserFromID  = async (req, res, next) => {
+  const id = req.params.uid
+  const user = await getUserFromID(id)
+  const address = await getUserAddress(id)
+
+  res.status(200).send({
+    data: user,
+    address: address,
+  })
+}
+
+export const fetchAllUsers = async (req, res, next) => {
+  const users = await getAllUsers()
+  console.log('Total users: ' + users.length)
+  res.status(200).send(users)
+}
+
 export const registeringUser = async (req, res, next) => {
   try {
-    await registerValidator.validateAsync(req.body)
+    await registerSchema.validateAsync(req.body)
   } catch (err) {
+    console.log(err)
     return res.status(400).send(err)
   }
 
-  let { username, password, email } = req.body
+  let { username, password, email, phone, address, first_name, last_name } = req.body
   const user = await checkUser(username, email)
 
+  console.log(user)
   if (user.length) {
-    if (results[0].username == username) {
-      res.status(409).send(`Username "${username}" has already taken,`)
-    } else if (results[0].email == email) {
-      res.status(409).send(`Email "${email}" has already taken,`)
+    if (user[0].username == username) {
+      return res.status(409).send(`Username "${username}" has already taken,`)
+    } else if (user[0].email == email) {
+      return res.status(409).send(`Email "${email}" has already taken,`)
     }
   } else {
     bcrypt.hash(password, secret['salt-rounds'])
-    .then(hash => {
+    .then(async (hash) => {
       let uuid = uuidv4()
-      addUser(uuid, username, email, hash)
-      // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' New user registered'.brightGreen.bold + ' id: ' + uuid)
-      res.status(200).send({
+
+      const user_data = {
+        id: uuid,
+        username,
+        password: hash,
+        email,
+        phone,
+        first_name,
+        last_name
+      }
+
+      await addUser(user_data)
+      await insertAddress(uuid, address)
+
+      return res.status(200).send({
         msg: 'Register successfully.',
         user: {
           id: uuid,
@@ -149,7 +195,7 @@ export const registeringUser = async (req, res, next) => {
       })
     }).catch(err => {
       console.log(err)
-      res.status(500).send(err)
+      return res.status(500).send(err)
     })
   }
 }
@@ -158,33 +204,6 @@ export const changePassword = async (req, res, next) => {
   const { id, oldPassword, newPassword } = req.body
   const user = await getUserFromID(id)
   const currentPassword = user.password
-
-  // console.log(id, currentPassword, oldPassword, newPassword)
-
-  // bcrypt.compare(oldPassword, currentPassword,
-  // (err, isMatch) => {
-  //   if (isMatch) {
-  //     // updateUser(req.body.id, { password: newPassword }, 'password')
-  //     bcrypt.hash(newPassword, secret['salt-rounds'])
-  //     .then(hash => {
-  //       updateUser(id, { password: hash }, 'password')
-  //       console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Password changed'.brightGreen.bold + ' user: ' + user.username)
-  //       return res.send({
-  //         msg: 'Password changed.',
-  //         id: id
-  //       })
-  //     }).catch(err => {
-  //       console.log(err)
-  //       return res.status(500).send(err)
-  //     })
-  //   } else {
-  //     console.log('Wrong password:', err)
-  //     return res.status(401).send({
-  //       msg: 'Password wrong.',
-  //       id: req.body.id
-  //     })
-  //   }
-  // })
 
   if((!(await bcrypt.compare(oldPassword, currentPassword)))) {
     console.log('Wrong password:')
@@ -212,6 +231,22 @@ export const changePassword = async (req, res, next) => {
 export const addAddress = async (req, res, next) => {
   const user_id = req.user.id
   const address = req.body.address
+
+  if (!user_id) {
+    return res.status(400).send({
+      msg: 'No user_id'
+    })
+  }
+  if (!address) {
+    return res.status(400).send({
+      msg: 'No address'
+    })
+  }
+  if (address.length < 20) {
+    return res.status(400).send({
+      msg: 'Address is shorter than 20'
+    })
+  }
 
   try {
     const result = await insertAddress(user_id, address)
@@ -244,6 +279,26 @@ export const removeAddress = async (req, res, next) => {
 
 export const editUserInfo = async (req, res, next) => {
   try {
+    const check = await checkUser(req.body.username, req.body.email)
+    // user id and user from token isn't the same
+    if (req.user.id !== req.body.id) {
+      return res.status(401).send({
+        msg: 'You are unauthorized.',
+        msg_th: 'คุณไม่สามรถแก้ไข',
+      })
+    }
+    // check if 1) email is duplicate 2) user is duplicate (using same username but different id)
+    for (let i=0; i<check.length; i++) {
+      if ((check[i].email === req.body.email || check[i].username === req.body.username)
+        && req.user.id != check[i].id
+      ) {
+        return res.status(401).send({
+          msg: 'Username/email is already used.',
+          msg_th: 'มีผู้ใช้ชื่อผู้ใช้ หรืออีเมลนี้ไปแล้ว',
+        })
+      }
+    }
+
     await updateUser(req.user.id, req.body)
     return res.send({
       msg: 'Updated user info',
@@ -294,6 +349,46 @@ export const setMainAddress = async (req, res, next) => {
       msg: 'Main address set.',
       user_id: req.user.id,
       address_id: req.body.address_id
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send(err)
+  }
+}
+
+export const addAdmin = async (req, res, next) => {
+  try {
+    await setAdmin(req.body.uid)
+    return res.send({
+      msg: 'Added admin.',
+      user_id: req.params.uid
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send(err)
+  }
+}
+
+export const removeAdmin = async (req, res, next) => {
+  try {
+    await deleteAdmin(req.body.uid)
+    return res.send({
+      msg: 'Removed admin.',
+      user_id: req.params.uid
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send(err)
+  }
+}
+
+export const removeUser = async (req, res, next) => {
+  console.log(req.body.uid)
+  try {
+    await deleteUser(req.body.uid)
+    return res.send({
+      msg: 'Removed user.',
+      user_id: req.params.uid
     })
   } catch (err) {
     console.log(err)

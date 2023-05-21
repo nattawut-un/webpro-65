@@ -1,23 +1,4 @@
-// import NotFound from '@/views/NotFound.vue'
-// import Home from '@/views/Home.vue'
-// import ProductList from '@/views/ProductList.vue'
-// import ProductDetails from '@/views/ProductDetails.vue'
-// import UserProfile from '@/views/UserProfile.vue'
-// import Cart from '@/views/CartPage.vue'
-// import Checkout from '@/views/CheckoutPage.vue'
-// import Login from '@/views/LoginPage.vue'
-// import Register from '@/views/RegisterPage.vue'
-// import OrderList from '@/views/OrderList.vue'
-// import AdminHome from '@/views/admin/AdminHome.vue'
-// import AdminProductList from '@/views/admin/AdminProductList.vue'
-// import AdminProductDetails from '@/views/admin/AdminProductDetails.vue'
-// import AdminProductAdd from '@/views/admin/AdminProductAdd.vue'
-// import AdminCategoryList from '@/views/admin/AdminCategoryList.vue'
-// import AdminCategoryAdd from '@/views/admin/AdminCategoryAdd.vue'
-// import AdminOrderList from '@/views/admin/AdminOrderList.vue'
-
 import { store } from '@/store'
-
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -131,15 +112,6 @@ const routes = [
     }
   }, {
   }, {
-    name: 'admin-category-add',
-    path: '/admin/categories/add',
-    component: () => import('@/views/admin/AdminCategoryAdd.vue'),
-    meta: {
-      title: 'แก้ไขข้อมูลสินค้า',
-      level: 'admin'
-    }
-  }, {
-  }, {
     name: 'admin-order',
     path: '/admin/orders',
     component: () => import('@/views/admin/AdminOrderList.vue'),
@@ -185,12 +157,10 @@ import http from '@/http'
 
 // navigation guard
 router.beforeEach(async (to, from, next) => {
-  // const isLoggedIn = this.$cookies.isKey('jwt-token')
-  // console.log(JSON.stringify(user.data))
   const token = localStorage.getItem('token')
   var user = store.user
   if (token && Object.keys(store.user).length === 0) {
-    await http.post('/api/get_user')
+    await http.get('/api/get_user')
     .then(res => { 
       user = res
     })
@@ -217,18 +187,5 @@ router.beforeEach(async (to, from, next) => {
 
   next()
 })
-
-// router.afterEach((to, from) => {
-//   const toDepth = to.path.split('/').length
-//   const fromDepth = from.path.split('/').length
-
-//   if (toDepth < fromDepth) {
-//     to.meta.transition = 'slide-right'
-//   } else if (toDepth < fromDepth) {
-//     to.meta.transition = 'slide-left'
-//   } else {
-//     to.meta.transition = 'page-opacity'
-//   }
-// })
 
 export default router

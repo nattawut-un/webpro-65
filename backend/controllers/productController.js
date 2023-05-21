@@ -1,7 +1,8 @@
-import { getProducts, getProductById, addProduct, editProduct, getCategories, deleteProduct, insertCategory } from '../models/productModel.js'
+import { getProducts, getProductById, addProduct, editProduct, getCategories, deleteProduct, insertCategory, deleteCategory } from '../models/productModel.js'
 import { getUserFromID } from '../models/userModel.js'
 import jwt from 'jsonwebtoken'
 import secret from '../config/auth.js'
+import Joi from 'joi'
 
 export const showProducts = async (req, res, next) => {
   var user_id = null
@@ -36,7 +37,22 @@ export const showProductById = async (req, res, next) => {
   }
 }
 
+const productSchema = Joi.object({
+  name: Joi.string().required().min(5),
+  price: Joi.number().required().min(0),
+  description: Joi.string().allow(''),
+  category_id: Joi.number().required()
+})
+
 export const createProduct = async (req, res, next) => {
+  try {
+    await productSchema.validateAsync(req.body)
+  } catch {
+    return res.status(401).send({
+      msg: 'Product details are invalid.'
+    })
+  }
+
   var isValid = true
 
   if (req.body.name.length < 5) {isValid = false}
@@ -51,7 +67,6 @@ export const createProduct = async (req, res, next) => {
 
   try {
     const results = await addProduct(req.body, req.file)
-    // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Product added'.brightGreen.bold + ' name: ' + req.body.name)
     console.log(` product `.bgBlue, results.product)
     console.log(` image `.bgBlue, results.image)
     res.send({
@@ -121,5 +136,20 @@ export const addCategory = async (req, res, next) => {
   } catch (err) {
     console.log(err)
     res.status(500).send(err)
+  }
+}
+
+export const removeCategory = async (req, res, next) => {
+  try {
+    await deleteCategory(req.params.id)
+    res.send({
+      msg: 'Category deleted.'
+    })
+  } catch (err) {
+    console.log(err)
+    res.status(500).send({
+      msg: 'ERROR: Category is not removed.',
+      data: err
+    })
   }
 }

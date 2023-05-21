@@ -4,10 +4,7 @@ module.exports = {
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
-  plugins: [
-    require('tw-elements/dist/plugin'),
-    require('flowbite/plugin')
-  ],
+  plugins: [],
   theme: {
     extend: {
       colors: {

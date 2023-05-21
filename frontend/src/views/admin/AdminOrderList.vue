@@ -24,21 +24,19 @@ export default {
   methods: {
     async getOrders() {
       this.loading = true
+      this.orders = []
+      this.doing = []
+      this.finished = []
       await http.get('/api/orders')
         .then(response => {
           this.orders = response.data
-          this.orders.forEach(v => {
-            v.cart = JSON.parse(v.cart)
-            v.totalPrice = v.cart.reduce((total, item) => {
-              return total + parseFloat(item.total)
-            }, 0)
-          })
-          this.doing = this.orders.filter(v => {
-            return !v.finish_time
-          })
-          this.finished = this.orders.filter(v => {
-            return v.finish_time
-          })
+          for (const [key, value] of Object.entries(this.orders)) {
+            if (value.finish_time) {
+              this.finished.push(value)
+            } else {
+              this.doing.push(value)
+            }
+          }
         })
         .catch(err => console.log(err))
       this.loading = false
@@ -71,7 +69,7 @@ export default {
       }
     },
     async authorize() {
-      const result = await http.post('/api/get_user')
+      const result = await http.get('/api/get_user')
         .then(res => {
           if (res.error) {
             alert(res.error)
@@ -84,7 +82,13 @@ export default {
         }).catch(err => {
           console.log(err)
         })
-    }
+    },
+    totalPrice(list) {
+      return list.reduce((total, item) => { return total + (item.price * item.amount) }, 0)
+    },
+    totalAmount(list) {
+      return list.reduce((total, item) => { return total + item.amount }, 0)
+    },
   },
   watch: {
     toRefresh(sec) {
@@ -93,13 +97,13 @@ export default {
       }
     }
   },
-  created() {
+  mounted() {
     this.getOrders()
     this.refreshTimer = setInterval(() => {
       this.toRefresh -= 1
     }, 1000)
   },
-  uncreated() {
+  unmounted() {
     clearInterval(this.refreshTimer)
   }
 }
@@ -132,16 +136,16 @@ export default {
 
       <!-- finished -->
       <h1 class="text-2xl font-pattaya">กำลังดำเนินการ ({{ doing.length }})</h1>
-      <div class="bg-gray-200 my-2 p-4 rounded-lg border-4 border-gray-300 font-mali" v-for="order in doing">
-        <div class="flex" v-if="order.finish_time == null">
+      <div class="bg-gray-200 my-2 p-4 rounded-lg border-4 border-gray-300 font-mali" v-for="(value, key) in doing" :key="key">
+        <div class="flex">
           <div class="w-1/2">
             <!-- <div class="bg-gray-100/50">
               <p v-for="(value, key) in order">{{ key }}: {{ value }}</p>
             </div> -->
-            <h3 class="text-gray-400 font-[monospace] font-bold text-sm mb-3">#{{ order.order_id }}</h3>
-            <p><b>ชื่อผู้สั่ง:</b><br>{{ order.username }}</p>
-            <p><b>เวลาที่สั่งซื้อ:</b><br>{{ moment(order.order_time).format('llll') }} ({{ moment(order.order_time).fromNow() }})</p>
-            <p><b>ที่อยู่:</b><br>{{ order.address }}</p>
+            <h3 class="text-gray-400 font-[monospace] font-bold text-sm mb-3">#{{ value.order_id }}</h3>
+            <p><b>ชื่อผู้สั่ง:</b><br>{{ value.username }}</p>
+            <p><b>เวลาที่สั่งซื้อ:</b><br>{{ moment(value.order_time).format('llll') }} ({{ moment(value.order_time).fromNow() }})</p>
+            <p><b>ที่อยู่:</b><br>{{ value.address }}</p>
           </div>
           <div class="w-1/2 px-4">
             <!-- <table class="table-auto w-full bg-white">
@@ -178,15 +182,26 @@ export default {
                 <tbody>
                   <tr
                     class="bg-gray-100 border-b"
-                    v-for="item in order.cart" :key="item.order_id">
+                    v-for="item in value.order_list" :key="item.id">
                     <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
                       {{ item.name }}
                     </th>
                     <td class="px-6 py-4">
-                      {{ item.quantity }}
+                      {{ item.amount }}
                     </td>
                     <td class="px-6 py-4">
-                      {{ item.total }}.-
+                      {{ item.price * item.amount }}.-
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
+                      รวม
+                    </th>
+                    <td class="px-6 py-4 font-bold">
+                      {{ totalAmount(value.order_list) }}
+                    </td>
+                    <td class="px-6 py-4 font-bold">
+                      {{ totalPrice(value.order_list) }}.-
                     </td>
                   </tr>
                 </tbody>
@@ -196,8 +211,8 @@ export default {
         </div>
         <br>
         <div class="flex">
-          <button class="bg-green-400 px-4 py-2 font-bold rounded-full mr-2" @click="finishOrder(order)">✅ เสร็จสิ้น</button>
-          <button class="bg-red-500 px-4 py-2 text-white font-bold rounded-full mr-2" @click="deleteOrder(order)">🚫 ยกเลิก</button>
+          <button class="bg-green-400 px-4 py-2 font-bold rounded-full mr-2" @click="finishOrder(value)">✅ เสร็จสิ้น</button>
+          <button class="bg-red-500 px-4 py-2 text-white font-bold rounded-full mr-2" @click="deleteOrder(value)">🚫 ยกเลิก</button>
         </div>
       </div>
     </div>
@@ -248,32 +263,76 @@ export default {
           <tbody>
             <tr
               class="bg-gray-100 border-b hover:bg-gray-200 text-black transition ease-out duration-100"
-              v-for="item in finished" :key="item.order_id">
+              v-for="(value, key) in finished" :key="key">
               <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
-                {{ item.username }}
+                <span class="tooltip">
+                  {{ value.first_name }} {{ value.last_name }}
+                  <span class="tooltiptext text-xs">
+                    <p>username: {{ value.username }}</p>
+                    <p>order_id: {{ value.order_id }}</p>
+                  </span>
+                </span>
               </th>
               <td class="px-6 py-4">
-                {{ item.address }}
+                {{ value.address }}
               </td>
               <td class="px-6 py-4">
-                {{ item.cart.length }}
+                <span class="tooltip">
+                  {{ value.order_list.length }}
+                  <span class="tooltiptext text-xs">
+                    <p v-for="item in value.order_list">{{ item.name }} - จำนวน {{ item.amount }} ที่ ที่ละ {{ item.price }} บาท</p>
+                  </span>
+                </span>
               </td>
               <td class="px-6 py-4">
-                {{ item.totalPrice }}.-
+                {{ totalPrice(value.order_list) }}.-
               </td>
               <td class="px-6 py-4">
-                {{ moment(item.order_time).format('llll') }}<br>({{ moment(item.order_time).fromNow() }})
+                <span class="tooltip">
+                  {{ moment(value.order_time).fromNow() }}
+                  <span class="tooltiptext text-xs">
+                    {{ moment(value.order_time).format('llll') }}
+                  </span>
+                </span>
               </td>
               <td class="px-6 py-4">
-                {{ moment(item.finish_time).format('llll') }}<br>({{ moment(item.finish_time).fromNow() }})
+                <span class="tooltip">
+                  {{ moment(value.finish_time).fromNow() }}
+                  <span class="tooltiptext text-xs">
+                    {{ moment(value.finish_time).format('llll') }}
+                  </span>
+                </span>
               </td>
               <td class="px-6 py-4 text-right">
-                <router-link :to="'/admin/orders/' + item.order_id"
-                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline">📃ข้อมุล</router-link>
+                <router-link :to="'/admin/orders/' + value.order_id"
+                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline">📃ข้อมูล</router-link>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-  </main></template>
+  </main>
+</template>
+
+<style>
+.tooltiptext {
+  visibility: hidden;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  text-align: start;
+  font-weight: normal;
+  padding: 4px 5px;
+  margin: -3px 10px;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  transition: opacity .2s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+</style>

@@ -13,6 +13,7 @@ export default {
       loading: false,
       categories: [],
       newCategory: {
+        emoji: '',
         name: '',
         description: ''
       }
@@ -33,16 +34,32 @@ export default {
       }
       const result = await http.post('/api/categories/add', {
         name: this.newCategory.name,
-        description: this.newCategory.description
+        description: this.newCategory.description,
+        emoji: this.newCategory.emoji,
       }).then(response => {
         alert('เพิ่มเสร็จสิ้น')
         this.getCategories()
       }).catch(err => {
         console.log(err)
       })
+    },
+    async deleteCategory(cate) {
+      if (cate.prod_amount > 0) {
+        alert('ไม่สามารถลบได้\nมีเมนูที่ใช้หมวดหมู่นี้อยู่ ' + cate.prod_amount + ' อัน')
+      } else {
+        if (confirm('คุณต้องการลบหมวดหมู่ "' + cate.name + '" หรือไม่\nการกระทำนี้ไม่สามารถย้อนกลับได้')) {
+          await http.delete(`/api/categories/${cate.id}/delete`)
+          .then(res => {
+            alert('การลบเสร็จสิ้น')
+            this.getCategories()
+          }).catch(err => {
+            console.log(err)
+          })
+        }
+      }
     }
   },
-  created() {
+  mounted() {
     this.getCategories()
   }
 }
@@ -64,9 +81,10 @@ export default {
         <div class="w-1/2 bg-white p-4 rounded-xl">
           <h1 class="text-xl font-pattaya">เพิ่มหมวดหมู่</h1><hr class="mb-3">
           <label>ชื่อ <span class="text-red-500">*</span></label><br>
-          <input type="text" v-model.trim="newCategory.name" class="bg-gray-100 rounded-full px-2"><br>
+          <input type="text" v-model.trim="newCategory.emoji" placeholder="อิโมจิ" class="bg-gray-100 rounded-full px-2 w-14">&nbsp;
+          <input type="text" v-model.trim="newCategory.name" placeholder="ชื่อ" class="bg-gray-100 rounded-full px-2"><br>
           <label>คำอธิบาย </label><br>
-          <textarea rows="2" cols="50" v-model.trim="newCategory.description" class="bg-gray-100 rounded-xl px-2"></textarea><br><br>
+          <textarea rows="2" cols="50" v-model.trim="newCategory.description" placeholder="คำอธิบาย" class="bg-gray-100 rounded-xl px-2"></textarea><br><br>
           <button class="bg-secondary hover:bg-primary hover:text-white px-3 py-1 rounded-full transition ease-in-out duration-200" @click="addCategory()">เพิ่ม</button>&nbsp;<span class="text-xs" v-show="!newCategory.name">โปรดกรอกชื่อ</span>
         </div>
       </div>
@@ -95,21 +113,23 @@ export default {
           </div>
         </div>
       </div>
-      <router-link class="font-mali bg-gray-200 shadow-lg m-8 px-8 py-6 rounded-lg flex" v-for="item in categories" :to="'/admin/categories/' + item.id">
+      <div class="font-mali bg-gray-200 shadow-lg m-8 px-8 py-6 rounded-lg flex" v-for="item in categories">
         <div class="w-1/6">
-          <p class="text-2xl">{{ item.id }} 🍜</p>
+          <p class="text-2xl">{{ item.id }} {{ item.emoji }}</p>
           <!-- <img :src="store.apiURL + item.file_path" class="aspect-square object-cover rounded-full h-24"> -->
         </div>
         <div class="w-3/6">
           <h1 class="font-bold text-2xl">{{ item.name }}</h1>
+          <p>{{ item.description }}</p>
         </div>
         <div class="w-1/6">
           <p class="font-bold text-xl">{{ item.prod_amount }}</p>
         </div>
         <div class="w-1/6">
-          <!-- <p>(some menus)</p> -->
+          <button class="bg-green-300 px-2 py-1 rounded-full mr-2">แก้ไข</button>
+          <button class="bg-red-500 text-white px-2 py-1 rounded-full mr-2" @click="deleteCategory(item)">ลบ</button>
         </div>
-      </router-link>
+      </div>
     </div>
   </main>
 </template>

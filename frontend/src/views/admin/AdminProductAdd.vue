@@ -1,10 +1,16 @@
 <script>
 import { store } from '@/store'
 import http from '@/http'
+import useVuelidate from '@vuelidate/core'
+import {
+  required, helpers, minLength,
+  minValue, numeric
+} from '@vuelidate/validators'
 
 export default {
   data() {
     return {
+      v$: useVuelidate(),
       store,
       loading: false,
       details: {
@@ -20,25 +26,24 @@ export default {
       debug: false
     }
   },
+  validations() {
+    return {
+      details: {
+        name: {
+          required: helpers.withMessage('ต้องกรอกชื่อเมนู', required),
+          minLength: helpers.withMessage('ชื่อเมนูต้องยาวกว่า 5 ตัวอักษร', minLength(5)),
+        },
+        price: {
+          required: helpers.withMessage('ต้องกรอกราคา', required),
+          numeric: helpers.withMessage('ราคาต้องเป็นตัวเลข', numeric),
+          minValue: helpers.withMessage('ราคาต้องมากกว่า 0', minValue(0)),
+        },
+        description: {},
+        category_id: {}
+      }
+    }
+  },
   methods: {
-    async authorize() {
-      this.loading = true
-      const result = await http.post('/api/get_user')
-      .then(res => {
-        if (res.error) {
-          alert(res.error)
-          this.$router.back()
-        } else if (res.data.data.is_admin != 1) {
-          this.$router.push('/')
-        } else {
-          this.userInfo = res.data.data
-          return true
-        }
-      }).catch(err => {
-        console.log(err)
-      })
-      this.loading = false
-    },
     async getCategories() {
       this.loading = true
       try {
@@ -58,6 +63,11 @@ export default {
       this.file_preview = URL.createObjectURL(this.file)
     },
     async submitData() {
+      this.v$.$touch()
+      if (this.v$.$invalid) {
+        return console.log('The form is invalid.')
+      }
+
       this.loading = true
       var formData = new FormData()
       formData.append("name", this.details.name)
@@ -79,15 +89,25 @@ export default {
           console.log('Data added.')
           alert('เพิ่มข้อมูลสำเร็จ')
           this.$router.push('/admin/products')
-        }).catch(err => console.log(err))
+        }).catch(err => {
+          console.log(err)
+          this.uploadPercentage = 0
+        })
       } catch (err) {
         console.log(err)
       }
       this.loading = false
     }
   },
-  created() {
+  mounted() {
     this.getCategories()
+  },
+  beforeUnmount() {
+    if (this.v$.$anyDirty && !this.loading) {
+      if (!(confirm('คุณต้องการออกจากหน้านี้หรือไม่\nคุณมีการแก้ไขที่ยังไม่ได้ถูกบันทึก'))) {
+        return false
+      }
+    }
   }
 }
 </script>
@@ -112,15 +132,18 @@ import SectionFull from '@/components/SectionFull.vue'
     <!-- main page -->
     <div v-show="!loading">
       <p class="text-red-500">*** 📝 โหมดเพิ่มข้อมูล ***</p>
-      <input type="text" v-model="details.name" class="text-[400%] font-pattaya w-full border-b-4 hover:border-gray-500 transition ease-out duration-100">
-      <span class="text-[200%]"><input type="text" v-model="details.price" class="border-b-2 hover:border-gray-500 transition ease-out duration-100 w-1/4"> บาท</span>
+      <input type="text" placeholder="ชื่อสินค้า" v-model="v$.details.name.$model" class="text-[400%] font-pattaya w-full border-b-4 transition ease-out duration-100"
+      :class="[ v$.details.name.$dirty ? 'border-red-400 hover:border-red-600' : 'border-gray-200 hover:border-gray-500' ]">
+      <span class="text-[200%]"><input type="number" placeholder="ราคา" v-model="v$.details.price.$model" class="border-b-2 transition ease-out duration-100 w-1/4"
+      :class="[ v$.details.price.$dirty ? 'border-red-400 hover:border-red-600' : 'border-gray-200 hover:border-gray-500' ]"> บาท</span>
       <br><hr><br>
       <h3 class="text-3xl font-pattaya">คำอธิบาย</h3>
-      <textarea v-model="details.description" rows="8" class="border-b-2 hover:border-gray-500 transition ease-out duration-100 w-full"></textarea>
+      <textarea placeholder="คำอธิบาย" v-model="v$.details.description.$model" rows="8" class="border-b-2 transition ease-out duration-100 w-full"
+      :class="[ v$.details.description.$dirty ? 'border-red-400 hover:border-red-600' : 'border-gray-200 hover:border-gray-500' ]"></textarea>
       <br><hr><br>
       <div>
         <label for="category">หมวดหมู่</label>
-        <select name="category" id="category" v-model="details.category_id" class="bg-gray-100 rounded-full ml-2 px-2 py-1">
+        <select name="category" id="category" v-model="v$.details.category_id.$model" class="bg-gray-100 rounded-full ml-2 px-2 py-1">
           <option v-for="item in categories" :key="item.id" :value="item.id">{{ item.name }}</option>
         </select>
       </div><br>
@@ -131,12 +154,13 @@ import SectionFull from '@/components/SectionFull.vue'
         <button class="bg-red-200 hover:bg-primary transition ease-in-out duration-200 text-black hover:text-white rounded-full px-4 py-2 font-bold" @click="submitData()">บันทึกข้อมูล</button>
         <span class="ml-3" v-show="uploadPercentage">💾 กำลังบันทึก ({{ uploadPercentage }}%)</span>
       </div><br>
-      <button class="bg-green-300 px-4 py-2 rounded-full" @click="debug = !debug">show data = {{ debug }}</button>
+      <p class="text-red-500" v-for="err in v$.$errors">- {{ err.$message }}</p>
+      <!-- <button class="bg-green-300 px-4 py-2 rounded-full" @click="debug = !debug">show data = {{ debug }}</button>
       <div v-show="debug" class="bg-gray-300 m-4 p-4 rounded-xl">
         {{ categories }}
         <br>
         {{ details }}
-      </div>
+      </div> -->
     </div>
   </SectionFull>
 </template>

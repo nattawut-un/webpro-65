@@ -5,9 +5,46 @@ export const getProducts = async (user_id = null) => {
   try {
     var sql = ''
     if (user_id) {
-      sql += "SELECT p.*, i.file_path, c.name `category`, f.id `fav_id` FROM products p LEFT OUTER JOIN images i ON (p.id = i.product_id AND i.main = 1) JOIN categories c ON (p.category_id = c.id) LEFT OUTER JOIN user_favs f ON (p.id = f.prod_id AND f.user_id = '" + user_id + "') ORDER BY p.id"
+      sql += `
+      SELECT p.*, p.name, i.file_path, c.name category, c.emoji cate_emoji,
+      odc.purchase_amount, tuf.total_user_favs, f.id fav_id
+      FROM products p
+      LEFT OUTER JOIN images i ON (p.id = i.product_id)
+      LEFT OUTER JOIN categories c ON (p.category_id = c.id)
+      LEFT OUTER JOIN user_favs f ON (p.id = f.prod_id AND f.user_id = '${user_id}')
+      JOIN (
+        SELECT p.id prod_id, count(od.od_id) purchase_amount
+        FROM products p
+        LEFT OUTER JOIN order_detail od ON (p.id = od.prod_id)
+        GROUP BY p.id
+      ) AS odc ON (p.id = odc.prod_id)
+      JOIN (
+        SELECT p.id prod_id, count(uf.id) total_user_favs
+        FROM products p
+        LEFT OUTER JOIN user_favs uf ON (p.id = uf.prod_id)
+        GROUP BY p.id
+      ) AS tuf ON (p.id = tuf.prod_id)
+      ORDER BY p.id
+      `
     } else {
-      sql += 'SELECT p.*, i.file_path, c.name `category` FROM products p LEFT OUTER JOIN images i ON (p.id = i.product_id) JOIN categories c ON (p.category_id = c.id) WHERE i.main = 1 ORDER BY p.id'
+      sql += `SELECT p.*, p.name, i.file_path, c.name category, c.emoji cate_emoji,
+      odc.purchase_amount, tuf.total_user_favs
+      FROM products p
+      LEFT OUTER JOIN images i ON (p.id = i.product_id)
+      LEFT OUTER JOIN categories c ON (p.category_id = c.id)
+      JOIN (
+        SELECT p.id prod_id, count(od.od_id) purchase_amount
+        FROM products p
+        LEFT OUTER JOIN order_detail od ON (p.id = od.prod_id)
+        GROUP BY p.id
+      ) AS odc ON (p.id = odc.prod_id)
+      JOIN (
+        SELECT p.id prod_id, count(uf.id) total_user_favs
+        FROM products p
+        LEFT OUTER JOIN user_favs uf ON (p.id = uf.prod_id)
+        GROUP BY p.id
+      ) AS tuf ON (p.id = tuf.prod_id)
+      ORDER BY p.id`
     }
     const [rows, fields] = await db.query(sql)
     return rows
@@ -36,8 +73,8 @@ export const addProduct = async (data, image) => {
   await conn.beginTransaction()
 
   try {
-    const [r1, f1] = await db.query('INSERT INTO products SET ?', data)
-    const [r2, f2] = await db.query('INSERT INTO images (product_id, file_path, main) VALUES (?, ?, 1)', [r1.insertId, image.path.substr(6)])
+    const [r1, f1] = await conn.query('INSERT INTO products SET ?', data)
+    const [r2, f2] = await conn.query('INSERT INTO images (product_id, file_path) VALUES (?, ?)', [r1.insertId, image.path.substr(6)])
     conn.commit()
     return {
       product: r1,
@@ -56,7 +93,7 @@ export const editProduct = async (data) => {
   await conn.beginTransaction()
 
   try {
-    const [rows, fields] = await db.query('UPDATE products SET name=?, price=?, description=?, category_id=?, date_modified=current_timestamp WHERE id=?', data)
+    const [rows, fields] = await conn.query('UPDATE products SET name=?, price=?, description=?, category_id=?, date_modified=current_timestamp WHERE id=?', data)
     conn.commit()
     return rows
   } catch (err) {
@@ -69,7 +106,19 @@ export const editProduct = async (data) => {
 
 export const getCategories = async () => {
   try {
-    const [rows, fields] = await db.query('SELECT c.*, count(p.id) `prod_amount` FROM categories c LEFT OUTER JOIN products p ON (c.id = p.category_id) GROUP BY c.id')
+    const sql = `
+      SELECT c.*, count(p.id) prod_amount, i.file_path
+      FROM categories c
+      LEFT OUTER JOIN products p ON (c.id = p.category_id)
+      LEFT OUTER JOIN (
+        SELECT min(id) product_id, category_id
+        FROM products
+        GROUP BY category_id
+      ) pid ON (pid.category_id = c.id)
+      LEFT OUTER JOIN images i ON (pid.product_id = i.product_id)
+      GROUP BY c.id;
+    `
+    const [rows, fields] = await db.query(sql)
     return rows
   } catch (err) {
     throw new Error(err)
@@ -81,7 +130,7 @@ export const deleteProduct = async (id) => {
   await conn.beginTransaction()
 
   try {
-    const [rows, fields] = await db.query('DELETE FROM products WHERE id=?', id)
+    const [rows, fields] = await conn.query('DELETE FROM products WHERE id=?', id)
     conn.commit()
     return rows
   } catch (err) {
@@ -97,7 +146,23 @@ export const insertCategory = async (data) => {
   await conn.beginTransaction()
 
   try {
-    const [rows, fields] = await db.query('INSERT INTO categories SET ?', data)
+    const [rows, fields] = await conn.query('INSERT INTO categories SET ?', data)
+    conn.commit()
+    return rows
+  } catch (err) {
+    await conn.rollback()
+    throw new Error(err)
+  } finally {
+    conn.release()
+  }
+}
+
+export const deleteCategory = async (cate_id) => {
+  const conn = await db.getConnection()
+  await conn.beginTransaction()
+
+  try {
+    const [rows, fields] = await conn.query('DELETE FROM categories WHERE id=?', [cate_id])
     conn.commit()
     return rows
   } catch (err) {

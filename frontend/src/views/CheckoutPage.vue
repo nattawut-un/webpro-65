@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     async userFetch() {
-      const result = await http.post('/api/get_user')
+      const result = await http.get('/api/get_user')
       .then((res) => {
         if (res.error) {
           alert('โปรดลงชื่อเข้าใช้ใหม่')
@@ -39,10 +39,8 @@ export default {
       let cartClean = this.store.cart.map((currentValue => {
         return {
           id: currentValue.id,
-          name: currentValue.name,
           quantity: currentValue.quantity,
           price: currentValue.price,
-          total: currentValue.quantity * currentValue.price
         }
       }))
       const result = await http.post('/api/place_order', {
@@ -65,7 +63,7 @@ export default {
       }, 0)
     }
   },
-  created() {
+  mounted() {
     if (!store.user || store.cart.length == 0) {
       this.$router.push('/')
     } else {
@@ -105,11 +103,11 @@ export default {
             </div>
           </div>
           <br><hr><br>
-          <div>
+          <!-- <div>
             <div class="flex pb-2">
               <h2 class="font-bold text-xl mr-2">วิธีชำระเงิน</h2>
             </div>
-          </div>
+          </div> -->
           <!-- selected = {{ selectedAddress }} -->
         </div>
       </div>
@@ -117,9 +115,9 @@ export default {
     <Section :title="'ราคาทั้งหมด: ' + totalPrice + ' บาท'">
       <p> <!-- idk --> </p><br>
       <button @click="sendOrder()" class="rounded-full bg-primary text-white text-2xl font-bold px-6 py-3">สั่งซื้อเลย</button><br><br>
-      <p><b>this.userInfo.id:</b> {{ this.userInfo.id }}</p>
+      <!-- <p><b>this.userInfo.id:</b> {{ this.userInfo.id }}</p>
       <p><b>this.selectedAddress.id:</b> {{ this.selectedAddress.id }}</p>
-      <p><b>this.store.cart:</b> {{ this.store.cart }}</p>
+      <p><b>this.store.cart:</b> {{ this.store.cart }}</p> -->
     </Section>
   </div>
 </template>

@@ -33,18 +33,18 @@ export default {
           description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro deserunt qui earum, nihil harum quo, explicabo rerum mollitia labore rem libero deleniti nesciunt vitae aliquid odit tenetur quibusdam illo expedita.',
           to: '/admin/users'
         },
-        {
-          icon: '💵',
-          title: 'ระบบบัญชี',
-          description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro deserunt qui earum, nihil harum quo, explicabo rerum mollitia labore rem libero deleniti nesciunt vitae aliquid odit tenetur quibusdam illo expedita.',
-          to: '/admin/account'
-        },
-        {
-          icon: '⚙️',
-          title: 'ตั้งค่าระบบ',
-          description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro deserunt qui earum, nihil harum quo, explicabo rerum mollitia labore rem libero deleniti nesciunt vitae aliquid odit tenetur quibusdam illo expedita.',
-          to: '/admin/settings'
-        },
+        // {
+        //   icon: '💵',
+        //   title: 'ระบบบัญชี',
+        //   description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro deserunt qui earum, nihil harum quo, explicabo rerum mollitia labore rem libero deleniti nesciunt vitae aliquid odit tenetur quibusdam illo expedita.',
+        //   to: '/admin/account'
+        // },
+        // {
+        //   icon: '⚙️',
+        //   title: 'ตั้งค่าระบบ',
+        //   description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro deserunt qui earum, nihil harum quo, explicabo rerum mollitia labore rem libero deleniti nesciunt vitae aliquid odit tenetur quibusdam illo expedita.',
+        //   to: '/admin/settings'
+        // },
       ],
       colors: [
         '#f87171',
@@ -59,7 +59,7 @@ export default {
   },
   // methods: {
   //   async authorize() {
-  //     const result = await http.post('/api/get_user')
+  //     const result = await http.get('/api/get_user')
   //     .then(res => {
   //       if (res.error) {
   //         alert(res.error)
@@ -74,7 +74,7 @@ export default {
   //     })
   //   }
   // },
-  created() {
+  mounted() {
     // this.authorize()
   }
 }
@@ -88,7 +88,7 @@ export default {
       <h2>{{ userInfo }}</h2> -->
       <br><hr class="border-primary border-2 rounded-full"><br>
       <div class="grid grid-cols-2">
-        <router-link v-for="(item, index) in menus" :to="item.to" :style="{ backgroundColor: colors[index % this.colors.length] }" class="text-white p-6 mx-4 my-2 rounded-lg shadow-lg hover:shadow-xl flex hover:scale-105 transition duration-150">
+        <router-link v-for="(item, index) in menus" :to="item.to" :style="{ backgroundColor: colors[index % this.colors.length] }" class="text-white p-6 mx-4 my-2 rounded-lg shadow-lg hover:shadow-xl flex hover:scale-105 transition duration-150 min-h-[230px]">
           <div class="w-1/3">
             <span class="text-[120px]">{{ item.icon }}</span>
           </div>

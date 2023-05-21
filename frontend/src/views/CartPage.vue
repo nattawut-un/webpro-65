@@ -32,7 +32,7 @@ export default {
       }, 0)
     }
   },
-  created() {
+  mounted() {
     this.store.cart = JSON.parse(localStorage.getItem('cart') || '[]')
   }
 }

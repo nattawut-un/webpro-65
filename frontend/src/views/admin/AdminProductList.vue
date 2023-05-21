@@ -25,7 +25,7 @@ export default {
       this.loading = false
     },
     async authorize() {
-      const result = await http.post('/api/get_user')
+      const result = await http.get('/api/get_user')
       .then(res => {
         if (res.error) {
           alert(res.error)
@@ -47,7 +47,7 @@ export default {
       return this.products.filter(item => item.name.includes(this.searchKeyword))
     }
   },
-  created() {
+  mounted() {
     this.getProducts()
   }
 }
@@ -106,13 +106,20 @@ export default {
                 ประเภท
               </th>
               <th scope="col" class="px-6 py-3">
+                ยอดขายทั้งหมด
+              </th>
+              <th scope="col" class="px-6 py-3">
+                ผู้ชื่นชอบ
+              </th>
+              <th scope="col" class="px-6 py-3">
                 <span class="sr-only">แก้ไข</span>
               </th>
             </tr>
           </thead>
           <tbody>
             <tr
-              class="bg-gray-100 border-b hover:bg-gray-200 text-black text-2xl transition ease-out duration-100"
+              class="bg-gray-100 border-b hover:bg-gray-200 text-black transition ease-out duration-100"
+              :class="[ this.showImage ? 'text-2xl' : 'text-md' ]"
               v-for="item in searchedList" :key="item.id">
               <td class="px-6 py-4" v-show="showImage">
                 <img :src="store.apiURL + item.file_path" class="aspect-square object-cover rounded-full h-24">
@@ -127,11 +134,17 @@ export default {
                 {{ item.price }}
               </td>
               <td class="px-6 py-4">
-                {{ item.category }}
+                {{ item.cate_emoji }} {{ item.category }}
+              </td>
+              <td class="px-6 py-4">
+                {{ item.purchase_amount }}
+              </td>
+              <td class="px-6 py-4">
+                {{ item.total_user_favs }}
               </td>
               <td class="px-6 py-4 text-right">
                 <router-link :to="'/admin/products/' + item.id"
-                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline">✏️</router-link>
+                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline">✏️แก้ไข</router-link>
               </td>
             </tr>
             <tr class="bg-gray-300 text-black font-bold">
@@ -143,6 +156,8 @@ export default {
               <td class="py-2">
                 <router-link to="/admin/products/add" class="hover:bg-gray-100 rounded-full px-3 py-1 transition ease-out duration-100">➕ เพิ่ม</router-link>
               </td>
+              <td></td>
+              <td></td>
               <td></td>
               <td></td>
             </tr>
