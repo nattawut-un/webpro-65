@@ -13,6 +13,7 @@ model User {
   firstName    String         @db.VarChar(50)
   lastName     String         @db.VarChar(50)
   username     String         @unique @db.VarChar(30)
+  password     String         @db.VarChar(100)
   isAdmin      Int            @default(0)
   phone        String         @unique @db.VarChar(10)
   email        String         @unique @db.VarChar(50)
@@ -35,6 +36,7 @@ model Address {
   id          String  @id @default(uuid()) @db.VarChar(50)
   userId      String  @db.VarChar(50)
   user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address     String  @db.Text()
   mainAddress Boolean @default(false)
   orders      Order[]
 }
