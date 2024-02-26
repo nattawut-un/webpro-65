@@ -1,9 +1,21 @@
 import {
-  setLogin, getUserFromName, getUserFromID, getUserAddress,
-  addUser, checkUser, updateUser, insertAddress, deleteAddress,
-  insertUserFavs, deleteFromFavs, updateAddressMain, getAllUsers,
-  setAdmin, deleteAdmin, deleteUser
-} from "../models/userModel.js"
+  setLogin,
+  getUserFromName,
+  getUserFromID,
+  getUserAddress,
+  addUser,
+  checkUser,
+  updateUser,
+  insertAddress,
+  deleteAddress,
+  insertUserFavs,
+  deleteFromFavs,
+  updateAddressMain,
+  getAllUsers,
+  setAdmin,
+  deleteAdmin,
+  deleteUser,
+} from '../models/userModel.js'
 import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
 import secret from '../config/auth.js'
@@ -11,10 +23,9 @@ import bcrypt from 'bcryptjs'
 import colors from 'colors'
 import Joi from 'joi'
 
-
 const loginSchema = Joi.object({
   username: Joi.string().required(),
-  password: Joi.string().required()
+  password: Joi.string().required(),
 })
 
 const registerSchema = Joi.object({
@@ -22,9 +33,12 @@ const registerSchema = Joi.object({
   password: Joi.string().min(6).alphanum().required(),
   first_name: Joi.string().min(3).max(100).required(),
   last_name: Joi.string().min(3).max(100).required(),
-  phone: Joi.string().length(10).required().pattern(/^0[0-9]{9}$/),
+  phone: Joi.string()
+    .length(10)
+    .required()
+    .pattern(/^0[0-9]{9}$/),
   email: Joi.string().email(),
-  address: Joi.string().min(10)
+  address: Joi.string().min(10),
 })
 
 export const loginUser = async (req, res, next) => {
@@ -33,7 +47,7 @@ export const loginUser = async (req, res, next) => {
     await loginSchema.validateAsync(req.body)
   } catch {
     return res.status(401).send({
-      msg: 'Please input username and password.'
+      msg: 'Please input username and password.',
     })
   }
 
@@ -44,29 +58,26 @@ export const loginUser = async (req, res, next) => {
   if (!user) {
     console.log(username + ': user not found')
     return res.status(401).send({
-      msg: 'Incorrect credentials are provided.'
+      msg: 'Incorrect credentials are provided.',
     })
   }
 
   // wrong password
-  if(!(await bcrypt.compare(password, user.password))) {
+  if (!(await bcrypt.compare(password, user.password))) {
     console.log(username + ': password wrong')
     return res.status(401).send({
-      msg: 'Incorrect credentials are provided.'
+      msg: 'Incorrect credentials are provided.',
     })
   }
 
   // everything is right
-  const token = jwt.sign(
-    { id: user.id },
-    secret["jwt-secret"],
-  )
+  const token = jwt.sign({ id: user.id }, secret['jwt-secret'])
 
   setLogin(user.id)
   console.log('username: ' + user.username)
 
   return res.send({
-    msg: "Logged in!",
+    msg: 'Logged in!',
     token,
     user: user.username,
   })
@@ -85,14 +96,14 @@ export const authorizeUser = async (req, res, next) => {
   }
 
   try {
-    var decoded = jwt.verify(part2, secret["jwt-secret"])
+    var decoded = jwt.verify(part2, secret['jwt-secret'])
     var thisUser = await getUserFromID(decoded.id)
   } catch (err) {
     console.log(err)
     return res.status(401).json({
       error: true,
       data: err,
-      message: "Token is invalid."
+      message: 'Token is invalid.',
     })
   }
 
@@ -107,7 +118,7 @@ export const authorizeAdmin = async (req, res, next) => {
   }
 
   return res.status(401).send({
-    msg: 'Unauthorized: You are not an admin.'
+    msg: 'Unauthorized: You are not an admin.',
   })
 }
 
@@ -117,7 +128,7 @@ export const authorizeOwner = async (req, res, next) => {
   }
 
   return res.status(401).send({
-    msg: 'Unauthorized: You are not an owner.'
+    msg: 'Unauthorized: You are not an owner.',
   })
 }
 
@@ -132,7 +143,7 @@ export const fetchUser = async (req, res, next) => {
   })
 }
 
-export const fetchUserFromID  = async (req, res, next) => {
+export const fetchUserFromID = async (req, res, next) => {
   const id = req.params.uid
   const user = await getUserFromID(id)
   const address = await getUserAddress(id)
@@ -157,7 +168,8 @@ export const registeringUser = async (req, res, next) => {
     return res.status(400).send(err)
   }
 
-  let { username, password, email, phone, address, first_name, last_name } = req.body
+  let { username, password, email, phone, address, first_name, last_name } =
+    req.body
   const user = await checkUser(username, email)
 
   console.log(user)
@@ -168,35 +180,37 @@ export const registeringUser = async (req, res, next) => {
       return res.status(409).send(`Email "${email}" has already taken,`)
     }
   } else {
-    bcrypt.hash(password, secret['salt-rounds'])
-    .then(async (hash) => {
-      let uuid = uuidv4()
+    bcrypt
+      .hash(password, secret['salt-rounds'])
+      .then(async hash => {
+        let uuid = uuidv4()
 
-      const user_data = {
-        id: uuid,
-        username,
-        password: hash,
-        email,
-        phone,
-        first_name,
-        last_name
-      }
-
-      await addUser(user_data)
-      await insertAddress(uuid, address)
-
-      return res.status(200).send({
-        msg: 'Register successfully.',
-        user: {
+        const user_data = {
           id: uuid,
-          username: username,
-          email: email
+          username,
+          password: hash,
+          email,
+          phone,
+          firstName: first_name,
+          lastName: last_name,
         }
+
+        await addUser(user_data)
+        await insertAddress(uuid, address)
+
+        return res.status(200).send({
+          msg: 'Register successfully.',
+          user: {
+            id: uuid,
+            username: username,
+            email: email,
+          },
+        })
       })
-    }).catch(err => {
-      console.log(err)
-      return res.status(500).send(err)
-    })
+      .catch(err => {
+        console.log(err)
+        return res.status(500).send(err)
+      })
   }
 }
 

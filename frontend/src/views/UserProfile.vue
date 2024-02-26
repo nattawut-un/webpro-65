@@ -43,11 +43,11 @@ export default {
           maxLength: helpers.withMessage('ต้องกรอกไม่เกิน 30 ตัวอักษร', maxLength(30)),
           alphaNum: helpers.withMessage('ต้องมีแค่ตัวอักษรกับตัวเลข', alphaNum)
         },
-        first_name: {
+        firstName: {
           required: helpers.withMessage('จำเป็นต้องกรอกชื่อจริง', required),
           minLength: helpers.withMessage('ต้องกรอกชื่อจริงอย่างน้อย 3 ตัวอักษร', minLength(3))
         },
-        last_name: {
+        lastName: {
           required: helpers.withMessage('จำเป็นต้องกรอกนามสกุล', required),
           minLength: helpers.withMessage('ต้องกรอกนามสกุลอย่างน้อย 3 ตัวอักษร', minLength(3))
         },
@@ -221,159 +221,160 @@ export default {
           <img :src="ProfileImage" class="aspect-square object-cover w-48 rounded-full shadow-lg">
         </div>
         <div class="w-4/5">
-          <div v-if="userInfo.is_admin" class="mb-2">
-            <span class="text-lg bg-red-500 text-white px-3 py-1 rounded-full">Admin</span>
-          </div>
-          <span v-if="editMode" class="grid grid-cols-2 gap-4">
-            <input class="text-5xl font-bold px-2 rounded-lg" type="text" v-model="v$.userInfoEdit.first_name.$model">
-            <input class="text-5xl font-bold  px-2 rounded-lg" type="text" v-model="v$.userInfoEdit.last_name.$model">
-          </span>
-          <h1 v-else class="text-5xl font-bold">{{ userInfo.first_name }} {{ userInfo.last_name }}</h1>
-          <p class="text-black/50 font-mono">id: {{ userInfo.id }}</p><br>
-          <hr class="border-2 border-black/30 rounded-full"><br>
-          <!-- edit mode -->
-          <div v-if="editMode">
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <h1 class="font-bold text-xl">ชื่อผู้ใช้</h1>
-                <input type="text" v-model="v$.userInfoEdit.username.$model" class="px-2 rounded-full w-full">
+                <div v-if="userInfo.isAdmin" class="mb-2">
+                <span class="text-lg bg-red-500 text-white px-3 py-1 rounded-full">Admin</span>
               </div>
-              <div>
-                <h1 class="font-bold text-xl">อีเมล</h1>
-                <input type="text" v-model="v$.userInfoEdit.email.$model" class="px-2 rounded-full w-full">
+              <span v-if="editMode" class="grid grid-cols-2 gap-4">
+                          <input class="text-5xl font-bold px-2 rounded-lg" type="text" v-model="v$.userInfoEdit.firstName.$model">
+                        <input class="text-5xl font-bold  px-2 rounded-lg" type="text" v-model="v$.userInfoEdit.lastName.$model">
+                      </span>
+                        <h1 v-else class="text-5xl font-bold">{{ userInfo.firstName }} {{ userInfo.lastName }}</h1>
+              <p class="text-black/50 font-mono">id: {{ userInfo.id }}</p><br>
+              <hr class="border-2 border-black/30 rounded-full"><br>
+              <!-- edit mode -->
+              <div v-if="editMode">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <h1 class="font-bold text-xl">ชื่อผู้ใช้</h1>
+                    <input type="text" v-model="v$.userInfoEdit.username.$model" class="px-2 rounded-full w-full">
+                  </div>
+                  <div>
+                    <h1 class="font-bold text-xl">อีเมล</h1>
+                    <input type="text" v-model="v$.userInfoEdit.email.$model" class="px-2 rounded-full w-full">
+                  </div>
+                  <div>
+                    <h1 class="font-bold text-xl">เบอร์มือถือ</h1>
+                    <input type="text" v-model="v$.userInfoEdit.phone.$model" class="px-2 rounded-full w-full">
+                  </div>
+                  <div>
+                    <h1 class="font-bold text-xl">วันที่เริ่มเป็นสมาชิก</h1>
+                    <p>{{ moment(userInfo.register_time) }} ({{ moment(userInfo.register_time).fromNow() }})</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h1 class="font-bold text-xl">เบอร์มือถือ</h1>
-                <input type="text" v-model="v$.userInfoEdit.phone.$model" class="px-2 rounded-full w-full">
+              <span v-if="editMode">
+                <br>
+                <p class="text-red-500" v-for="err in v$.userInfoEdit.$errors">- {{ err.$message }}</p>
+                <p class="text-red-500" v-if="serverErr">- {{ serverErr }}</p>
+              </span>
+              <!-- read only mode -->
+              <div v-else>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <h1 class="font-bold text-xl">ชื่อผู้ใช้</h1>
+                    <p>{{ userInfo.username }}</p>
+                  </div>
+                  <div>
+                    <h1 class="font-bold text-xl">อีเมล</h1>
+                    <p>{{ userInfo.email }}</p>
+                  </div>
+                  <div>
+                    <h1 class="font-bold text-xl">เบอร์มือถือ</h1>
+                    <p>{{ userInfo.phone }}</p>
+                  </div>
+                  <div>
+                    <h1 class="font-bold text-xl">วันที่เริ่มเป็นสมาชิก</h1>
+                    <p>{{ moment(userInfo.register_time) }} ({{ moment(userInfo.register_time).fromNow() }})</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h1 class="font-bold text-xl">วันที่เริ่มเป็นสมาชิก</h1>
-                <p>{{ moment(userInfo.register_time) }} ({{ moment(userInfo.register_time).fromNow() }})</p>
-              </div>
+              <br>
+              <button @click="switchEditMode()" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-lg cursor-pointer">
+                <span v-if="editMode">ยกเลิก</span>
+                <span v-else>แก้ไขข้อมูล</span>
+              </button>&nbsp;
+              <button v-if="editMode" @click="changeUserInfo()" class="bg-green-400 font-bold px-6 py-2 rounded-full text-lg cursor-pointer">
+                บันทึก
+              </button>
+              <p v-for="err in v$.errors">{{ err.$message }}</p>
             </div>
+            <!-- read only mode -->
           </div>
-          <span v-if="editMode">
-            <br>
-            <p class="text-red-500" v-for="err in v$.userInfoEdit.$errors">- {{ err.$message }}</p>
-            <p class="text-red-500" v-if="serverErr">- {{ serverErr }}</p>
-          </span>
-          <!-- read only mode -->
-          <div v-else>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <h1 class="font-bold text-xl">ชื่อผู้ใช้</h1>
-                <p>{{ userInfo.username }}</p>
-              </div>
-              <div>
-                <h1 class="font-bold text-xl">อีเมล</h1>
-                <p>{{ userInfo.email }}</p>
-              </div>
-              <div>
-                <h1 class="font-bold text-xl">เบอร์มือถือ</h1>
-                <p>{{ userInfo.phone }}</p>
-              </div>
-              <div>
-                <h1 class="font-bold text-xl">วันที่เริ่มเป็นสมาชิก</h1>
-                <p>{{ moment(userInfo.register_time) }} ({{ moment(userInfo.register_time).fromNow() }})</p>
-              </div>
-            </div>
+        </Section>
+        <Section v-show="!loading" title="ที่อยู่" id="address">
+          <br>
+          <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left">
+              <thead class="text-sm uppercase bg-primary text-white">
+                <tr>
+                  <th scope="col" class="px-6 py-3">
+                    ที่อยู่หลัก
+                  </th>
+                  <th scope="col" class="px-6 py-3">
+                    ที่อยู่
+                  </th>
+                  <th scope="col" class="px-6 py-3 max-w-[200px]">
+                    {{ address.length }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class="border-b" :class="[item.main_addr ? 'bg-secondary' : 'bg-gray-100']"
+                  v-for="item in address" :key="item.id">
+                  <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
+                    <span v-if="item.main_addr">✅</span>
+                  </th>
+                  <td class="px-6 py-4" :class="[item.main_addr ? 'font-bold' : '']">
+                    {{ item.address }}
+                  </td>
+                  <td class="px-6 py-2">
+                    <div class="flex">
+                      <span v-if="!item.main_addr">
+                        <button class="hover:bg-primary text-black hover:text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" :class="[item.main_addr ? 'bg-light' : 'bg-secondary']" @click="setMainAddress(item)">
+                          ตั้งให้เป็นอันหลัก
+                        </button>&nbsp;&nbsp;
+                      </span>
+                      <button class="bg-red-500 hover:bg-red-400 text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" @click="deleteAddress(item)">
+                        ลบ
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="bg-gray-100 border-b">
+                  <th class="px-6 py-4 font-bold whitespace-nowrap">เพิ่มที่อยู่ใหม่</th>
+                  <td class="px-6 py-2">
+                    <input type="text" v-model="v$.newAddress.$model" class="px-2 py-1 rounded-full border-2 w-4/5">
+                    <p class="text-xs text-red-500" v-for="err in v$.newAddress.$errors">- {{ err.$message }}</p>
+                  </td>
+                  <td class="px-6 py-2">
+                    <button class="bg-secondary hover:bg-primary text-black hover:text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" @click="addAddress()">
+                      ➕ เพิ่ม
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           <br>
-          <button @click="switchEditMode()" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-lg cursor-pointer">
-            <span v-if="editMode">ยกเลิก</span>
-            <span v-else>แก้ไขข้อมูล</span>
-          </button>&nbsp;
-          <button v-if="editMode" @click="changeUserInfo()" class="bg-green-400 font-bold px-6 py-2 rounded-full text-lg cursor-pointer">
-            บันทึก
-          </button>
-          <p v-for="err in v$.errors">{{ err.$message }}</p>
-        </div>
-        <!-- read only mode -->
-      </div>
-    </Section>
-    <Section v-show="!loading" title="ที่อยู่" id="address">
-      <br>
-      <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table class="w-full text-sm text-left">
-          <thead class="text-sm uppercase bg-primary text-white">
-            <tr>
-              <th scope="col" class="px-6 py-3">
-                ที่อยู่หลัก
-              </th>
-              <th scope="col" class="px-6 py-3">
-                ที่อยู่
-              </th>
-              <th scope="col" class="px-6 py-3 max-w-[200px]">
-                {{ address.length }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              class="border-b" :class="[ item.main_addr ? 'bg-secondary' : 'bg-gray-100' ]"
-              v-for="item in address" :key="item.id">
-              <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
-                <span v-if="item.main_addr">✅</span>
-              </th>
-              <td class="px-6 py-4" :class="[ item.main_addr ? 'font-bold' : '' ]">
-                {{ item.address }}
-              </td>
-              <td class="px-6 py-2">
-                <div class="flex">
-                  <span v-if="!item.main_addr">
-                    <button class="hover:bg-primary text-black hover:text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" :class="[ item.main_addr ? 'bg-light' : 'bg-secondary' ]" @click="setMainAddress(item)">
-                      ตั้งให้เป็นอันหลัก
-                    </button>&nbsp;&nbsp;
-                  </span>
-                  <button class="bg-red-500 hover:bg-red-400 text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" @click="deleteAddress(item)">
-                    ลบ
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr class="bg-gray-100 border-b">
-              <th class="px-6 py-4 font-bold whitespace-nowrap">เพิ่มที่อยู่ใหม่</th>
-              <td class="px-6 py-2">
-                <input type="text" v-model="v$.newAddress.$model" class="px-2 py-1 rounded-full border-2 w-4/5">
-                <p class="text-xs text-red-500" v-for="err in v$.newAddress.$errors">- {{ err.$message }}</p>
-              </td>
-              <td class="px-6 py-2">
-                <button class="bg-secondary hover:bg-primary text-black hover:text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" @click="addAddress()">
-                  ➕ เพิ่ม
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <br>
-    </Section>
+        </Section>
 
-    <Section v-show="!loading" title="ตั้งค่า">
-      <div class="flex">
-        <div class="w-1/3">
-          <div>
-            <label>รหัสเก่า</label><br>
-            <input type="password" v-model="editPassword.oldPassword" class="border-2 rounded-full mt-2 px-4">
-          </div><br>
-          <div>
-            <label>รหัสใหม่</label><br>
-            <input type="password" v-model="v$.editPassword.newPassword.$model" class="border-2 rounded-full mt-2 px-4">
-          </div><br>
-          <div>
-            <label>รหัสใหม่อีกครั้ง</label><br>
-            <input type="password" v-model="v$.editPassword.confirmPassword.$model" class="border-2 rounded-full mt-2 px-4">
-          </div><br>
-          <button @click="changePassword()" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-lg cursor-pointer">แก้ไขรหัสผ่าน</button>
-        </div>
-        <div class="w-1/3 text-red-500">
-          <p v-for="err in v$.editPassword.newPassword.$errors">- {{ err.$message }}</p><br>
-          <p v-for="err in v$.editPassword.confirmPassword.$errors">- {{ err.$message }}</p>
-        </div>
-      </div>
-    </Section>
+        <Section v-show="!loading" title="ตั้งค่า">
+          <div class="flex">
+            <div class="w-1/3">
+              <div>
+                <label>รหัสเก่า</label><br>
+                <input type="password" v-model="editPassword.oldPassword" class="border-2 rounded-full mt-2 px-4">
+              </div><br>
+              <div>
+                <label>รหัสใหม่</label><br>
+                <input type="password" v-model="v$.editPassword.newPassword.$model" class="border-2 rounded-full mt-2 px-4">
+              </div><br>
+              <div>
+                <label>รหัสใหม่อีกครั้ง</label><br>
+                <input type="password" v-model="v$.editPassword.confirmPassword.$model" class="border-2 rounded-full mt-2 px-4">
+              </div><br>
+              <button @click="changePassword()" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-lg cursor-pointer">แก้ไขรหัสผ่าน</button>
+            </div>
+            <div class="w-1/3 text-red-500">
+              <p v-for="err in v$.editPassword.newPassword.$errors">- {{ err.$message }}</p><br>
+              <p v-for="err in v$.editPassword.confirmPassword.$errors">- {{ err.$message }}</p>
+            </div>
+          </div>
+        </Section>
 
-    <Section v-show="!loading && userInfo.is_admin" title="ผู้ดูแลระบบ">
+
+        <Section v-show="!loading && userInfo.isAdmin" title="ผู้ดูแลระบบ">
       <p>ตั้งค่าระบบ และรายการต่างๆ ของร้าน</p>
       <br>
       <router-link to="/admin" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-lg cursor-pointer">แอดมิน</router-link>

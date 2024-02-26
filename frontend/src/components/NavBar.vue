@@ -80,18 +80,18 @@ export default {
           </div>
         </div>
         <div class="flex px-4 font-pattaya w-2/3 justify-end">
-          <router-link v-if="store.user.data && store.user.data.is_admin" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" to="/admin">
-            ⚒️แอดมิน
-          </router-link>
-          <router-link v-if="store.user.data" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in userMenu" :to="item.url">
-            {{ item.title }}
-          </router-link>
-          <router-link v-else class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in guestMenu" :to="item.url">
-            {{ item.title }}
-          </router-link>
-          <button v-if="store.user.data" @click="logout()" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4">🚪ลงชื่อออก</button>
-          <h1 class="bg-primary/40 px-2 rounded-full" v-if="store.user.data">
-            <span v-if="store.user.data.is_admin">🖥️</span>
+              <router-link v-if="store.user.data && store.user.data.isAdmin" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" to="/admin">
+              ⚒️แอดมิน
+            </router-link>
+            <router-link v-if="store.user.data" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in userMenu" :to="item.url">
+              {{ item.title }}
+            </router-link>
+            <router-link v-else class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4" v-for="item in guestMenu" :to="item.url">
+              {{ item.title }}
+            </router-link>
+            <button v-if="store.user.data" @click="logout()" class="text-gray-500 hover:text-black transition duration-300 ease-out mr-4">🚪ลงชื่อออก</button>
+            <h1 class="bg-primary/40 px-2 rounded-full" v-if="store.user.data">
+                <span v-if="store.user.data.isAdmin">🖥️</span>
             <span v-else>👤</span>
             {{ store.user.data.username }}
           </h1>
