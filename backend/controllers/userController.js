@@ -113,7 +113,7 @@ export const authorizeUser = async (req, res, next) => {
 }
 
 export const authorizeAdmin = async (req, res, next) => {
-  if (req.user.is_admin >= 0) {
+  if (req.user.isAdmin >= 0) {
     return next()
   }
 
