@@ -83,14 +83,16 @@ export const createProduct = async (req, res, next) => {
 }
 
 export const updateProduct = async (req, res, next) => {
-  let data = [
-    req.body.name,
-    req.body.price,
-    req.body.description,
-    req.body.category_id,
-    req.body.id,
-  ]
-  // console.log(' data '.bgGray, data)
+  // let data = [
+  //   req.body.name,
+  //   req.body.price,
+  //   req.body.description,
+  //   req.body.category_id,
+  //   req.body.id,
+  // ]
+  const { id, name, price, description, category_id } = req.body
+  let data = { id, name, price, description, category_id }
+  console.log(' data '.bgGray, data)
 
   try {
     const results = await editProduct(data)
