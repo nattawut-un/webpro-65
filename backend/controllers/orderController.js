@@ -19,7 +19,7 @@ export const placeOrder = async (req, res, next) => {
   const address = await getAddressFromID(address_id)
 
   try {
-    await addOrder(order_id, user_id, address, JSON.parse(cart))
+    await addOrder(order_id, user_id, address_id, JSON.parse(cart))
     return res.status(200).send({
       msg: 'Order successful.'
     })
