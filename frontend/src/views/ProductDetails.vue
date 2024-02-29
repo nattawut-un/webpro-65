@@ -8,7 +8,10 @@ export default {
       loading: false,
       store,
       productId: null,
-      details: {},
+      details: {
+        images: [{ path: '' }],
+        userFavs: []
+      },
       quantity: 1,
       alreadyAdded: false,
       cartIndex: null
@@ -48,7 +51,7 @@ export default {
       await http.post('/api/favs/add', {
         prod_id: this.details.id,
       }).then(res => {
-        this.details.fav_id = 1
+        this.details.userFavs = [1]
         // this.$emit('productRefresh')
       }).catch(err => {
         console.log(err)
@@ -60,7 +63,7 @@ export default {
           prod_id: this.details.id,
         }
       }).then(res => {
-        this.details.fav_id = 0
+        this.details.userFavs = []
         // this.$emit('productRefresh')
       }).catch(err => {
         console.log(err)
@@ -92,7 +95,7 @@ import SectionFull from '../components/SectionFull.vue'
 </script>
 
 <template>
-  <SectionFull :title="details.name" :imageApi="`${details.file_path}`" backButton="true">
+  <SectionFull :title="details.title" :imageApi="`${details.images[0].path}`" backButton="true">
     <div v-show="loading" class="flex items-center justify-center space-x-2">
       <div
         class="inline-block h-24 w-24 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
@@ -107,7 +110,7 @@ import SectionFull from '../components/SectionFull.vue'
       <div class="flex">
         <h2 class="text-[200%]">{{ details.price }} บาท</h2>
         <span v-if="store.user.data">
-          <button v-if="details.fav_id" class="ml-2 px-4 py-3 rounded-full transition ease-out duration-100 bg-pink-200 hover:bg-pink-300 flex" @click="deleteFav()">
+          <button v-if="details.userFavs.length" class="ml-2 px-4 py-3 rounded-full transition ease-out duration-100 bg-pink-200 hover:bg-pink-300 flex" @click="deleteFav()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill mt-1" viewBox="0 0 16 16">
               <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
             </svg>

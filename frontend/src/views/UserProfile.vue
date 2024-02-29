@@ -310,18 +310,18 @@ export default {
               </thead>
               <tbody>
                 <tr
-                  class="border-b" :class="[item.main_addr ? 'bg-secondary' : 'bg-gray-100']"
+                  class="border-b" :class="[item.mainAddress ? 'bg-secondary' : 'bg-gray-100']"
                   v-for="item in address" :key="item.id">
                   <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
-                    <span v-if="item.main_addr">✅</span>
+                    <span v-if="item.mainAddress">✅</span>
                   </th>
-                  <td class="px-6 py-4" :class="[item.main_addr ? 'font-bold' : '']">
+                  <td class="px-6 py-4" :class="[item.mainAddress ? 'font-bold' : '']">
                     {{ item.address }}
                   </td>
                   <td class="px-6 py-2">
                     <div class="flex">
-                      <span v-if="!item.main_addr">
-                        <button class="hover:bg-primary text-black hover:text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" :class="[item.main_addr ? 'bg-light' : 'bg-secondary']" @click="setMainAddress(item)">
+                      <span v-if="!item.mainAddress">
+                        <button class="hover:bg-primary text-black hover:text-white font-bold px-4 py-2 rounded-full transition ease-out duration-100" :class="[item.mainAddress ? 'bg-light' : 'bg-secondary']" @click="setMainAddress(item)">
                           ตั้งให้เป็นอันหลัก
                         </button>&nbsp;&nbsp;
                       </span>

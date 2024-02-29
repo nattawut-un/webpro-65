@@ -46,7 +46,7 @@ export default {
         return this.products
       } else if (this.searchKeyword && this.selectedCategories == 0) {
         return this.products.filter(item => {
-          return item.name.includes(this.searchKeyword)
+          return item.title.includes(this.searchKeyword)
         })
       } else if (!this.searchKeyword && this.selectedCategories.length > 0) {
         return this.products.filter(item => {
@@ -54,7 +54,7 @@ export default {
         })
       } else {
         return this.products.filter(item => {
-          return item.name.includes(this.searchKeyword) && this.selectedCategories.includes(item.category_id)
+          return item.title.includes(this.searchKeyword) && this.selectedCategories.includes(item.category_id)
       })
       }
     },

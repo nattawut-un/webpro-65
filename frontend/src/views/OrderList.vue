@@ -28,7 +28,7 @@ export default {
       .then(response => {
         this.orders = response.data
         for (const [key, value] of Object.entries(this.orders)) {
-          if (value.finish_time) {
+          if (value.finishTime) {
             this.finished.push(value)
           } else {
             this.doing.push(value)
@@ -37,11 +37,11 @@ export default {
       }).catch(err => {
         console.log(err)
         alert(err)
-        this.$router.push('/')
+        // this.$router.push('/')
       })
     },
     totalPrice(list) {
-      return list.reduce((total, item) => { return total + (item.price * item.amount) }, 0)
+      return list.reduce((total, item) => { return total + (item.priceEach * item.amount) }, 0)
     },
     totalAmount(list) {
       return list.reduce((total, item) => { return total + item.amount }, 0)
@@ -71,9 +71,9 @@ export default {
           <div class="bg-gray-200 my-2 p-4 rounded-lg border-4 border-gray-300 font-mali" v-for="order in doing">
             <div class="flex">
               <div class="w-1/2">
-                <h3 class="text-gray-400 font-[monospace] font-bold text-sm mb-3">#{{ order.order_id }}</h3>
-                <p><b>เวลาที่สั่งซื้อ:</b><br>{{ moment(order.order_time).format('llll') }}</p>
-                <p><b>ที่อยู่:</b><br>{{ order.address }}</p>
+                <h3 class="text-gray-400 font-[monospace] font-bold text-sm mb-3">#{{ order.id }}</h3>
+                <p><b>เวลาที่สั่งซื้อ:</b><br>{{ moment(order.orderTime).format('llll') }}</p>
+                <p><b>ที่อยู่:</b><br>{{ order.address.address }}</p>
               </div>
               <div class="w-1/2 px-4">
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -94,15 +94,15 @@ export default {
                     <tbody>
                       <tr
                         class="bg-gray-100 border-b"
-                        v-for="item in order.order_list" :key="item.order_id">
+                        v-for="item in order.cartItem" :key="item.id">
                         <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
-                          {{ item.name }}
+                          {{ item.product.title }}
                         </th>
                         <td class="px-6 py-4">
-                          {{ item.price }}
+                          {{ item.amount }}
                         </td>
                         <td class="px-6 py-4">
-                          {{ item.price * item.amount }}.-
+                          {{ item.product.price * item.amount }}.-
                         </td>
                       </tr>
                       <tr
@@ -111,10 +111,10 @@ export default {
                           รวม
                         </th>
                         <td class="px-6 py-4 font-bold">
-                          {{ totalAmount(order.order_list) }}
+                          {{ totalAmount(order.cartItem) }}
                         </td>
                         <td class="px-6 py-4 font-bold">
-                          {{ totalPrice(order.order_list) }}.-
+                          {{ totalPrice(order.cartItem) }}.-
                         </td>
                       </tr>
                     </tbody>
@@ -132,9 +132,9 @@ export default {
         <div class="bg-gray-200 my-2 p-4 rounded-lg border-4 border-gray-300 font-mali" v-for="order in finished">
           <div class="flex">
             <div class="w-1/2">
-              <h3 class="text-gray-400 font-[monospace] font-bold text-sm mb-3">#{{ order.order_id }}</h3>
-              <p><b>เวลาที่สั่งซื้อ:</b><br>{{ moment(order.order_time).format('llll') }} ({{ moment(order.order_time).fromNow() }})</p>
-              <p><b>เวลาที่เสร็จสิ้น:</b><br>{{ moment(order.finish_time).format('llll') }} ({{ moment(order.finish_time).fromNow() }})</p>
+              <h3 class="text-gray-400 font-[monospace] font-bold text-sm mb-3">#{{ order.id }}</h3>
+              <p><b>เวลาที่สั่งซื้อ:</b><br>{{ moment(order.orderTime).format('llll') }} ({{ moment(order.orderTime).fromNow() }})</p>
+              <p><b>เวลาที่เสร็จสิ้น:</b><br>{{ moment(order.finishTime).format('llll') }} ({{ moment(order.finishTime).fromNow() }})</p>
               <p><b>ที่อยู่:</b><br>{{ order.address }}</p>
             </div>
             <div class="w-1/2 px-4">
@@ -156,15 +156,15 @@ export default {
                   <tbody>
                     <tr
                       class="bg-gray-100 border-b"
-                      v-for="item in order.order_list" :key="item.order_id">
+                      v-for="item in order.cartItem" :key="item.id">
                       <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
-                        {{ item.name }}
+                        {{ item.product.title }}
                       </th>
                       <td class="px-6 py-4">
-                        {{ item.price }}
+                        {{ item.amount }}
                       </td>
                       <td class="px-6 py-4">
-                        {{ item.price * item.amount }}.-
+                        {{ item.priceEach * item.amount }}.-
                       </td>
                     </tr>
                     <tr
@@ -173,10 +173,10 @@ export default {
                         รวม
                       </th>
                       <td class="px-6 py-4 font-bold">
-                        {{ totalAmount(order.order_list) }}
+                        {{ totalAmount(order.cartItem) }}
                       </td>
                       <td class="px-6 py-4 font-bold">
-                        {{ totalPrice(order.order_list) }}.-
+                        {{ totalPrice(order.cartItem) }}.-
                       </td>
                     </tr>
                   </tbody>

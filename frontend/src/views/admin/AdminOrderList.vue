@@ -31,7 +31,8 @@ export default {
         .then(response => {
           this.orders = response.data
           for (const [key, value] of Object.entries(this.orders)) {
-            if (value.finish_time) {
+            console.log(value)
+            if (value.finishTime) {
               this.finished.push(value)
             } else {
               this.doing.push(value)
@@ -46,7 +47,7 @@ export default {
       if (confirm('คุณต้องการทำให้ออเดอร์นี้เสร็จหรือไม่')) {
         this.loading = true
         await http.put('/api/orders/finish', {
-          order_id: order.order_id
+          order_id: order.id
         })
           .then(response => {
             alert('order เสร็จสมบูรณ์')
@@ -69,7 +70,7 @@ export default {
       }
     },
     totalPrice(list) {
-      return list.reduce((total, item) => { return total + (item.price * item.amount) }, 0)
+      return list.reduce((total, item) => { return total + (item.priceEach * item.amount) }, 0)
     },
     totalAmount(list) {
       return list.reduce((total, item) => { return total + item.amount }, 0)
@@ -128,10 +129,10 @@ export default {
               <!-- <div class="bg-gray-100/50">
                 <p v-for="(value, key) in order">{{ key }}: {{ value }}</p>
               </div> -->
-              <h3 class="text-gray-400 font-[monospace] font-bold text-sm mb-3">#{{ value.order_id }}</h3>
-              <p><b>ชื่อผู้สั่ง:</b><br>{{ value.username }}</p>
-              <p><b>เวลาที่สั่งซื้อ:</b><br>{{ moment(value.order_time).format('llll') }} ({{ moment(value.order_time).fromNow() }})</p>
-              <p><b>ที่อยู่:</b><br>{{ value.address }}</p>
+              <h3 class="text-gray-400 font-[monospace] font-bold text-sm mb-3">#{{ value.id }}</h3>
+              <p><b>ชื่อผู้สั่ง:</b><br>{{ value.user.username }}</p>
+              <p><b>เวลาที่สั่งซื้อ:</b><br>{{ moment(value.orderTime).format('llll') }} ({{ moment(value.orderTime).fromNow() }})</p>
+              <p><b>ที่อยู่:</b><br>{{ value.address.address }}</p>
             </div>
             <div class="w-1/2 px-4">
               <!-- <table class="table-auto w-full bg-white">
@@ -168,9 +169,9 @@ export default {
                   <tbody>
                     <tr
                       class="bg-gray-100 border-b"
-                      v-for="item in value.order_list" :key="item.id">
+                      v-for="item in value.cartItem" :key="item.id">
                       <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
-                        {{ item.name }}
+                        {{ item.product.title }}
                       </th>
                       <td class="px-6 py-4">
                         {{ item.amount }}
@@ -184,10 +185,10 @@ export default {
                         รวม
                       </th>
                       <td class="px-6 py-4 font-bold">
-                        {{ totalAmount(value.order_list) }}
+                        {{ totalAmount(value.cartItem) }}
                       </td>
                       <td class="px-6 py-4 font-bold">
-                        {{ totalPrice(value.order_list) }}.-
+                        {{ totalPrice(value.cartItem) }}.-
                       </td>
                     </tr>
                   </tbody>
@@ -253,40 +254,40 @@ export default {
               v-for="(value, key) in finished" :key="key">
               <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
                 <span class="tooltip">
-                  {{ value.first_name }} {{ value.last_name }}
+                  {{ value.user.firstName }} {{ value.user.lastName }}
                   <span class="tooltiptext text-xs">
-                    <p>username: {{ value.username }}</p>
-                    <p>order_id: {{ value.order_id }}</p>
+                    <p>username: {{ value.user.username }}</p>
+                    <p>order_id: {{ value.id }}</p>
                   </span>
                 </span>
               </th>
               <td class="px-6 py-4">
-                {{ value.address }}
+                {{ value.address.address }}
               </td>
               <td class="px-6 py-4">
                 <span class="tooltip">
-                  {{ value.order_list.length }}
+                  {{ value.cartItem.length }}
                   <span class="tooltiptext text-xs">
-                    <p v-for="item in value.order_list">{{ item.name }} - จำนวน {{ item.amount }} ที่ ที่ละ {{ item.price }} บาท</p>
+                    <p v-for="item in value.cartItem">{{ item.name }} - จำนวน {{ item.amount }} ที่ ที่ละ {{ item.price }} บาท</p>
                   </span>
                 </span>
               </td>
               <td class="px-6 py-4">
-                {{ totalPrice(value.order_list) }}.-
+                {{ totalPrice(value.cartItem) }}.-
               </td>
               <td class="px-6 py-4">
                 <span class="tooltip">
-                  {{ moment(value.order_time).fromNow() }}
+                  {{ moment(value.orderTime).fromNow() }}
                   <span class="tooltiptext text-xs">
-                    {{ moment(value.order_time).format('llll') }}
+                    {{ moment(value.orderTime).format('llll') }}
                   </span>
                 </span>
               </td>
               <td class="px-6 py-4">
                 <span class="tooltip">
-                  {{ moment(value.finish_time).fromNow() }}
+                  {{ moment(value.finishTime).fromNow() }}
                   <span class="tooltiptext text-xs">
-                    {{ moment(value.finish_time).format('llll') }}
+                    {{ moment(value.finishTime).format('llll') }}
                   </span>
                 </span>
               </td>
