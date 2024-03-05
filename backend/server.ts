@@ -1,6 +1,6 @@
-import express from 'express'
+import express, { Express, Request, Response } from 'express'
 import cors from 'cors'
-import Router from './routes/routes.js'
+import Router from './routes/routes'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import colors from 'colors'
@@ -8,10 +8,8 @@ import morgan from 'morgan'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-const app = express();
-const port = process.env.PORT || 3000;
-
-// console.log(' process.env '.bgGray, process.env)
+const app: Express = express();
+const port = process.env.PORT || '3000';
 
 app.use(
   cors({
@@ -21,7 +19,7 @@ app.use(
       'https://localhost:5173',
       'http://127.0.0.1:5173',
       'https://127.0.0.1:5173',
-      process.env.CLIENT_ORIGIN
+      process.env.CLIENT_ORIGIN || ''
     ]
   })
 );
@@ -33,8 +31,8 @@ app.use(morgan('dev'))
 app.use(express.static('static'))
 
 app.use('/api', Router)
-
-app.get('/', (req, res, next) => {
+0
+app.get('/', (req: Request, res: Response) => {
   res.send('<h1>Web Programming 2023</h1><p>by Nattawut Unwiseth 64070035</p><a href="https://github.com/nattawut-un/webpro-65">GitHub</a><br><img src="https://media.tenor.com/71bZdJOKqqgAAAAC/spideyvivi.gif">')
 })
 

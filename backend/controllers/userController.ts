@@ -15,13 +15,13 @@ import {
   setAdmin,
   deleteAdmin,
   deleteUser,
-} from '../models/userModel.js'
+} from '../models/userModel.ts'
 import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
-import secret from '../config/auth.js'
+import secret from '../config/auth.ts'
 import bcrypt from 'bcryptjs'
-import colors from 'colors'
 import Joi from 'joi'
+import { Request, Response, NextFunction } from 'express'
 
 const loginSchema = Joi.object({
   username: Joi.string().required(),
@@ -41,7 +41,7 @@ const registerSchema = Joi.object({
   address: Joi.string().min(10),
 })
 
-export const loginUser = async (req, res, next) => {
+export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   // validation
   try {
     await loginSchema.validateAsync(req.body)
@@ -83,7 +83,7 @@ export const loginUser = async (req, res, next) => {
   })
 }
 
-export const authorizeUser = async (req, res, next) => {
+export const authorizeUser = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
   let authorization = req.headers.authorization
 
   if (!authorization) {
@@ -97,6 +97,7 @@ export const authorizeUser = async (req, res, next) => {
 
   try {
     var decoded = jwt.verify(part2, secret['jwt-secret'])
+    // @ts-ignore
     var thisUser = await getUserFromID(decoded.id)
   } catch (err) {
     console.log(err)
@@ -107,12 +108,13 @@ export const authorizeUser = async (req, res, next) => {
     })
   }
 
+  // @ts-ignore
   await setLogin(decoded.id)
   req.user = thisUser
   next()
 }
 
-export const authorizeAdmin = async (req, res, next) => {
+export const authorizeAdmin = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
   if (req.user.isAdmin >= 0) {
     return next()
   }
@@ -122,7 +124,7 @@ export const authorizeAdmin = async (req, res, next) => {
   })
 }
 
-export const authorizeOwner = async (req, res, next) => {
+export const authorizeOwner = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
   if (req.user.is_admin === 2) {
     return next()
   }
@@ -132,7 +134,7 @@ export const authorizeOwner = async (req, res, next) => {
   })
 }
 
-export const fetchUser = async (req, res, next) => {
+export const fetchUser = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
   const id = req.user.id
   const user = await getUserFromID(id)
   const address = await getUserAddress(id)
@@ -143,7 +145,7 @@ export const fetchUser = async (req, res, next) => {
   })
 }
 
-export const fetchUserFromID = async (req, res, next) => {
+export const fetchUserFromID = async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.uid
   const user = await getUserFromID(id)
   const address = await getUserAddress(id)
@@ -154,13 +156,13 @@ export const fetchUserFromID = async (req, res, next) => {
   })
 }
 
-export const fetchAllUsers = async (req, res, next) => {
+export const fetchAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   const users = await getAllUsers()
   console.log('Total users: ' + users.length)
   res.status(200).send(users)
 }
 
-export const registeringUser = async (req, res, next) => {
+export const registeringUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await registerSchema.validateAsync(req.body)
   } catch (err) {
@@ -182,7 +184,7 @@ export const registeringUser = async (req, res, next) => {
   } else {
     bcrypt
       .hash(password, secret['salt-rounds'])
-      .then(async hash => {
+      .then(async (hash: string) => {
         let uuid = uuidv4()
 
         const user_data = {
@@ -207,16 +209,24 @@ export const registeringUser = async (req, res, next) => {
           },
         })
       })
-      .catch(err => {
+      .catch((err: Error) => {
         console.log(err)
         return res.status(500).send(err)
       })
   }
 }
 
-export const changePassword = async (req, res, next) => {
+export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
   const { id, oldPassword, newPassword } = req.body
   const user = await getUserFromID(id)
+
+  if (!user) {
+    return res.status(40).send({
+      msg: 'User is not found.',
+      id: req.body.id
+    })
+  }
+
   const currentPassword = user.password
 
   if((!(await bcrypt.compare(oldPassword, currentPassword)))) {
@@ -228,20 +238,20 @@ export const changePassword = async (req, res, next) => {
   }
 
   bcrypt.hash(newPassword, secret['salt-rounds'])
-  .then(hash => {
+  .then((hash: string) => {
     console.log(hash)
     updateUser(id, { password: hash }, 'password')
     return res.send({
       msg: 'Password changed.',
       id: id
     })
-  }).catch(err => {
+  }).catch((err: Error) => {
     console.log(err)
     return res.status(500).send(err)
   })
 }
 
-export const addAddress = async (req, res, next) => {
+export const addAddress = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
   const user_id = req.user.id
   const address = req.body.address
 
@@ -274,7 +284,7 @@ export const addAddress = async (req, res, next) => {
   }
 }
 
-export const removeAddress = async (req, res, next) => {
+export const removeAddress = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
   const { address_id } = req.body
 
   try {
@@ -290,9 +300,10 @@ export const removeAddress = async (req, res, next) => {
   }
 }
 
-export const editUserInfo = async (req, res, next) => {
+export const editUserInfo = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
   try {
     const check = await checkUser(req.body.username, req.body.email)
+
     // user id and user from token isn't the same
     if (req.user.id !== req.body.id) {
       return res.status(401).send({
@@ -300,6 +311,7 @@ export const editUserInfo = async (req, res, next) => {
         msg_th: 'คุณไม่สามรถแก้ไข',
       })
     }
+
     // check if 1) email is duplicate 2) user is duplicate (using same username but different id)
     for (let i=0; i<check.length; i++) {
       if ((check[i].email === req.body.email || check[i].username === req.body.username)
@@ -312,7 +324,7 @@ export const editUserInfo = async (req, res, next) => {
       }
     }
 
-    await updateUser(req.user.id, req.body)
+    await updateUser(req.user.id, req.body, null)
     return res.send({
       msg: 'Updated user info',
       user_id: req.user.id,
@@ -324,7 +336,7 @@ export const editUserInfo = async (req, res, next) => {
   }
 }
 
-export const addFavorite = async (req, res, next) => {
+export const addFavorite = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
   try {
     await insertUserFavs(req.user.id, req.body.prod_id)
     return res.send({
@@ -338,7 +350,7 @@ export const addFavorite = async (req, res, next) => {
   }
 }
 
-export const removeFavorite = async (req, res, next) => {
+export const removeFavorite = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
   try {
     console.log(req.body)
     console.log('delete', req.user.id, req.body.prod_id)
@@ -354,7 +366,7 @@ export const removeFavorite = async (req, res, next) => {
   }
 }
 
-export const setMainAddress = async (req, res, next) => {
+export const setMainAddress = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
   try {
     console.log('main', req.user.id, req.body.address_id)
     await updateAddressMain(req.user.id, req.body.address_id)
@@ -369,7 +381,7 @@ export const setMainAddress = async (req, res, next) => {
   }
 }
 
-export const addAdmin = async (req, res, next) => {
+export const addAdmin = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await setAdmin(req.body.uid)
     return res.send({
@@ -382,7 +394,7 @@ export const addAdmin = async (req, res, next) => {
   }
 }
 
-export const removeAdmin = async (req, res, next) => {
+export const removeAdmin = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await deleteAdmin(req.body.uid)
     return res.send({
@@ -395,7 +407,7 @@ export const removeAdmin = async (req, res, next) => {
   }
 }
 
-export const removeUser = async (req, res, next) => {
+export const removeUser = async (req: Request, res: Response, next: NextFunction) => {
   console.log(req.body.uid)
   try {
     await deleteUser(req.body.uid)
