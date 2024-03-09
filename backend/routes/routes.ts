@@ -1,12 +1,12 @@
-import express from 'express'
-const router = express.Router();
+import express, { Router } from 'express'
+const router: Router = express.Router();
 
 import upload from '../config/multer'
 
 import {
   showProducts, showProductById, createProduct, updateProduct,
   fetchCategories, removeProduct, addCategory, removeCategory
-} from '../controllers/productController.ts'
+} from '../controllers/productController'
 
 import {
   loginUser, authorizeUser, authorizeAdmin, authorizeOwner,
@@ -14,12 +14,12 @@ import {
   removeAddress, editUserInfo, addFavorite,
   removeFavorite, setMainAddress, fetchAllUsers,
   fetchUserFromID, addAdmin, removeAdmin, removeUser
-} from '../controllers/userController.ts'
+} from '../controllers/userController'
 
 import {
   fetchOrderbyUser, placeOrder, fetchOrders, finishOrder,
   removeOrder
-} from '../controllers/orderController.ts'
+} from '../controllers/orderController'
 
 // products
 router.get('/products', showProducts)                                                                       // get all products

@@ -15,10 +15,10 @@ import {
   setAdmin,
   deleteAdmin,
   deleteUser,
-} from '../models/userModel.ts'
+} from '../models/userModel'
 import { v4 as uuidv4 } from 'uuid'
 import jwt from 'jsonwebtoken'
-import secret from '../config/auth.ts'
+import secret from '../config/auth'
 import bcrypt from 'bcryptjs'
 import Joi from 'joi'
 import { Request, Response, NextFunction } from 'express'

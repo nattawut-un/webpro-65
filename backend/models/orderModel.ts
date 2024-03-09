@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import prisma from '../config/prisma.ts'
+import prisma from '../config/prisma'
 import { Prisma } from '@prisma/client'
 
 export const addOrder = async (order_id: string, user_id: string, address_id: string, cart: {

@@ -1,5 +1,5 @@
-import { addOrder, getOrderFromID, getOrders, editOrderFinish, deleteOrder } from '../models/orderModel.ts'
-import { getAddressFromID } from '../models/userModel.ts'
+import { addOrder, getOrderFromID, getOrders, editOrderFinish, deleteOrder } from '../models/orderModel'
+import { getAddressFromID } from '../models/userModel'
 import { v4 as uuidv4 } from 'uuid'
 import { Request, Response, NextFunction } from 'express'
 
