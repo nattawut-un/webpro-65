@@ -1,19 +1,27 @@
-import { getProducts, getProductById, addProduct, editProduct, getCategories, deleteProduct, insertCategory, deleteCategory } from '../models/productModel.js'
-import { getUserFromID } from '../models/userModel.js'
+import { getProducts, getProductById, addProduct, editProduct, getCategories, deleteProduct, insertCategory, deleteCategory } from '../models/productModel'
+import { getUserFromID } from '../models/userModel'
 import jwt from 'jsonwebtoken'
-import secret from '../config/auth.js'
+import secret from '../config/auth'
 import Joi from 'joi'
+import { Request, Response, NextFunction } from 'express'
 
-export const showProducts = async (req, res, next) => {
-  var user_id = null
+const verifyToken = async (token: string) => {
+  let [part1, part2] = token.split(' ')
+  var decoded = jwt.verify(part2, secret['jwt-secret'])
+  // @ts-ignore
+  var user = await getUserFromID(decoded.id)
+
+  if (!user) throw new Error('User is not found.')
+  return user.id
+}
+
+export const showProducts = async (req: Request, res: Response, next: NextFunction) => {
+  var user_id: string = ''
   try {
     if (req.headers.authorization) {
-      let [part1, part2] = req.headers.authorization.split(' ')
-      var decoded = jwt.verify(part2, secret["jwt-secret"])
-      var user = await getUserFromID(decoded.id)
-      var user_id = user.id
+      user_id = await verifyToken(req.headers.authorization)
     }
-    const results = await getProducts(user_id || null)
+    const results = await getProducts(user_id)
     res.send(results)
   } catch (err) {
     console.log(err)
@@ -21,15 +29,13 @@ export const showProducts = async (req, res, next) => {
   }
 }
 
-export const showProductById = async (req, res, next) => {
+export const showProductById = async (req: Request, res: Response, next: NextFunction) => {
+  var user_id: string = ''
   try {
     if (req.headers.authorization) {
-      let [part1, part2] = req.headers.authorization.split(' ')
-      var decoded = jwt.verify(part2, secret["jwt-secret"])
-      var user = await getUserFromID(decoded.id)
-      var user_id = user.id
+      user_id = await verifyToken(req.headers.authorization)
     }
-    const results = await getProductById(req.params.id, user_id || null)
+    const results = await getProductById(req.params.id, user_id)
     res.send(results)
   } catch (err) {
     console.log(err)
@@ -44,7 +50,7 @@ const productSchema = Joi.object({
   category_id: Joi.number().required()
 })
 
-export const createProduct = async (req, res, next) => {
+export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await productSchema.validateAsync(req.body)
   } catch {
@@ -59,16 +65,13 @@ export const createProduct = async (req, res, next) => {
   if (isNaN(req.body.price)) {isValid = false}
 
   if (!isValid) {
-    res.status(400).send({
-      err: 'form invalid'
+    return res.status(400).send({
+      err: 'Form invalid',
     })
-    return
   }
 
   try {
     const results = await addProduct(req.body, req.file)
-    console.log(` product `.bgBlue, results.product)
-    console.log(` image `.bgBlue, results.image)
     res.send({
       msg: 'Product added.',
       data: results
@@ -82,19 +85,12 @@ export const createProduct = async (req, res, next) => {
   }
 }
 
-export const updateProduct = async (req, res, next) => {
-  let data = [
-    req.body.name,
-    req.body.price,
-    req.body.description,
-    req.body.category_id,
-    req.body.id,
-  ]
-  // console.log(' data '.bgGray, data)
+export const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
+  const { id, name, price, description, category_id } = req.body
+  let data = { id, name, price, description, category_id }
 
   try {
     const results = await editProduct(data)
-    // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Product updated'.brightGreen.bold + ' name: ' + req.body.name)
     res.send(results)
   } catch (err) {
     console.log(err)
@@ -102,7 +98,7 @@ export const updateProduct = async (req, res, next) => {
   }
 }
 
-export const fetchCategories = async (req, res, next) => {
+export const fetchCategories = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const results = await getCategories()
     res.send(results)
@@ -112,10 +108,9 @@ export const fetchCategories = async (req, res, next) => {
   }
 }
 
-export const removeProduct = async (req, res, next) => {
+export const removeProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const results = await deleteProduct(req.params.id)
-    // console.log(` ${new Date().toLocaleTimeString()} `.bgBlue + ' Product deleted'.brightGreen.bold + ' id: ' + req.params.id)
+    const results = await deleteProduct(parseInt(req.params.id))
     res.send({
       msg: 'Product removed.',
       id: req.body.id
@@ -129,7 +124,7 @@ export const removeProduct = async (req, res, next) => {
   }
 }
 
-export const addCategory = async (req, res, next) => {
+export const addCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const results = await insertCategory(req.body)
     res.send(results)
@@ -139,9 +134,9 @@ export const addCategory = async (req, res, next) => {
   }
 }
 
-export const removeCategory = async (req, res, next) => {
+export const removeCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await deleteCategory(req.params.id)
+    await deleteCategory(parseInt(req.params.id))
     res.send({
       msg: 'Category deleted.'
     })

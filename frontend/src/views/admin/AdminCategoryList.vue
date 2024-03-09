@@ -44,10 +44,10 @@ export default {
       })
     },
     async deleteCategory(cate) {
-      if (cate.prod_amount > 0) {
-        alert('ไม่สามารถลบได้\nมีเมนูที่ใช้หมวดหมู่นี้อยู่ ' + cate.prod_amount + ' อัน')
+      if (cate._count.products > 0) {
+        alert('ไม่สามารถลบได้\nมีเมนูที่ใช้หมวดหมู่นี้อยู่ ' + cate._count.products + ' อัน')
       } else {
-        if (confirm('คุณต้องการลบหมวดหมู่ "' + cate.name + '" หรือไม่\nการกระทำนี้ไม่สามารถย้อนกลับได้')) {
+        if (confirm('คุณต้องการลบหมวดหมู่ "' + cate.title + '" หรือไม่\nการกระทำนี้ไม่สามารถย้อนกลับได้')) {
           await http.delete(`/api/categories/${cate.id}/delete`)
           .then(res => {
             alert('การลบเสร็จสิ้น')
@@ -118,11 +118,11 @@ export default {
           <p class="text-2xl">{{ item.id }} {{ item.emoji }}</p>
         </div>
         <div class="w-3/6">
-          <h1 class="font-bold text-2xl">{{ item.name }}</h1>
+          <h1 class="font-bold text-2xl">{{ item.title }}</h1>
           <p>{{ item.description }}</p>
         </div>
         <div class="w-1/6">
-          <p class="font-bold text-xl">{{ item.prod_amount }}</p>
+          <p class="font-bold text-xl">{{ item._count.products }}</p>
         </div>
         <div class="w-1/6">
           <button class="bg-red-500 text-white px-4 py-2 rounded-full mr-2" @click="deleteCategory(item)">ลบ</button>

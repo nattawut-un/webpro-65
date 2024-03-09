@@ -15,10 +15,12 @@ export default {
       loading: false,
       productId: null,
       details: {
-        name: null,
+        title: null,
         price: null,
         description: null,
         category_id: null,
+        category: { id: null },
+        images: [{ path: null }],
       },
       categories: [],
       debug: false
@@ -27,7 +29,7 @@ export default {
   validations() {
     return {
       details: {
-        name: {
+        title: {
           required: helpers.withMessage('ต้องกรอกชื่อเมนู', required),
           minLength: helpers.withMessage('ชื่อเมนูต้องยาวกว่า 5 ตัวอักษร', minLength(5)),
         },
@@ -37,7 +39,10 @@ export default {
           minValue: helpers.withMessage('ราคาต้องมากกว่า 0', minValue(0)),
         },
         description: {},
-        category_id: {}
+        category_id: {},
+        category: {
+          id: {}
+        }
       }
     }
   },
@@ -94,7 +99,7 @@ export default {
       try {
         let res = await http.put('/api/products/' + this.productId + '/update', {
           id: this.details.id,
-          name: this.details.name,
+          name: this.details.title,
           price: this.details.price,
           description: this.details.description,
           category_id: this.details.category_id
@@ -114,7 +119,7 @@ export default {
       this.loading = true
 
       try {
-        if (confirm('คุณต้องการลบข้อมูลสินค้า "' + this.details.name + '" หรือไม่\nการกระทำนี้ไม่สามารถย้อนกลับได้')) {
+        if (confirm('คุณต้องการลบข้อมูลสินค้า "' + this.details.title + '" หรือไม่\nการกระทำนี้ไม่สามารถย้อนกลับได้')) {
           let res = await http.delete('/api/products/' + this.details.id + '/delete')
           .then(response => {
             this.v$.$reset()
@@ -153,7 +158,7 @@ import SectionFull from '@/components/SectionFull.vue'
 </script>
 
 <template>
-  <SectionFull :imageApi="`${details.file_path}`" backButton="true">
+  <SectionFull :imageApi="`${details.images[0].path}`" backButton="true">
     <!-- loading -->
     <div v-show="loading" class="flex items-center justify-center space-x-2">
       <div
@@ -168,8 +173,8 @@ import SectionFull from '@/components/SectionFull.vue'
     <!-- main page -->
     <div v-show="!loading">
       <p class="text-red-500">*** 📝 โหมดแก้ไขข้อมูล ***</p>
-      <input type="text" v-model="v$.details.name.$model" class="text-[400%] font-pattaya w-full border-b-4 transition ease-out duration-100"
-      :class="[ v$.details.name.$dirty ? 'border-red-400 hover:border-red-600' : 'border-gray-200 hover:border-gray-500' ]">
+      <input type="text" v-model="v$.details.title.$model" class="text-[400%] font-pattaya w-full border-b-4 transition ease-out duration-100"
+      :class="[ v$.details.title.$dirty ? 'border-red-400 hover:border-red-600' : 'border-gray-200 hover:border-gray-500' ]">
       <span class="text-[200%]"><input type="number" v-model="v$.details.price.$model" class="border-b-2 transition ease-out duration-100 w-1/4"
       :class="[ v$.details.price.$dirty ? 'border-red-400 hover:border-red-600' : 'border-gray-200 hover:border-gray-500' ]"> บาท</span>
       <br><hr><br>
@@ -179,9 +184,14 @@ import SectionFull from '@/components/SectionFull.vue'
       <br><hr><br>
       <div>
         <label for="category">หมวดหมู่</label>
-        <select name="category" id="category" v-model="v$.details.category_id.$model" class="bg-gray-100 rounded-full ml-2 px-2 py-1"
+        <select name="category" id="category" v-model="v$.details.category.id.$model" class="bg-gray-100 rounded-full ml-2 px-2 py-1"
         :class="[ v$.details.category_id.$dirty ? 'border-red-400 hover:border-red-600' : 'border-gray-200 hover:border-gray-500' ]">
-          <option v-for="item in categories" :key="item.id" :value="item.id">{{ item.emoji }} {{ item.name }}</option>
+          <option
+            v-for="item in categories" :key="item.id" :value="item.id"
+            :selected="item.id === details.category.id ? true : false"
+          >
+            {{ item.emoji }} {{ item.title }}
+          </option>
         </select>
       </div><br>
       <div>

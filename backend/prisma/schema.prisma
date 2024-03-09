@@ -1,0 +1,94 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(uuid()) @db.VarChar(50)
+  firstName    String         @db.VarChar(50)
+  lastName     String         @db.VarChar(50)
+  username     String         @unique @db.VarChar(30)
+  password     String         @db.VarChar(100)
+  isAdmin      Int            @default(0)
+  phone        String         @unique @db.VarChar(10)
+  email        String         @unique @db.VarChar(50)
+  address      Address[]
+  favorites    UserFavorite[]
+  orders       Order[]
+  registerTime DateTime       @default(now())
+  lastLogin    DateTime       @default(now())
+}
+
+model UserFavorite {
+  id        Int     @id @default(autoincrement())
+  userId    String  @db.VarChar(50)
+  user      User    @relation(fields: [userId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Address {
+  id          String  @id @default(uuid()) @db.VarChar(50)
+  userId      String  @db.VarChar(50)
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address     String  @db.Text()
+  mainAddress Boolean @default(false)
+  orders      Order[]
+}
+
+model Order {
+  id         String     @id @default(uuid()) @db.VarChar(50)
+  userId     String     @db.VarChar(50)
+  user       User       @relation(fields: [userId], references: [id])
+  addressId  String     @db.VarChar(50)
+  address    Address    @relation(fields: [addressId], references: [id])
+  cartItem   CartItem[]
+  orderTime  DateTime   @default(now())
+  finishTime DateTime?
+}
+
+model Product {
+  id           Int            @id @default(autoincrement())
+  title        String         @unique @db.VarChar(50)
+  description  String?        @db.Text()
+  categoryId   Int
+  category     Category       @relation(fields: [categoryId], references: [id])
+  images       Image[]
+  cartItem     CartItem[]
+  userFavs     UserFavorite[]
+  price        Decimal        @db.Decimal(8, 2)
+  dateCreated  DateTime       @default(now())
+  dateModified DateTime       @default(now())
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  title       String    @unique @db.VarChar(50)
+  description String    @db.Text()
+  emoji       String    @unique @db.VarChar(1)
+  products    Product[]
+}
+
+model CartItem {
+  id          String  @id @default(uuid()) @db.VarChar(50)
+  orderId     String  @db.VarChar(50)
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   Int
+  product     Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  description String? @db.Text()
+  amount      Int
+  priceEach   Int
+}
+
+model Image {
+  id        String  @id @default(uuid()) @db.VarChar(100)
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  path      String  @unique @db.VarChar(256)
+  mainImage Boolean @default(false)
+}

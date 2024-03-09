@@ -1,16 +1,16 @@
 <template>
   <div class="bg-secondary hover:bg-primary rounded-[1.5rem] font-mali text-black hover:text-white transition ease-out duration-100 shadow-lg border-primary border-4">
     <router-link :to="'/products/'+ product.id">
-      <img class="rounded-[1.3rem] aspect-square object-cover w-full" :src="store.apiURL + product.file_path" @error="setToDefaultImg">
+      <img class="rounded-[1.3rem] aspect-square object-cover w-full" :src="store.apiURL + product.images[0].path" @error="setToDefaultImg">
       <div class="flex">
         <div class="p-6">
-          <h1 class="text-2xl">{{ product.name }}</h1>
+          <h1 class="text-2xl">{{ product.title }}</h1>
           <p>{{ product.price }} บาท</p>
         </div>
       </div>
     </router-link>
     <div class="px-4 pb-4 grid grid-cols-2 gap-2" v-if="store.user.data">
-      <button class="rounded-full text-black py-2 bg-pink-400 hover:bg-pink-300" v-if="product.fav_id" @click="deleteFav(product)">
+      <button class="rounded-full text-black py-2 bg-pink-400 hover:bg-pink-300" v-if="product.userFavs.length > 0" @click="deleteFav(product)">
         <div class="flex justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill mt-1 mr-2" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
@@ -50,7 +50,7 @@ export default {
       await http.post('/api/favs/add', {
         prod_id: product.id,
       }).then(res => {
-        product.fav_id = 1
+        product.userFavs = [1]
       }).catch(err => {
         console.log(err)
       })
@@ -61,7 +61,7 @@ export default {
           prod_id: product.id,
         }
       }).then(res => {
-        product.fav_id = 0
+        product.userFavs = []
         // this.$emit('productRefresh')
       }).catch(err => {
         console.log(err)

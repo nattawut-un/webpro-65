@@ -122,19 +122,19 @@ export default {
               :class="[ this.showImage ? 'text-2xl' : 'text-md' ]"
               v-for="item in searchedList" :key="item.id">
               <td class="px-6 py-4" v-show="showImage">
-                <img :src="store.apiURL + item.file_path" class="aspect-square object-cover rounded-full h-24">
+                <img :src="store.apiURL + item.images[0].path" class="aspect-square object-cover rounded-full h-24">
               </td>
               <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
                 {{ item.id }}
               </th>
               <th class="px-6 py-4 font-bold whitespace-nowrap">
-                {{ item.name }}
+                {{ item.title }}
               </th>
               <td class="px-6 py-4">
                 {{ item.price }}
               </td>
               <td class="px-6 py-4">
-                {{ item.cate_emoji }} {{ item.category }}
+                {{ item.category.emoji }} {{ item.category.title }}
               </td>
               <td class="px-6 py-4">
                 {{ item.purchase_amount }}

@@ -68,6 +68,9 @@ export default {
         return console.log('The form is invalid.')
       }
 
+      console.log(this.details)
+      console.log(this.file)
+
       this.loading = true
       var formData = new FormData()
       formData.append("name", this.details.name)
@@ -144,7 +147,7 @@ import SectionFull from '@/components/SectionFull.vue'
       <div>
         <label for="category">หมวดหมู่</label>
         <select name="category" id="category" v-model="v$.details.category_id.$model" class="bg-gray-100 rounded-full ml-2 px-2 py-1">
-          <option v-for="item in categories" :key="item.id" :value="item.id">{{ item.emoji }} {{ item.name }}</option>
+          <option v-for="item in categories" :key="item.id" :value="item.id">{{ item.emoji }} {{ item.title }}</option>
         </select>
       </div><br>
       <div>

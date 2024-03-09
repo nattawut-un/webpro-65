@@ -181,7 +181,7 @@ router.beforeEach(async (to, from, next) => {
     return next({ name: 'login' })
   }
 
-  if (to.meta.level === 'admin' && token && user.data.is_admin === 0) {
+  if (to.meta.level === 'admin' && token && user.data.isAdmin === 0) {
     // pages need admin but not admin
     alert('Unauthorized.')
     return next({ name: 'home' })

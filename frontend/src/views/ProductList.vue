@@ -46,7 +46,7 @@ export default {
         return this.products
       } else if (this.searchKeyword && this.selectedCategories == 0) {
         return this.products.filter(item => {
-          return item.name.includes(this.searchKeyword)
+          return item.title.includes(this.searchKeyword)
         })
       } else if (!this.searchKeyword && this.selectedCategories.length > 0) {
         return this.products.filter(item => {
@@ -54,14 +54,14 @@ export default {
         })
       } else {
         return this.products.filter(item => {
-          return item.name.includes(this.searchKeyword) && this.selectedCategories.includes(item.category_id)
+          return item.title.includes(this.searchKeyword) && this.selectedCategories.includes(item.category_id)
       })
       }
     },
     favoriteList() {
       if (this.showFavorites) {
         return this.searchedList.filter(item => {
-          return item.fav_id
+          return item.userFavs.length
         })
       }
       return this.searchedList
@@ -98,7 +98,7 @@ export default {
           <h1 class="font-bold text-xl">หมวดหมู่</h1>
           <div v-for="item in categories">
             <input type="checkbox" :id="item.id" :value="item.id" :key="item.id" v-model="selectedCategories">&nbsp;
-            <label :for="item.id">{{ item.emoji }} {{ item.name }}</label>
+            <label :for="item.id">{{ item.emoji }} {{ item.title }}</label>
           </div>
         </div>
       </div>

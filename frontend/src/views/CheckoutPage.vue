@@ -26,7 +26,7 @@ export default {
         } else {
           this.userInfo = JSON.parse(JSON.stringify(res.data.data))
           this.address = JSON.parse(JSON.stringify(res.data.address))
-          this.selectedAddress = this.address.find(currentValue => currentValue.main_addr)
+          this.selectedAddress = this.address.find(currentValue => currentValue.mainAddress)
         }
       }).catch((err) => {
         console.log(err)
@@ -83,7 +83,7 @@ export default {
       <div class="container mx-auto flex py-8">
         <div class="w-1/2 pr-4">
           <h1 class="font-pattaya text-4xl">รายการอาหาร</h1><br>
-          <ProductCard v-for="item in store.cart" :title="item.name" :amount="item.quantity" :price="item.price" />
+          <ProductCard v-for="item in store.cart" :title="item.title" :amount="item.quantity" :price="item.price" />
         </div>
         <div class="w-1/2 pl-4">
           <h1 class="font-pattaya text-4xl">ข้อมูลผู้ใช้</h1>
@@ -96,7 +96,7 @@ export default {
             <div class="flex" v-for="addr in address">
               <input type="radio" v-model="selectedAddress" :key="addr.id" :id="addr.id" :value="addr" class="mx-4">
               <label :for="addr.id">
-                <AddressCard :main="addr.main_addr">
+                <AddressCard :main="addr.mainAddress">
                   {{ addr.address }}
                 </AddressCard>
               </label>
