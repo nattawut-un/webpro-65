@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE `address` ADD COLUMN `address` TEXT NOT NULL;
+ALTER TABLE `Address` ADD COLUMN `address` TEXT NOT NULL;
