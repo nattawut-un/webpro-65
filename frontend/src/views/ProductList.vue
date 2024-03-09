@@ -50,11 +50,11 @@ export default {
         })
       } else if (!this.searchKeyword && this.selectedCategories.length > 0) {
         return this.products.filter(item => {
-          return this.selectedCategories.includes(item.category_id)
+          return this.selectedCategories.includes(item.category.id)
         })
       } else {
         return this.products.filter(item => {
-          return item.title.includes(this.searchKeyword) && this.selectedCategories.includes(item.category_id)
+          return item.title.includes(this.searchKeyword) && this.selectedCategories.includes(item.category.id)
       })
       }
     },

@@ -102,7 +102,7 @@ export default {
           name: this.details.title,
           price: this.details.price,
           description: this.details.description,
-          category_id: this.details.category_id
+          category_id: this.details.category.id
         })
         .then(response => {
           this.v$.$reset()
