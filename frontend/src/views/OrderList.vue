@@ -135,7 +135,7 @@ export default {
               <h3 class="text-gray-400 font-[monospace] font-bold text-sm mb-3">#{{ order.id }}</h3>
               <p><b>เวลาที่สั่งซื้อ:</b><br>{{ moment(order.orderTime).format('llll') }} ({{ moment(order.orderTime).fromNow() }})</p>
               <p><b>เวลาที่เสร็จสิ้น:</b><br>{{ moment(order.finishTime).format('llll') }} ({{ moment(order.finishTime).fromNow() }})</p>
-              <p><b>ที่อยู่:</b><br>{{ order.address }}</p>
+              <p><b>ที่อยู่:</b><br>{{ order.address.address }}</p>
             </div>
             <div class="w-1/2 px-4">
               <div class="relative overflow-x-auto shadow-md sm:rounded-lg">

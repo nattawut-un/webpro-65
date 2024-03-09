@@ -38,6 +38,9 @@ export const addOrder = async (order_id: string, user_id: string, address_id: st
 export const getOrderFromID = async (user_id: string) => {
   try {
     const res = await prisma.order.findMany({
+      where: {
+        userId: user_id
+      },
       include: {
         cartItem: {
           include: {
