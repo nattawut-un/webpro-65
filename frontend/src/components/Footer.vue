@@ -17,23 +17,26 @@ export default {
     <div class="container mx-auto md:flex p-8">
       <div class="md:w-2/3 md:pr-4 md:border-r-4 mb-4">
         <h1 class="text-xl font-bold mb-2">{{ store.shopName }}</h1>
-        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatum suscipit veniam quos aut quas ipsa quo explicabo molestias, dolores dignissimos in impedit, minima ullam nihil voluptate dicta praesentium sequi doloremque?</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil excepturi exercitationem doloremque vero maxime minima commodi illum repellat, corrupti eaque consequuntur distinctio ipsum aliquid dolorem qui ea fuga enim at!</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum odio esse magni quidem saepe nemo aperiam autem blanditiis adipisci eum sequi omnis exercitationem ea, distinctio laborum quia! Atque, perferendis nulla.</p>
+        <p>
+          คอนแท็คโกเต็กซ์ซัพพลาย กฤษณ์ไลน์เอ็นจีโอชินบัญชรวันเวย์ อิมพีเรียล คันธาระ คอมเพล็กซ์ สุนทรีย์ช็อปสารขัณฑ์เรซิ่น เหี่ยวย่นบ๊อบซาดิสม์ ซิมโฟนีโปสเตอร์ ซาร์ดีนฟลอร์ดีไซน์ซิตี้ ซาร์ดีนสโลว์นินจาแม่ค้า วาฟเฟิลหมวยแอ็กชั่นห่วยแซว มินต์อัลตรา นิรันดร์เคส ช็อปเวสต์อาร์ติสต์ ทอมมาราธอนมวลชนลอจิสติกส์ มหภาค
+        </p>
+        <p>
+          ไงสเตริโอนิวโปรเจกต์ ฮ่องเต้คอรัปชันบรรพชนฟลอร์ป๋อหลอ ร็อคอ่อนด้อยสหัสวรรษยูวี ตัวเองคีตปฏิภาณเซ็นเตอร์แคชเชียร์สี่แยก ซีเรียสไชน่า คาร์โก้ บึมเฉิ่มฟีเวอร์ซูเอี๋ย สไตรค์ คอร์ปคอนเซปต์โปรแชมพู ยูวี เฟรม ไนน์ไลท์มหาอุปราชา บัส เดโมแรลลีครัวซองโรลออนบ๊วย คัตเอาต์มั้งวิภัชภาคพงษ์เดโม แซวเฟรชชี่ฟลุตสไลด์ป๋อหลอ
+        </p>
+        <p>
+          วาฟเฟิล ป่าไม้คอนเฟิร์มภควัมบดีเลคเชอร์ ครัวซองต์ อิกัวนาเทรนด์มายองเนส รีเสิร์ช บุญคุณ แซวมะกันวีน เพทนาการเป่ายิงฉุบฮ่องเต้ ป๊อกซานตาคลอส ซูโม่แซว พลาซ่าซิตีแดนเซอร์ลิสต์สโตน สแล็ก มวลชนเช็ก คาแรคเตอร์โปสเตอร์ ซีดาน พูลแอ็คชั่นบอยคอตต์
+        </p>
+        <p>
+          มาเฟียกู๋ลิมิต มาราธอน มหาอุปราชาเช็งเม้งปัจฉิมนิเทศโรแมนติคทัวร์ เฟรชถ่ายทำโปรเจ็คท์ ปิโตรเคมี เพนตากอนพิซซ่า แทคติค ฮิปฮอปปาสคาลบอยคอตต์เฟอร์นิเจอร์ ไทม์กุนซือพลานุภาพช็อปปิ้งเพาเวอร์ มุมมองคอร์สช็อปปิ้งคอนแทค ออดิทอเรียม แบดฟรุตแอสเตอร์ เพรส โปรเจ็คท์แครกเกอร์ ลิสต์ ชินบัญชรสุริยยาตรอัลตราซัมเมอร์อ่อนด้อย
+        </p>
       </div>
       <div class="md:w-1/3 md:pl-4">
         <h1 class="text-xl font-bold">
-          Web Technology
-        </h1><br>
-        <h2 class="text-lg font-bold">
-          ณัฐวุฒิ อุ่นวิเศษ
-        </h2>
-        <h3 class="text-md">
-          64070035
-        </h3>
+          {{ store.shopName }}
+        </h1>
         <br>
         <p>
-          เว็บไซต์นี้เป็นส่วนหนึ่งของวิชา Web Technology ภาคเรียนที่ 2 ปีการศึกษา 2565
+          สงบสุขฟอยล์มยุราภิรมย์แบ็กโฮคอร์ป วีเจแบล็ก ซิมโฟนี่ฮอตดอกเย้ว ฮ่องเต้พาร์ทเนอร์ คาร์โก้ดัมพ์เบญจมบพิตร เฟอร์นิเจอร์คำสาปจิ๊กซอว์แล็บศึกษาศาสตร์ ไตรมาสสตูดิโอโฮสเตสแบ็กโฮ แพ็ค สหัสวรรษแทคติคแอ็กชั่น ดอกเตอร์เวณิกา ฮิบรูโปรเจ็กเตอร์ออร์เดอร์ ทัวร์คอรัปชั่นคลิปตุ๋ยคลับ
         </p>
       </div>
     </div>
