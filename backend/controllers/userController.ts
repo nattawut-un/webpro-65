@@ -125,7 +125,7 @@ export const authorizeAdmin = async (req: Request & { user?: any }, res: Respons
 }
 
 export const authorizeOwner = async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
-  if (req.user.is_admin === 2) {
+  if (req.user.isAdmin === 2) {
     return next()
   }
 
