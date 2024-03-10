@@ -82,7 +82,7 @@ export default {
               <span class="text-[120px]">{{ item.emoji }}</span>
             </div>
             <div class="w-2/3 py-2">
-              <h2 class="text-5xl font-pattaya py-2">{{ item.name }}</h2>
+              <h2 class="text-5xl font-pattaya py-2">{{ item.title }}</h2>
               <p>{{ item.description }}</p>
               <!-- <img :src="store.apiURL + item.file_path"> -->
             </div>

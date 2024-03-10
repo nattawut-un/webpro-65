@@ -48,7 +48,7 @@ export default {
       })
       .then(res => {
         alert(`เพิ่ม ${user.username} เป็น admin แล้ว`)
-        user.is_admin = 1
+        user.isAdmin = 1
       }).catch(err => {
         console.log(err)
       })
@@ -60,7 +60,7 @@ export default {
       })
       .then(res => {
         alert(`ลบ ${user.username} ออกจาก admin แล้ว`)
-        user.is_admin = 0
+        user.isAdmin = 0
       }).catch(err => {
         console.log(err)
       })
@@ -133,8 +133,8 @@ export default {
                 v-for="user in users" :key="user.id">
                 <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
                   <span v-if="user.id == store.user.data.id" class="bg-green-300 text-black text-xs p-1 rounded-lg mr-1.5">YOU</span>
-                  <span v-if="user.is_admin == 1" class="bg-secondary text-black text-xs p-1 rounded-lg mr-1.5">ADMIN</span>
-                  <span v-if="user.is_admin == 2" class="bg-primary text-white text-xs p-1 rounded-lg mr-1.5">OWNER</span>
+                  <span v-if="user.isAdmin == 1" class="bg-secondary text-black text-xs p-1 rounded-lg mr-1.5">ADMIN</span>
+                  <span v-if="user.isAdmin == 2" class="bg-primary text-white text-xs p-1 rounded-lg mr-1.5">OWNER</span>
                   <span class="tooltip">
                     {{ user.username }}
                     <span class="tooltiptext text-xs">id: {{ user.id }}</span>

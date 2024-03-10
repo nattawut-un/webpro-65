@@ -24,7 +24,7 @@ export default {
         {
           icon: '📃',
           title: 'รายการสั่งซื้อ',
-          description: 'ดำเนินการคพสั่งซื้อให้เสร็จ หรือลบคำสั่งซื้อ',
+          description: 'ดำเนินการคำสั่งซื้อให้เสร็จ หรือลบคำสั่งซื้อ',
           to: '/admin/orders'
         },
         {
@@ -52,7 +52,7 @@ export default {
   <main>
     <img :src="AdminHomeHeader" class="w-full h-[30vh] object-cover">
     <Section title="Admin Home">
-      <h2>Server URL: {{ store.apiURL }}</h2>
+      <!-- <h2>Server URL: {{ store.apiURL }}</h2> -->
       <br><hr class="border-primary border-2 rounded-full"><br>
       <div class="grid grid-cols-2">
         <router-link v-for="(item, index) in menus" :to="item.to"

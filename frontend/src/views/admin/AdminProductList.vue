@@ -137,10 +137,10 @@ export default {
                 {{ item.category.emoji }} {{ item.category.title }}
               </td>
               <td class="px-6 py-4">
-                {{ item.purchase_amount }}
+                {{ item._count.cartItem }}
               </td>
               <td class="px-6 py-4">
-                {{ item.total_user_favs }}
+                {{ item._count.userFavs }}
               </td>
               <td class="px-6 py-4 text-right">
                 <router-link :to="'/admin/products/' + item.id"
