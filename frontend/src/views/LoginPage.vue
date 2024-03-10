@@ -12,7 +12,7 @@ import { required, minLength } from '@vuelidate/validators'
 export default {
   data() {
     return {
-      $v: useVuelidate(),
+      v$: useVuelidate(),
       store,
       username: '',
       password: '',
@@ -58,13 +58,13 @@ export default {
     <form>
       <div class="my-4">
         <label>ชื่อผู้ใช้:</label><br>
-        <input type="text" v-model="$v.username.$model" placeholder="Username" class="border-2 rounded-full mt-2 px-4 text-xl">
-        <label class="text-red-500 ml-2" v-if="$v.username.minLength.$invalid">ต้องยาวกว่า 5 ตัว</label>
+        <input type="text" v-model="v$.username.$model" placeholder="Username" class="border-2 rounded-full mt-2 px-4 text-xl">
+        <label class="text-red-500 ml-2" v-if="v$.username.minLength.$invalid">ต้องยาวกว่า 5 ตัว</label>
       </div>
       <div class="my-4">
         <label>รหัสผ่าน:</label><br>
-        <input type="password" v-model="$v.password.$model" placeholder="Password" class="border-2 rounded-full mt-2 px-4 text-xl">
-        <label class="text-red-500 ml-2" v-if="$v.password.minLength.$invalid">ต้องยาวกว่า 6 ตัว</label>
+        <input type="password" v-model="v$.password.$model" placeholder="Password" class="border-2 rounded-full mt-2 px-4 text-xl">
+        <label class="text-red-500 ml-2" v-if="v$.password.minLength.$invalid">ต้องยาวกว่า 6 ตัว</label>
       </div>
     </form><br><hr><br><br>
     <button @click="login()" class="bg-primary text-white font-bold px-6 py-2 rounded-full text-2xl">ลงชื่อเข้าใช้</button>
