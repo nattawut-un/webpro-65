@@ -119,7 +119,7 @@ export default {
           <tbody>
             <tr
               class="bg-gray-100 border-b hover:bg-gray-200 text-black transition ease-out duration-100"
-              :class="[ this.showImage ? 'text-2xl' : 'text-md' ]"
+              :class="[ showImage ? 'text-2xl' : 'text-md' ]"
               v-for="item in searchedList" :key="item.id">
               <td class="px-6 py-4" v-show="showImage">
                 <img :src="store.apiURL + item.images[0].path" class="aspect-square object-cover rounded-full h-24">

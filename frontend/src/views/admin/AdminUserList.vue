@@ -141,7 +141,7 @@ export default {
                   </span>
                 </th>
                 <td class="px-6 py-4 font-bold">
-                  {{ user.first_name }} {{ user.last_name }}
+                  {{ user.firstName }} {{ user.lastName }}
                 </td>
                 <!-- <td class="px-6 py-4">
                   {{ user.email }}
@@ -150,29 +150,29 @@ export default {
                   {{ user.phone }}
                 </td> -->
                 <td class="px-6 py-4">
-                  {{ user.order_amount }}
+                  {{ user._count.orders }}
                 </td>
                 <td class="px-6 py-4">
                   <span class="tooltip">
-                    {{ moment(user.register_time).fromNow() }}
-                    <span class="tooltiptext text-xs">{{ moment(user.register_time).format('llll') }}</span>
+                    {{ moment(user.registerTime).fromNow() }}
+                    <span class="tooltiptext text-xs">{{ moment(user.registerTime).format('llll') }}</span>
                   </span>
                 </td>
                 <td class="px-6 py-4">
                   <span class="tooltip">
-                    {{ moment(user.last_login).fromNow() }}
-                    <span class="tooltiptext text-xs">{{ moment(user.last_login).format('llll') }}</span>
+                    {{ moment(user.lastLogin).fromNow() }}
+                    <span class="tooltiptext text-xs">{{ moment(user.lastLogin).format('llll') }}</span>
                   </span>
                 </td>
                 <td class="px-6 py-4 text-right">
-                  <div v-if="store.user.data.is_admin === 2">
-                    <button class="font-medium text-blue-600 dark:text-blue-500 hover:underline" v-if="store.user.data.is_admin === 2 && user.is_admin === 0" @click="addAdmin(user)">
+                  <div v-if="store.user.data.isAdmin === 2">
+                    <button class="font-medium text-blue-600 dark:text-blue-500 hover:underline" v-if="store.user.data.isAdmin === 2 && user.isAdmin === 0" @click="addAdmin(user)">
                       ➕ ตั้งเป็นแอดมิน
                     </button>
-                    <button class="font-medium text-blue-600 dark:text-blue-500 hover:underline" v-if="store.user.data.is_admin === 2 && user.is_admin === 1" @click="removeAdmin(user)">
+                    <button class="font-medium text-blue-600 dark:text-blue-500 hover:underline" v-if="store.user.data.isAdmin === 2 && user.isAdmin === 1" @click="removeAdmin(user)">
                       ❌ ลบออกจากแอดมิน
                     </button>&nbsp;
-                    <button @click="deleteUser(user)"
+                    <button @click="deleteUser(user)" v-if="store.user.data.id !== user.id"
                       class="font-medium text-red-500 hover:underline">
                       ❌ ลบผู้ใช้
                     </button>
