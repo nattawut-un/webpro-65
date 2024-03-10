@@ -72,7 +72,7 @@ export default {
           <router-link
           v-for="(item, index) in categories" :to="'/products?cate_id=' + item.id"
           :style="{
-            backgroundColor: colors[index % this.colors.length],
+            backgroundColor: '#f87171',
             // backgroundImage: `url('${store.apiURL + item.file_path}')`,
             // backgroundImage: 'url(' + store.apiURL + item.file_path + ')'
           }"
