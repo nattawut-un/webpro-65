@@ -224,8 +224,8 @@ export const deleteFromFavs = async (user_id: string, prod_id: number) => {
 
 export const updateAddressMain = async (user_id: string, address_id: string) => {
   try {
-    const removeFavFromOldAddress = prisma.$executeRaw`UPDATE address SET mainAddress=0 WHERE userId=${user_id} AND id!=${address_id}`
-    const addFavToNewAddress = prisma.$executeRaw`UPDATE address SET mainAddress=1 WHERE userId=${user_id} AND id=${address_id}`
+    const removeFavFromOldAddress = prisma.$executeRaw`UPDATE Address SET mainAddress=0 WHERE userId=${user_id} AND id!=${address_id}`
+    const addFavToNewAddress = prisma.$executeRaw`UPDATE Address SET mainAddress=1 WHERE userId=${user_id} AND id=${address_id}`
 
     const res = await prisma.$transaction([
       removeFavFromOldAddress,
