@@ -177,7 +177,7 @@ export default {
                         {{ item.amount }}
                       </td>
                       <td class="px-6 py-4">
-                        {{ item.price * item.amount }}.-
+                        {{ item.priceEach * item.amount }}.-
                       </td>
                     </tr>
                     <tr>
