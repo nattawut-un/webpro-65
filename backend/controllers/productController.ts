@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken'
 import secret from '../config/auth'
 import Joi from 'joi'
 import { Request, Response, NextFunction } from 'express'
+import { uploadFile, getPublicURL } from '../config/supabase'
+import { readFileSync } from 'fs'
 
 const verifyToken = async (token: string) => {
   let [part1, part2] = token.split(' ')
@@ -70,8 +72,27 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
     })
   }
 
+  // s3.upload({
+  //   Bucket: `${bucketName}`,
+  //   Key: `${req.file?.originalname}`,
+  //   Body: req.file?.buffer
+  // }, (err, data) => {
+  //   if (err) {
+  //     console.error(err)
+  //     return res.status(500).send('Error uploading file')
+  //   }
+  // })
+
+  const file = new File(
+    [readFileSync(`${req.file?.path}`)],
+    `${req.file?.filename}`,
+    { type: req.file?.mimetype }
+  )
+  const image = await uploadFile( 'images/', file)
+  const imgPublicPath = await getPublicURL(image)
+
   try {
-    const results = await addProduct(req.body, req.file)
+    const results = await addProduct(req.body, imgPublicPath)
     res.send({
       msg: 'Product added.',
       data: results

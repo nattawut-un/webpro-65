@@ -1,7 +1,7 @@
 <template>
   <div class="bg-secondary hover:bg-primary rounded-[1.5rem] font-mali text-black hover:text-white transition ease-out duration-100 shadow-lg border-primary border-4">
     <router-link :to="'/products/'+ product.id">
-      <img class="rounded-[1.3rem] aspect-square object-cover w-full" :src="store.apiURL + product.images[0].path" @error="setToDefaultImg">
+      <img class="rounded-[1.3rem] aspect-square object-cover w-full" :src="product.images[0].path" @error="setToDefaultImg">
       <div class="flex">
         <div class="p-6">
           <h1 class="text-2xl">{{ product.title }}</h1>

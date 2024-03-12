@@ -63,7 +63,7 @@ export const getProductById = async (prod_id: string, user_id?: string) => {
 
 export const addProduct = async (data: {
   name: string, price: number, description: string, category_id: string
-}, image: any) => {
+}, image: string) => {
   try {
     const res = await prisma.product.create({
       data: {
@@ -72,7 +72,7 @@ export const addProduct = async (data: {
         description: data.description,
         categoryId: parseInt(data.category_id),
         images: {
-          create: [{ path: image.path.substr(6) }],
+          create: [{ path: image }],
         },
       },
     })

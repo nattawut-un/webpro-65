@@ -95,7 +95,7 @@ import SectionFull from '../components/SectionFull.vue'
 </script>
 
 <template>
-  <SectionFull :title="details.title" :imageApi="`${details.images[0].path}`" backButton="true">
+  <SectionFull :title="details.title" :image="`${details.images[0].path}`" backButton="true">
     <div v-show="loading" class="flex items-center justify-center space-x-2">
       <div
         class="inline-block h-24 w-24 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"

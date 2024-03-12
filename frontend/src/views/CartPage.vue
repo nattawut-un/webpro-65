@@ -45,7 +45,7 @@ export default {
     </div>
     <div class="flex my-4" v-for="item in store.cart">
       <div class="w-1/6 mr-8">
-        <img :src="store.apiURL + item.images[0].path" class="w-full aspect-square rounded-full object-cover shadow-lg">
+        <img :src="item.images[0].path" class="w-full aspect-square rounded-full object-cover shadow-lg">
       </div>
       <div class="w-3/4 flex">
         <div class="w-5/6">

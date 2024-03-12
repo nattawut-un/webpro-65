@@ -158,7 +158,7 @@ import SectionFull from '@/components/SectionFull.vue'
 </script>
 
 <template>
-  <SectionFull :imageApi="`${details.images[0].path}`" backButton="true">
+  <SectionFull :image="`${details.images[0].path}`" backButton="true">
     <!-- loading -->
     <div v-show="loading" class="flex items-center justify-center space-x-2">
       <div
