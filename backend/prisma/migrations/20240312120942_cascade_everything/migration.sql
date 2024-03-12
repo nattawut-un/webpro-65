@@ -1,20 +1,20 @@
 -- DropForeignKey
-ALTER TABLE `image` DROP FOREIGN KEY `Image_productId_fkey`;
+ALTER TABLE `Image` DROP FOREIGN KEY `Image_productId_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `order` DROP FOREIGN KEY `Order_addressId_fkey`;
+ALTER TABLE `Order` DROP FOREIGN KEY `Order_addressId_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `order` DROP FOREIGN KEY `Order_userId_fkey`;
+ALTER TABLE `Order` DROP FOREIGN KEY `Order_userId_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `product` DROP FOREIGN KEY `Product_categoryId_fkey`;
+ALTER TABLE `Product` DROP FOREIGN KEY `Product_categoryId_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `userfavorite` DROP FOREIGN KEY `UserFavorite_productId_fkey`;
+ALTER TABLE `Userfavorite` DROP FOREIGN KEY `UserFavorite_productId_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `userfavorite` DROP FOREIGN KEY `UserFavorite_userId_fkey`;
+ALTER TABLE `Userfavorite` DROP FOREIGN KEY `UserFavorite_userId_fkey`;
 
 -- AddForeignKey
 ALTER TABLE `UserFavorite` ADD CONSTRAINT `UserFavorite_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
