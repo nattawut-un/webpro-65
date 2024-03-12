@@ -50,7 +50,7 @@ export default {
       <div class="w-3/4 flex">
         <div class="w-5/6">
           <router-link :to="'/products/' + item.id">
-            <h3 class="text-2xl font-bold">{{ item.name }}</h3>
+            <h3 class="text-2xl font-bold">{{ item.title }}</h3>
           </router-link>
           <p>ราคา {{ item.price }} บาท</p>
           <p>จำนวน {{ item.quantity }} ที่</p>

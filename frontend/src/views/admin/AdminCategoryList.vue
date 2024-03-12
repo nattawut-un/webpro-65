@@ -33,7 +33,7 @@ export default {
         return
       }
       const result = await http.post('/api/categories/add', {
-        name: this.newCategory.name,
+        title: this.newCategory.name,
         description: this.newCategory.description,
         emoji: this.newCategory.emoji,
       }).then(response => {

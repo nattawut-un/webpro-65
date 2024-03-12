@@ -1,7 +1,7 @@
 <template>
   <div class="flex bg-gray-100 border-2 rounded-xl shadow-lg p-4 mb-4">
     <div class="w-1/5">
-      <img src="../assets/images/profile.jpg" class="rounded-full">
+      <img :src="image || '../assets/images/profile.jpg'" class="rounded-full">
     </div>
     <div class="w-3/5 px-4">
       <h1 class="font-bold text-2xl mb-2">{{ title }}</h1>

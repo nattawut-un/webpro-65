@@ -139,11 +139,7 @@ export const deleteProduct = async (id: number) => {
 export const insertCategory = async (data: any) => {
   try {
     const res = await prisma.category.create({
-      data: {
-        ...data,
-        name: undefined,
-        title: data.name,
-      }
+      data
     })
     return res
   } catch (err) {

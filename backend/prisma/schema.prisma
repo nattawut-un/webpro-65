@@ -70,7 +70,7 @@ model Category {
   id          Int       @id @default(autoincrement())
   title       String    @unique @db.VarChar(50)
   description String    @db.Text()
-  emoji       String    @unique @db.VarChar(1)
+  emoji       String    @db.VarChar(1)
   products    Product[]
 }
 

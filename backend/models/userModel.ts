@@ -161,14 +161,14 @@ export const insertAddress = async (user_id: string, address: string) => {
     },
   })
 
-  const main_addr = r[0]._count.orders > 0 ? 1 : 0
+  const main_addr = r[0].address.length === 0 ? true : false
 
   try {
     const res = await prisma.address.create({
       data: {
         userId: user_id,
         address,
-        mainAddress: main_addr > 0 ? true : false,
+        mainAddress: main_addr
       },
     })
     return res

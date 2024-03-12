@@ -34,6 +34,9 @@ export default {
     async getUser() {
       await http.get('/api/get_user').then(res => {
         this.store.user = res.data
+      }).catch(err => {
+        console.log(err)
+        localStorage.removeItem('token')
       })
     }
   },
