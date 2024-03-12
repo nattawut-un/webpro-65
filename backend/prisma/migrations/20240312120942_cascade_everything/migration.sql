@@ -11,10 +11,10 @@ ALTER TABLE `Order` DROP FOREIGN KEY `Order_userId_fkey`;
 ALTER TABLE `Product` DROP FOREIGN KEY `Product_categoryId_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `Userfavorite` DROP FOREIGN KEY `UserFavorite_productId_fkey`;
+ALTER TABLE `UserFavorite` DROP FOREIGN KEY `UserFavorite_productId_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `Userfavorite` DROP FOREIGN KEY `UserFavorite_userId_fkey`;
+ALTER TABLE `UserFavorite` DROP FOREIGN KEY `UserFavorite_userId_fkey`;
 
 -- AddForeignKey
 ALTER TABLE `UserFavorite` ADD CONSTRAINT `UserFavorite_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
