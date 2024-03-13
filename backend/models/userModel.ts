@@ -213,7 +213,7 @@ export const insertUserFavs = async (user_id: string, prod_id: number) => {
 export const deleteFromFavs = async (user_id: string, prod_id: number) => {
   try {
     const res =
-      await prisma.$executeRaw`DELETE FROM Userfavorite WHERE userId=${user_id} AND productId=${prod_id}`
+      await prisma.$executeRaw`DELETE FROM UserFavorite WHERE userId=${user_id} AND productId=${prod_id}`
     return res
   } catch (err) {
     throw err
